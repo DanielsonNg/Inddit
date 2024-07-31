@@ -22,7 +22,7 @@ module.exports = {
     async getProducts(req, res) {
         try {
             const product = await Product.find({})
-            return res.status(200).json(product)
+            return res.status(200).json({product})
         } catch (err) {
             return res.status(500).json({ message: err.message })
         }

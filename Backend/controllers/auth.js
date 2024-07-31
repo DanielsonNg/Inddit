@@ -41,5 +41,9 @@ module.exports = {
     async logout(req,res){
         refreshTokens = refreshTokens.filter(token=> token !== req.body.token)
         res.sendStatus(204)
+    },
+
+    async register(req,res){
+        console.log('yes')
     }
 }
