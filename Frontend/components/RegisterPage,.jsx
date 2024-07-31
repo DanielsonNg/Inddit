@@ -60,7 +60,11 @@ export default function RegisterPage() {
         //     return;
         // }
         try {
-            const response = await axios.post(REGISTER_URL
+            const response = await axios.post(REGISTER_URL, 
+                {
+                    user: user,
+                    password: pwd
+                }
                 // JSON.stringify({ user, pwd }),
                 // {
                 //     headers: { 'Content-Type': 'application/json' },
