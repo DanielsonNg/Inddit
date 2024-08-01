@@ -9,7 +9,13 @@ const UserSchema = mongoose.Schema(
         password: {
             type:String,
             require: true
-        }
+        },
+        role:{
+            type: String,
+            require: true
+        },
+        refreshToken: String
+        
     },
     {
         timestamps: true
