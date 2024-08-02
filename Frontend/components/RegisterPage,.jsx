@@ -32,15 +32,11 @@ export default function RegisterPage() {
 
     useEffect(() => {
         const result = USER_REGEX.test(user)
-        console.log(result)
-        console.log(user)
         setValidName(result)
     }, [user])
 
     useEffect(() => {
         const result = PWD_REGEX.test(pwd)
-        console.log(result)
-        console.log(pwd)
         setValidPwd(result)
         const match = pwd === matchPwd
         setValidMatch(match)
@@ -63,7 +59,8 @@ export default function RegisterPage() {
             const response = await axios.post(REGISTER_URL, 
                 {
                     user: user,
-                    password: pwd
+                    password: pwd,
+                    withCredentials: true
                 }
                 // JSON.stringify({ user, pwd }),
                 // {

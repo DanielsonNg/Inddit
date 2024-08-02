@@ -7,8 +7,15 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import RightCard from '../components/RightCard,';
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useStateContext } from '../context/ContextProvider';
 
 export default function LandingPage() {
+    const {user} = useStateContext
+    useEffect(() => {
+      console.log(user)
+    }, [])
+    
     return (
         <>
             <div className={styles.container}>

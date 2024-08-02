@@ -26,10 +26,11 @@ module.exports = {
             refreshTokens.push(refreshToken)
             userFind.refreshToken = refreshToken
             //
+            let role = userFind.role
             const result = await userFind.save()
-
+            
             res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
-            res.json({ accessToken })
+            res.json({role, accessToken })
         } else {
             return res.sendStatus(401)
         }
@@ -118,7 +119,7 @@ module.exports = {
                     , process.env.ACCESS_TOKEN_SECRET
                     , { expiresIn: '30m' }
                 )
-                res.json({ accessToken })
+                res.json({userFind, accessToken })
             }
         )
     },
