@@ -9,11 +9,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useStateContext } from '../context/ContextProvider';
+import { useAuth } from '../context/AuthProvider';
+import LoginPage from '../components/LoginPage';
 
 export default function LandingPage() {
-    const {user} = useStateContext
+    const{isAuthenticated} = useAuth()
     useEffect(() => {
-      console.log(user)
+      console.log(isAuthenticated)
     }, [])
     
     return (

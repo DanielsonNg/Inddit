@@ -5,23 +5,24 @@ import LandingPage from './LandingPage'
 import LoginPage from '../components/LoginPage'
 import RegisterPage from '../components/RegisterPage,'
 import NotFound from '../components/NotFound'
-import RequireAuth from '../components/RequireAuth'
-import TestPage from '../components/TestPage'
-import Users from '../components/Users'
+import { useAuth } from '../context/AuthProvider'
+// import RequireAuth from '../components/RequireAuth'
+// import TestPage from '../components/TestPage'
 
 function App() {  
+  const {isAuthenticated} = useAuth()
   return (
     <>
     <Routes>
       <Route path='/' element={<LandingPage />} />
-      <Route path='/login' element={<LoginPage/>} />
+      <Route path='/login' element={!isAuthenticated ? <LoginPage/> : <LandingPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route path="*" element={<NotFound />} />
 
-      <Route element={<RequireAuth />}>
+      {/* <Route element={<RequireAuth />}>
         <Route path='/test' element={<TestPage />} />
-        <Route path='/users' element={<Users />} />
-      </Route>
+      </Route> */}
+        {/* <Route path='/users' element={<Users />} /> */}
     </Routes>
     </>
   )

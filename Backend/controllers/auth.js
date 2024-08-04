@@ -8,7 +8,35 @@ const Role = require('../models/roles.model')
 let refreshTokens = []
 module.exports = {
 
-    async login(req, res) {
+    // async login(req, res) {
+    //     // console.log('logiing')
+        // const username = req.body.username
+        // const password = req.body.password
+        // const user = {
+        //     name: username
+        // }
+        // if (!username || !password) return res.status(400).json({ 'message': "Username and Password is required" })
+        // const userFind = await User.findOne({ username: username }).exec()
+        // if (!userFind) {
+        //     return res.sendStatus(401)
+        // }
+    //     const match = await bcrypt.compare(password, userFind.password)
+    //     if (match) {
+    //         const accessToken = await generateAccessToken(user)
+    //         const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
+    //         refreshTokens.push(refreshToken)
+    //         userFind.refreshToken = refreshToken
+    //         //
+    //         let role = userFind.role
+    //         const result = await userFind.save()
+            
+    //         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 })
+    //         res.json({userFind, accessToken})
+    //     } else {
+    //         return res.sendStatus(401)
+    //     }
+    // },
+    async login(req,res){
         const username = req.body.username
         const password = req.body.password
         const user = {
@@ -19,21 +47,7 @@ module.exports = {
         if (!userFind) {
             return res.sendStatus(401)
         }
-        const match = await bcrypt.compare(password, userFind.password)
-        if (match) {
-            const accessToken = await generateAccessToken(user)
-            const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' })
-            refreshTokens.push(refreshToken)
-            userFind.refreshToken = refreshToken
-            //
-            let role = userFind.role
-            const result = await userFind.save()
-            
-            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
-            res.json({role, accessToken })
-        } else {
-            return res.sendStatus(401)
-        }
+        return {userFind, token}
     },
 
     async token(req, res) {
@@ -75,12 +89,32 @@ module.exports = {
         return res.sendStatus(204)
     },
 
+    // async register(req, res) {
+    //     const user = req.body.username
+    //     const password = req.body.password
+    //     console.log(req.body)
+    //     console.log(user, password)
+    //     console.log('yes')
+    //     if (!user || !password) return res.status(400).json({ 'message': "Username and Password is required" })
+    //     const duplicate = await User.find({ username: user })
+    //     if (duplicate.length !== 0) {
+    //         return res.status(409).json("Username already exist")
+    //     }
+    //     try {
+    //         //encrypt
+    //         const hashedPwd = await bcrypt.hash(password, 10)
+    //         //store db
+    //         const userCreate = await User.create({ username: user, password: hashedPwd, role: '66ab0b1e05bf04cc27a31ccb' })
+    //         return res.status(200).json(userCreate)
+
+    //     } catch (error) {
+    //         return res.status(500).json({ message: error.message })
+    //     }
+    // },
+
     async register(req, res) {
-        const user = req.body.username
+        const user = req.body.user
         const password = req.body.password
-        console.log(req.body)
-        console.log(user, password)
-        console.log('yes')
         if (!user || !password) return res.status(400).json({ 'message': "Username and Password is required" })
         const duplicate = await User.find({ username: user })
         if (duplicate.length !== 0) {
@@ -90,7 +124,7 @@ module.exports = {
             //encrypt
             const hashedPwd = await bcrypt.hash(password, 10)
             //store db
-            const userCreate = await User.create({ username: user, password: hashedPwd, role: '66ab0b1e05bf04cc27a31ccb' })
+            const userCreate = await User.create({ username: user, password: hashedPwd, role: '66ab0b1e05bf04cc27a31ccb', token: 'testtoken' })
             return res.status(200).json(userCreate)
 
         } catch (error) {
