@@ -8,18 +8,20 @@ import RightCard from '../components/RightCard,';
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useStateContext } from '../context/ContextProvider';
 import { useAuth } from '../context/AuthProvider';
-import LoginPage from '../components/LoginPage';
 
 export default function LandingPage() {
-    const{isAuthenticated} = useAuth()
-    useEffect(() => {
-      console.log(isAuthenticated)
-    }, [])
-    
+    const { userData, token, logout } = useAuth()
+
+    const handleLogout = ()=>{
+        logout()
+    }
+
     return (
         <>
+        <button onClick={handleLogout}>
+            Logout
+        </button>
             <div className={styles.container}>
                 <div className={styles.navbar}>
                     <h2>Inddit</h2>
@@ -29,11 +31,17 @@ export default function LandingPage() {
                         </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Link to={'/login'}>
-                        <div style={{ backgroundColor: 'rgb(100, 3, 156)', width:'100px', height: '49px', borderRadius: '10px',  display: 'flex', alignItems: 'center', justifyContent:'center', fontWeight:'bold' }}>
-                            Login
-                        </div>
-                        </Link>
+                        {token === null && (
+                            <Link to={'/login'} style={{textDecoration:'none'}}>
+                                <div style={{ backgroundColor: 'rgb(100, 3, 156)', width: '100px', height: '49px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                                    <p style={{textDecoration:'none'}}>Login</p>
+                                </div>
+                            </Link>)
+                        }
+                        {token && (
+                            <h1>Welcome, {userData.name}</h1>
+                        )}
+
                     </div>
                 </div>
                 <div className={styles.content}>

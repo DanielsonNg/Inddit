@@ -1,16 +1,14 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { useStateContext } from "../context/ContextProvider"
+import { useAuth } from "../context/AuthProvider"
 
 export default function LoginPage() {
-    const { setUser, setToken, token, user } = useStateContext()
+    const {login, isAuthenticated} = useAuth()
     const [error, setError] = useState('')
     const [username, setUsername] = useState('')
     const [pwd, setPwd] = useState('')
     const navigate = useNavigate()
-    // const refresh = useRefresh()
-
     useEffect(() => {
 
     }, [])
@@ -18,26 +16,21 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // const response = await axios.post('http://localhost:3333/newlogin',
-            //     {
-            //         username: username,
-            //         password: pwd,
-            //         withCredentials: true
-            //     },
-            //     // {
-            //     //     headers: { 'Content-Type': 'application/json' },
-            //     //     withCredentials: true
-            //     // }
-            // );
-            console.log(response.data.userFind)
-            const accessToken = response?.data?.accessToken;
-            // const roles = response?.data?.roles;
-            setUser(response?.data?.userFind)
-            setToken(accessToken)
+            const response = await axios.post('http://localhost:3333/newlogin',
+                {
+                    username: username,
+                    password: pwd,
+                    withCredentials: true
+                },
+                // {
+                //     headers: { 'Content-Type': 'application/json' },
+                //     withCredentials: true
+                // }
+            );
+            login(response.data.token, response.data.user)
             setUsername('');
             setPwd('');
-            // navigate('/users')
-            // navigate('/users');
+            navigate('/')
         } catch (err) {
             console.log(err)
         }
