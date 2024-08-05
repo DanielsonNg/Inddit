@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import useSignup from "../hooks/useSignup"
+import styles from "../src/css/registerpage.module.css"
+import { Link } from "react-router-dom"
+import registerImage from "../src/assets/Night.jpg"
 
 export default function RegisterPage() {
     const { loading, error, registerUser } = useSignup()
-    const [user, setUser] = useState('')
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
+    const [confirm, setConfirm] = useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -17,55 +22,54 @@ export default function RegisterPage() {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <h1>Register Page</h1>
-            </div>
-            <form onSubmit={handleSubmit}>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div>
-                        <input
-                            type="text"
-                            id="username"
-                            required
-                            autoComplete="off"
-                            style={{ height: '50px' }}
-                            value={user}
-                            onChange={(e) => setUser(e.target.value)}
-                        />
-
+            <div className={styles.root}>
+                <div className={styles.container}>
+                    {/* Left */}
+                    <div className={styles.left}>
+                        <div>
+                            <h1>Register</h1>
+                        </div>
+                        {/* Form */}
+                        <form onSubmit={handleSubmit}>
+                            <div>
+                                Username
+                            </div>
+                            <div>
+                                <input className={styles.input} type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                            </div>
+                            <div style={{ paddingTop: '20px' }}>
+                                Email
+                            </div>
+                            <div>
+                                <input className={styles.input} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                            </div>
+                            <div style={{ paddingTop: "20px" }}>
+                                Password
+                            </div>
+                            <div>
+                                <input className={styles.input} type="password" value={pwd} onChange={(e) => setPwd(e.target.value)} />
+                            </div>
+                            <div style={{ paddingTop: '20px' }}>
+                                Confirm Password
+                            </div>
+                            <div>
+                                <input className={styles.input} type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+                            </div>
+                            <div className={styles.btnContainer}>
+                                <button className={styles.loginBtn}>Sign Up</button>
+                            </div>
+                        </form>
+                        <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }}>
+                            Already have an account? &#160; <Link to="/login">Sign in here</Link>
+                        </div>
                     </div>
-
-                </div>
-                <br></br>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div>
-                        <input
-                            type="password"
-                            id="password"
-                            onChange={(e) => setPwd(e.target.value)}
-                            value={pwd}
-                            required
-                            style={{ height: '50px' }}
-                        />
-
+                    {/* Right */}
+                    <div className={styles.right}>
+                        <img src={registerImage}
+                            style={{ width: '600px', borderRadius: '0px 20px 20px 0px' }}>
+                        </img>
                     </div>
                 </div>
-                <br></br>
-                <br></br>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <button
-                        style={{ height: '50px' }}
-                    >Sign Up</button>
-                </div>
-            </form>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <p>
-                    Already registered?<br />
-                    <span className="line">
-                        {/*put router link here*/}
-                        <a href="/login">Sign In</a>
-                    </span>
-                </p>
             </div>
         </>
     )

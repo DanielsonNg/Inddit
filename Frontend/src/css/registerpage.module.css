@@ -1,0 +1,49 @@
+.root{
+    display: flex;
+    justify-content: center;
+    padding: 50px;
+}
+.container{
+    display: flex;
+    justify-content: space-between;
+    gap: 0px;
+    height: 700px;
+}
+
+.left{
+    background-color: rgb(88, 92, 92, 0.3);
+    border-radius: 20px 0px 0px 20px;
+    width: 600px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right{
+    display: flex;
+    justify-content: flex-end;
+    width: 600px;
+    /* border-radius: 0px 20px 20px 0px; */
+
+}
+
+.input{
+    border-radius: 10px;
+    height: 50px;
+    font-size: 20px;
+}
+
+.btnContainer{
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.loginBtn{
+    width: 100px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: rgb(71, 3, 110);
+    cursor: pointer;
+}

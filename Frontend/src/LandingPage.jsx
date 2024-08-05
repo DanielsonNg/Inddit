@@ -13,6 +13,11 @@ import { useAuth } from '../context/AuthProvider';
 export default function LandingPage() {
     const { userData, token, logout } = useAuth()
 
+    useEffect(() => {
+    //   logout()
+    }, [])
+    
+
     const handleLogout = ()=>{
         logout()
     }
@@ -32,8 +37,8 @@ export default function LandingPage() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {token === null && (
-                            <Link to={'/login'} style={{textDecoration:'none'}}>
-                                <div style={{ backgroundColor: 'rgb(100, 3, 156)', width: '100px', height: '49px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                            <Link to={'/login'} style={{textDecoration:'none', color:'white'}}>
+                                <div style={{ backgroundColor: 'rgb(71, 3, 110)', width: '100px', height: '49px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                                     <p style={{textDecoration:'none'}}>Login</p>
                                 </div>
                             </Link>)

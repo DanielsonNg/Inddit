@@ -12,11 +12,16 @@ module.exports = {
 
             //store db
             const userCreate = await User.create({ username: req.body.username, password: hashedPwd, role: 'member' })
-            const token = jwt.sign({ _id: userCreate.id }, 'secretkey123', { expiresIn: '90d' })
+            const token = jwt.sign({ _id: userCreate.id }, process.env.SECRET_KEY, { expiresIn: '90d' })
             return res.status(200).json({
                 status: 'success',
                 message: 'User registered successfully',
-                token
+                token,
+                user: {
+                    _id: userCreate._id,
+                    name: userCreate.username,
+                    role: userCreate.role
+                }
             })
         } catch (error) {
             console.log(error)
@@ -32,7 +37,7 @@ module.exports = {
             if (!isPasswordValid) {
                 return res.status(401).json({ message: 'Username or Password Incorrect' })
             }
-            const token = jwt.sign({ _id: user.id }, 'secretkey123', { expiresIn: '90d' })
+            const token = jwt.sign({ _id: user.id }, process.env.SECRET_KEY, { expiresIn: '90d' })
 
             return res.status(200).json({
                 status: 'success',
