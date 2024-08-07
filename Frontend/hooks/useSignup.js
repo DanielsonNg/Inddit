@@ -28,7 +28,7 @@ export default function useSignup(){
                 console.error('Registration Failed')
             }
         } catch (error) {
-            console.error(error)
+            // console.error(error)
         } finally{
             setLoading(false)
         }

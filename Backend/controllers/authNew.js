@@ -2,12 +2,34 @@ const User = require("../models/user.model")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+const { LoginSchema, RegisterSchema } = require('../middlewares/ValidationBody')
+
 module.exports = {
     async signup(req, res, next) {
         try {
-            const {username, email, password} = req.body
-            const user = await User.findOne({ email: email, username: username })
-            if (user) return res.status(401).json({ message: 'User Exist' })
+            const { error } = RegisterSchema.register.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+
+            const { username, email, password } = req.body
+            const userN = await User.findOne({ email: email })
+            const userE = await User.findOne({ username: username })
+            //email & username exist
+            if (userN && userE) {
+                return res.status(401).json({
+                    message: {
+                        email: 'Email Registered',
+                        username: 'User Exist'
+                    }
+                })
+            }
+            else if (userN) return res.status(401).json({ message: { email: 'Email Registered' } })
+            else if (userE) return res.status(401).json({ message: { username: 'User Exist' } })
+
             const hashedPwd = await bcrypt.hash(password, 10)
 
             //store db
@@ -29,13 +51,21 @@ module.exports = {
     },
     async signin(req, res, next) {
         try {
+            const { error } = LoginSchema.login.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+
             const { email, password } = req.body
             const user = await User.findOne({ email })
-            if (!user) return res.status(404).json({ message: 'User isn\'t registered!' })
+            if (!user) return res.status(404).json({ message: { email: 'User isn\'t registered!' } })
 
             const isPasswordValid = await bcrypt.compare(password, user.password)
             if (!isPasswordValid) {
-                return res.status(401).json({ message: 'Username or Password Incorrect' })
+                return res.status(401).json({ message: { password: 'Password Incorrect' } })
             }
             const token = jwt.sign({ _id: user.id }, process.env.SECRET_KEY, { expiresIn: '90d' })
 
