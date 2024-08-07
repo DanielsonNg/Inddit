@@ -5,7 +5,7 @@ const { validateToken, adminOnly, memberOnly } = require('../middlewares/validat
 const { signup, signin } = require('../controllers/authNew')
 const router = express.Router()
 
-router.get('/test', testNode)
+router.get('/test', validateToken ,testNode)
 router.get('/posts', validateToken, adminOnly, getPosts)
 router.post('/login', login)
 // router.post('/token', token)

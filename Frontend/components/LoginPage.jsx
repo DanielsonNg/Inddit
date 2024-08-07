@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "../src/axios"
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthProvider"
@@ -12,23 +12,16 @@ export default function LoginPage() {
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
     const navigate = useNavigate()
-    useEffect(() => {
-
-    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3333/newlogin',
+            const response = await axios.post('/newlogin',
                 {
-                    username: username,
+                    email: email,
                     password: pwd,
                     withCredentials: true
                 },
-                // {
-                //     headers: { 'Content-Type': 'application/json' },
-                //     withCredentials: true
-                // }
             );
             login(response.data.token, response.data.user)
             setUsername('');

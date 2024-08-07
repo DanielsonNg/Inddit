@@ -6,8 +6,9 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports = {
     async validateToken(req, res, next) {
-        const authHeader = req.headers['authorization']
-        const token = authHeader && authHeader.split(' ')[1]
+        // const authHeader = req.headers['authorization']
+        // const token = authHeader && authHeader.split(' ')[1]
+        const token = req.body.token
         if (token == null) {
             return res.sendStatus(401)
         }

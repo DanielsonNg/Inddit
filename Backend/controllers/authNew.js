@@ -5,13 +5,13 @@ const jwt = require('jsonwebtoken')
 module.exports = {
     async signup(req, res, next) {
         try {
-            const password = req.body.password
-            const user = await User.findOne({ username: req.body.username })
+            const {username, email, password} = req.body
+            const user = await User.findOne({ email: email, username: username })
             if (user) return res.status(401).json({ message: 'User Exist' })
             const hashedPwd = await bcrypt.hash(password, 10)
 
             //store db
-            const userCreate = await User.create({ username: req.body.username, password: hashedPwd, role: 'member' })
+            const userCreate = await User.create({ email: email, username: username, password: hashedPwd, role: 'member' })
             const token = jwt.sign({ _id: userCreate.id }, process.env.SECRET_KEY, { expiresIn: '90d' })
             return res.status(200).json({
                 status: 'success',
@@ -29,8 +29,8 @@ module.exports = {
     },
     async signin(req, res, next) {
         try {
-            const { username, password } = req.body
-            const user = await User.findOne({ username })
+            const { email, password } = req.body
+            const user = await User.findOne({ email })
             if (!user) return res.status(404).json({ message: 'User isn\'t registered!' })
 
             const isPasswordValid = await bcrypt.compare(password, user.password)

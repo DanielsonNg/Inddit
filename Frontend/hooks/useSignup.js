@@ -10,22 +10,16 @@ export default function useSignup(){
     const navigate = useNavigate()
 
     async function registerUser(values){
-        // if(values.password !== values.passwordConfirm){
-        //     return setError('Password confirmation failed')
-        // }
         try {
             setError(null)
             setLoading(false)
-            const res = await fetch('http://localhost:3333/newregister',{
-                method:'POST',
-                headers:{
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(values)
+            const res = await axios.post(`/newregister`,{
+                email: values.email,
+                username: values.username,
+                password: values.password
             })
-            const data = await res.json()
+            const data = await res.data
             if(res.status === 200){
-                // message.success(data.message)
                 await login(data.token, data.user)
                 navigate('/')
             }else if(res.status === 401){

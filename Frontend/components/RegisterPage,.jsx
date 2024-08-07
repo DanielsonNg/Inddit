@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import useSignup from "../hooks/useSignup"
 import styles from "../src/css/registerpage.module.css"
 import { Link } from "react-router-dom"
-import registerImage from "../src/assets/Night.jpg"
+import registerImage from "../src/assets/Library.jpg"
 
 export default function RegisterPage() {
     const { loading, error, registerUser } = useSignup()
@@ -14,7 +14,8 @@ export default function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         let values = {
-            "username": user,
+            "email": email,
+            "username": username,
             "password": pwd
         }
         registerUser(values)
