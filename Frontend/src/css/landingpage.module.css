@@ -63,14 +63,14 @@
 }
 
 
-@media all and (max-width:1530px) {
+ @media all and (max-width:1300px) {
     .right {
         display: none;
     }
 }
-
+/*
 @media all and (max-width:1180px) {
     .left {
         display: none;
     }
-}
+} */

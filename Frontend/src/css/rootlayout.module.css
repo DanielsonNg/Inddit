@@ -21,7 +21,7 @@
 }
 
 .left {
-    max-width: 200px;
+    width: 15%;
     display: flex;
     flex-direction: column;
     row-gap: 5px;
@@ -45,9 +45,9 @@
 
 
 .rightSide{
-    max-width: 1250px;
+    width: 82%;
     display: flex;
-    background-color: aliceblue;
+    /* background-color: aliceblue; */
     border-left: 1px solid rgb(97, 93, 93);
 }
 

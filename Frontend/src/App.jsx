@@ -8,7 +8,7 @@ import NotFound from './components/NotFound'
 import { useAuth } from '../context/AuthProvider'
 // import RequireAuth from '../components/RequireAuth'
 import Post from './components/Post'
-import RootLayout from '../layouts/RootLayout'
+import RootLayout from './layouts/RootLayout'
 
 function App() {  
   const {isAuthenticated} = useAuth()
