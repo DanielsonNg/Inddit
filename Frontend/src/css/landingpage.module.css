@@ -26,7 +26,7 @@
     flex-direction: column;
     width: 850px;
     gap: 20px;
-    border-left: 1px solid rgb(97, 93, 93);
+    /* border-left: 1px solid rgb(97, 93, 93); */
 }
 
 .cardmid{
