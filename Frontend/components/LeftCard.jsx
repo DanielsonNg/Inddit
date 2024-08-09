@@ -1,4 +1,4 @@
-import styles from '../src/landingpage.module.css'
+import styles from '../src/css/rootlayout.module.css'
 
 
 export default function LeftCard(props) {
