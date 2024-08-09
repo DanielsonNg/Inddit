@@ -1,4 +1,4 @@
-import styles from "../src/css/common.module.css"
+import styles from "../css/common.module.css"
 
 export default function Loading(){
     return(

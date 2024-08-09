@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react"
-import useSignup from "../hooks/useSignup"
-import styles from "../src/css/registerpage.module.css"
+import styles from "../css/registerpage.module.css"
 import { Link } from "react-router-dom"
-import registerImage from "../src/assets/Library.jpg"
-import { useAuth } from "../context/AuthProvider"
-import axios from "../src/axios"
+import registerImage from "../assets/Library.jpg"
+import { useAuth } from "../../context/AuthProvider"
+import axios from "../axios"
 import Loading from "./Loading"
+
 
 export default function RegisterPage() {
     const { login } = useAuth()

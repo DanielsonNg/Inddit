@@ -1,9 +1,9 @@
-import axios from "../src/axios"
+import axios from "../axios"
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../context/AuthProvider"
-import styles from "../src/css/loginpage.module.css"
-import loginImage from "../src/assets/Night.jpg"
+import { useAuth } from "../../context/AuthProvider"
+import styles from "../css/loginpage.module.css"
+import loginImage from "../assets/Night.jpg"
 import Loading from "./Loading"
 
 export default function LoginPage() {

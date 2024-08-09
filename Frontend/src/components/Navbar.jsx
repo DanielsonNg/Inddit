@@ -1,6 +1,6 @@
-import { useAuth } from "../context/AuthProvider"
+import { useAuth } from "../../context/AuthProvider"
 import SearchIcon from '@mui/icons-material/Search';
-import styles from "../src/css/rootlayout.module.css"
+import styles from "../css/rootlayout.module.css"
 import { Link } from "react-router-dom";
 
 export default function NavBar() {

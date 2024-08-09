@@ -1,5 +1,5 @@
 import PostCard from '../components/PostCard'
-import styles from './landingpage.module.css'
+import styles from '../css/landingpage.module.css'
 import RightCard from '../components/RightCard,';
 
 

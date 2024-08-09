@@ -1,5 +1,5 @@
-import styles from '../src/landingpage.module.css'
-import s from '../assets/s.jpg'
+import styles from '../css/landingpage.module.css'
+import s from '../../assets/s.jpg'
 
 export default function RightCard() {
     return (

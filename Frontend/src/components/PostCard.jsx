@@ -1,8 +1,8 @@
-import styles from '../src/landingpage.module.css'
+import styles from '../css/landingpage.module.css'
 import ArrowCircleUpTwoToneIcon from '@mui/icons-material/ArrowCircleUpTwoTone';
 import ArrowCircleDownTwoToneIcon from '@mui/icons-material/ArrowCircleDownTwoTone';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
-import s from '../assets/s.jpg'
+import s from '../../assets/s.jpg'
 
 export default function PostCard() {
     return (
