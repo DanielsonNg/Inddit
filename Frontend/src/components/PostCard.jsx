@@ -1,6 +1,5 @@
 import styles from '../css/landingpage.module.css'
-import ArrowCircleUpTwoToneIcon from '@mui/icons-material/ArrowCircleUpTwoTone';
-import ArrowCircleDownTwoToneIcon from '@mui/icons-material/ArrowCircleDownTwoTone';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import s from '../../assets/s.jpg'
 
@@ -26,9 +25,8 @@ export default function PostCard() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
-                    <ArrowCircleUpTwoToneIcon />&#160;&#160;
+                    <EmojiEmotionsIcon />&#160;&#160;
                     <p>51k</p>&#160;&#160;
-                    <ArrowCircleDownTwoToneIcon />
                 </div>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
                     <InsertCommentIcon />&#160;

@@ -16,9 +16,9 @@ export default function RootLayout() {
     }
     return (
         <>
-            <button onClick={handleLogout}>
+            {/* <button onClick={handleLogout}>
                 Logout
-            </button>
+            </button> */}
             <div className={styles.container}>
                 <NavBar />
                 <div className={styles.content}>
