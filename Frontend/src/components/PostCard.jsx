@@ -3,7 +3,7 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import s from '../../assets/s.jpg'
 
-export default function PostCard() {
+export default function PostCard(props) {
     return (
         <div className={styles.cardmid}>
             <div style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'row' }}>
@@ -17,10 +17,10 @@ export default function PostCard() {
                     Join Now
                 </div>
             </div>
-            <div className=''>
+            <div>
                 <h2>React Framework</h2>
             </div>
-            <div style={{ fontWeight: 'lighter' }}>
+            <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
             </div>
             <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>

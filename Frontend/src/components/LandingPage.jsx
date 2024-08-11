@@ -7,15 +7,14 @@ export default function LandingPage() {
     return (
         <>
             <div className={styles.mid}>
-                <PostCard />
-                <PostCard />
-                <PostCard />
+                <PostCard placement='landingpage' />
+                <PostCard placement='landingpage' />
+                <PostCard placement='landingpage' />
             </div>
             <div className={styles.right}>
                 <h3>Trending</h3>
                 <RightCard />
                 <RightCard />
-
             </div>
         </>
     )

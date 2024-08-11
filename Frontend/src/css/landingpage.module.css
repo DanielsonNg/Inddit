@@ -29,7 +29,7 @@
     /* border-left: 1px solid rgb(97, 93, 93); */
 }
 
-.cardmid{
+.cardmid {
     border-color: gray;
     border-radius: 20px;
     /* width: 100%; */
@@ -53,21 +53,33 @@
     margin-top: 20px;
 }
 
-.rightcard{
+.rightcard {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-.rightcard:hover{
+
+.rightcard:hover {
     background-color: gray;
 }
 
+.text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
 
- @media all and (max-width:1300px) {
+
+
+
+@media all and (max-width:1300px) {
     .right {
         display: none;
     }
 }
+
 /*
 @media all and (max-width:1180px) {
     .left {
