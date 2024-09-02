@@ -1,13 +1,13 @@
 .commentCard{
     border-color: gray;
     border-radius: 20px;
-    /* width: 100%; */
     padding: 25px;
     align-items: flex-start;
     text-decoration: none;
     color: whitesmoke;
-    flex-direction: column;
     background-color: rgb(28, 26, 26);
-    display: flex;
-
+    /* display: flex; */
+    display: grid;
+    flex-direction: column;
+    grid-gap: 30px;
 }
