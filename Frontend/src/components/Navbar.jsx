@@ -4,10 +4,12 @@ import styles from "../css/rootlayout.module.css"
 import { Link } from "react-router-dom";
 
 export default function NavBar() {
-    const { userData, token} = useAuth()
+    const { userData, token } = useAuth()
     return (
         <div className={styles.navbar}>
-            <h2>Inddit</h2>
+            <Link to={'/'} style={{textDecoration:'none', color:'white'}}>
+                <h2>Inddit</h2>
+            </Link>
             <div style={{ display: 'flex', alignItems: 'center', padding: '5px' }}>
                 <div style={{ backgroundColor: 'rgb(28, 26, 26)', borderRadius: '10px', width: '500px', height: '49px', paddingLeft: '20px', display: 'flex', alignItems: 'center' }}>
                     <SearchIcon /> <p style={{ fontWeight: 'lighter' }}>Search Inddit</p>

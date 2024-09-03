@@ -7,6 +7,7 @@ import { Outlet } from 'react-router-dom';
 import NavBar from '../components/Navbar'
 import LeftCard from '../components/LeftCard';
 import { useAuth } from '../../context/AuthProvider';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function RootLayout() {
     const { logout } = useAuth()
@@ -26,17 +27,9 @@ export default function RootLayout() {
                         <LeftCard name="Gaming" icon={<SportsEsportsIcon />} />
                         <LeftCard name="Programming" icon={<CodeIcon />} />
                         <LeftCard name="Music" icon={<AudiotrackIcon />} />
+                        <hr></hr>
+                        <LeftCard name="Create Community" icon={<AddIcon />} />
                     </div>
-                    {/* <div className={styles.mid}>
-                        <PostCard />
-                        <PostCard />
-                        <PostCard />
-                    </div>
-                    <div className={styles.right}>
-                        <h3>Trending</h3>
-                        <RightCard />
-                        <RightCard />
-                    </div> */}
                     <div className={styles.rightSide}>
                         <Outlet />
                     </div>

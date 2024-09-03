@@ -10,8 +10,10 @@ export default function PostCard(props) {
             <div style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'row' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
-                    <p style={{ fontWeight: 'lighter' }}>i/Programming</p>  &#160;&#160;
-                    &#160;
+                    <Link to={'/inddit/123'} style={{color:'white'}}>
+                    <p style={{ fontWeight: 'lighter' }}>i/Programming</p>  
+                    </Link>
+                    &#160;&#160;&#160;
                     <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
                 </div>
                 <div style={{ fontWeight: 'lighter' }}>

@@ -9,6 +9,8 @@ import { useAuth } from '../context/AuthProvider'
 // import RequireAuth from '../components/RequireAuth'
 import Post from './components/Post'
 import RootLayout from './layouts/RootLayout'
+import IndditPage from './components/IndditPage'
+import PostCreate from './components/PostCreate'
 
 function App() {  
   const {isAuthenticated} = useAuth()
@@ -18,12 +20,14 @@ function App() {
       <Route path='/' element={<RootLayout />}>
         <Route index element={<LandingPage />} /> 
         <Route path='/post' element={<Post />} />
+        <Route path='/inddit/:id' element={<IndditPage />} />
+        <Route path='/post/create' element={<PostCreate />} />
       </Route>
       <Route path='/login' element={!isAuthenticated ? <LoginPage/> : <LandingPage />} />
       <Route path='/register' element={!isAuthenticated ? <RegisterPage/> : <LandingPage />} />
       <Route path="*" element={<NotFound />} />
-      {/* <Route path='/test' element={isAuthenticated  ? <TestPage /> : <LoginPage />} /> */}
-      <Route path='/post/:id' element= {<Post />} />
+      {/* <Route path='/post/:id' element= {<Post />} /> */}
+     
 
       {/* <Route element={<RequireAuth />}>
         <Route path='/test' element={<TestPage />} />
