@@ -28,6 +28,7 @@
 }
 
 .leftcard {
+    cursor: pointer;
     display: flex;
     border-radius: 10px;
     width: 100%;
