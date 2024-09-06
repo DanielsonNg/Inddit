@@ -10,6 +10,8 @@ import { useAuth } from '../../context/AuthProvider';
 import AddIcon from '@mui/icons-material/Add';
 import { createContext, useState } from 'react';
 import CreateCommunityDialog from '../components/CreateCommunityDialog';
+import { Button } from '@mui/material';
+import axios from "../axios"
 
 export const Context = createContext()
 
@@ -21,9 +23,17 @@ export default function RootLayout() {
         logout()
     }
 
+    function test(){
+        let fd = new FormData()
+        fd.append("category","test")
+        axios.post('/category/insert', fd);
+    }
+
     return (
         <>
-
+            <Button onClick={test}>
+                Test
+            </Button>
             <Context.Provider value={[setOpen]}>
                 {/* <button onClick={handleLogout}>
                 Logout

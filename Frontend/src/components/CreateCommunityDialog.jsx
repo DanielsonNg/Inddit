@@ -10,6 +10,8 @@ export default function CreateCommunityDialog() {
     const [previewLogo, setPreviewLogo] = useState('')
     const [banner, setBanner] = useState('')
     const [logo, setLogo] = useState('')
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState('')
 
     function handleLogo(e) {
         const file = e.target.files[0]
@@ -25,6 +27,9 @@ export default function CreateCommunityDialog() {
 
     function handleSubmit() {
         console.log('submitting')
+        console.log(name , description)
+        console.log(logo)
+        console.log(banner)
     }
 
     return (
@@ -61,6 +66,8 @@ export default function CreateCommunityDialog() {
                         fontFamily: 'inherit',
                         color: 'inherit'
                     }}
+                    value={name}
+                    onChange={(e)=>setName(e.target.value)}
                 />
                 <h2>Community Description</h2>
                 <textarea
@@ -77,6 +84,8 @@ export default function CreateCommunityDialog() {
                         fontFamily: 'inherit',
                         color: 'inherit'
                     }}
+                    value={description}
+                    onChange={(e)=>setDescription(e.target.value)}
                 />
                 <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                     {/* logo */}
