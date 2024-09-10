@@ -3,7 +3,8 @@ const { testNode, getPosts, addProduct, getProduct, updateProduct, getProducts, 
 const { login, token, logout, register, handleRefreshToken, addRole } = require('../controllers/auth')
 const { validateToken, adminOnly, memberOnly } = require('../middlewares/validationHeader')
 const { signup, signin } = require('../controllers/authNew')
-const { insertCategory } = require('../controllers/category')
+const { insertCategory, getCategories } = require('../controllers/category')
+const { createCommunity } = require('../controllers/community')
 const router = express.Router()
 
 router.get('/test', validateToken ,testNode)
@@ -25,6 +26,9 @@ router.post('/newregister', signup)
 router.post('/newlogin', signin)
 
 router.post('/category/insert', insertCategory)
+router.get('/categories/get', getCategories)
+
+router.post('/community/create', createCommunity)
 
 // router.put('/role',adminOnly, addRole)
 

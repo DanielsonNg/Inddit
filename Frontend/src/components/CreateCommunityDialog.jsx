@@ -1,35 +1,74 @@
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material';
-import { useContext, useState } from 'react';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, tabScrollButtonClasses, TextField } from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
 import { Context } from '../layouts/RootLayout';
 import addIcon from '../assets/t.png'
+import axios from '../axios';
+// import { uploadImage } from '../../cloudinary';
 
 
 export default function CreateCommunityDialog() {
-    const [setOpen] = useContext(Context)
+    const { open, setOpen } = useContext(Context)
     const [previewBanner, setPreviewBanner] = useState('')
     const [previewLogo, setPreviewLogo] = useState('')
     const [banner, setBanner] = useState('')
+    const [bannerUrl, setBannerUrl] = useState('')
     const [logo, setLogo] = useState('')
+    const [logoUrl, setLogoUrl] = useState('')
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
+    const [selectedCategory, setSelectedCategory] = useState('')
+    const [categories, setCategories] = useState([])
+
+    const getCategories = async () => {
+        const categories = await axios.get('/categories/get')
+        setCategories(categories.data)
+    }
+
+    useEffect(() => {
+        getCategories()
+    }, [])
+
+    const setFileToBaseLogo = (file) =>{
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () =>{
+            setLogo(reader.result);
+        }
+
+    }
+    const setFileToBaseBanner= (file) =>{
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () =>{
+            setBanner(reader.result);
+        }
+
+    }
 
     function handleLogo(e) {
         const file = e.target.files[0]
-        setLogo(file)
+        setFileToBaseLogo(file)
         setPreviewLogo(URL.createObjectURL(file))
     }
 
     function handleBanner(e) {
         const file = e.target.files[0]
-        setBanner(file)
+        setFileToBaseBanner(file)
         setPreviewBanner(URL.createObjectURL(file))
     }
 
-    function handleSubmit() {
-        console.log('submitting')
-        console.log(name , description)
-        console.log(logo)
-        console.log(banner)
+    async function handleSubmit(e) {
+        e.preventDefault()
+        const data = {
+            name: name,
+            description: description,
+            logo: logo,
+            banner: banner,
+            category: selectedCategory,
+        }
+        const response = await axios.post('/community/create', data)
+        console.log(response)
+        
     }
 
     return (
@@ -67,7 +106,7 @@ export default function CreateCommunityDialog() {
                         color: 'inherit'
                     }}
                     value={name}
-                    onChange={(e)=>setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                 />
                 <h2>Community Description</h2>
                 <textarea
@@ -85,7 +124,7 @@ export default function CreateCommunityDialog() {
                         color: 'inherit'
                     }}
                     value={description}
-                    onChange={(e)=>setDescription(e.target.value)}
+                    onChange={(e) => setDescription(e.target.value)}
                 />
                 <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                     {/* logo */}
@@ -153,12 +192,13 @@ export default function CreateCommunityDialog() {
                 </div>
                 <h2>Category</h2>
                 {/* <SelectInput>Select Community</SelectInput> */}
-                <select style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
-                    <option>Travel</option>
-                    <option>Gaming</option>
-                    <option>Science</option>
-                    <option>Programming</option>
-                    <option>Pet</option>
+                <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory} style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
+                    <option value={null}>Select Category</option>
+                    {categories ? categories.map((c) => (
+                        <option value={c.name} key={c.name}>{c.name}</option>
+                    )) :
+                        (<option>Category is Empty</option>)
+                    }
                 </select>
 
             </DialogContent>

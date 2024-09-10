@@ -4,7 +4,7 @@ import { Context } from '../layouts/RootLayout'
 
 
 export default function LeftCard(props) {
-    const [setOpen] = useContext(Context)
+    const {setOpen} = useContext(Context)
 
     return (
         <>

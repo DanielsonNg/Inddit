@@ -23,9 +23,9 @@ export default function RootLayout() {
         logout()
     }
 
-    function test(){
+    function test() {
         let fd = new FormData()
-        fd.append("category","test")
+        fd.append("category", "test")
         axios.post('/category/insert', fd);
     }
 
@@ -34,7 +34,7 @@ export default function RootLayout() {
             <Button onClick={test}>
                 Test
             </Button>
-            <Context.Provider value={[setOpen]}>
+            <Context.Provider value={{open, setOpen}} >
                 {/* <button onClick={handleLogout}>
                 Logout
             </button> */}
