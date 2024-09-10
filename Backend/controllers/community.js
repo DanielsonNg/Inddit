@@ -1,30 +1,58 @@
+const { CommunitySchema } = require("../middlewares/ValidationBody")
+const Category = require("../models/categories.model")
 const Inddit = require("../models/inddits.model")
 const cloudinary = require("../utils/cloudinary")
+const category = require("./category")
 
 module.exports = {
     async createCommunity(req, res) {
-        // console.log(req.body)
-        const logo = await cloudinary.uploader.upload(req.body.logo,{
-            folder:"Inddit"
-        })
-        const banner = await cloudinary.uploader.upload(req.body.banner,{
-            folder:"Inddit"
-        })
+        try {
+            const data = req.body
+            const { error } = CommunitySchema.create.validate(data)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const find = await Inddit.find({ name: data.name })
+            if (find.length > 0) {
+                return res.status(422).json({
+                    response_message: 'Community Already Exist'
+                })
+            }
 
-        console.log(banner.secure_url)
-        console.log(logo.secure_url)
-        // const create = await Inddit.create({
-        //     req
-        // })
-        // console.log(req.file)
-        // console.log(req.file)
-        // const create = await Inddit.create(req.body)
+            const category = await Category.find({ name: data.category })
+            const logo = await cloudinary.uploader.upload(data.logo, {
+                folder: "Inddit"
+            })
+            const banner = await cloudinary.uploader.upload(data.banner, {
+                folder: "Inddit"
+            })
 
-        return res.status(200).json({msg:'Successfully created'})
+            const create = await Inddit.create({
+                name: data.name,
+                description: data.description,
+                banner: banner.secure_url,
+                logo: logo.secure_url,
+                category_id: category[0]._id
+            })
+            return res.status(200).json({data: create, msg: 'Community Successfully Created' })
+        }
+        catch (error) {
+            console.log(error)
+            return res.status(500).json({ msg: error.message })
+        }
+
     },
 
-    async getCommunity(res){
-        
+    async getCommunities(req, res) {
+        try {
+            const communities = await Inddit.find({})
+            return res.status(200).json(communities)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema
-const ObjectId = Schema.ObjectId
+const ObjectId = mongoose.Schema.ObjectId
 
 const CommentSchema = mongoose.Schema(
     {
