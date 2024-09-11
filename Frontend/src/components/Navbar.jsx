@@ -24,7 +24,7 @@ export default function NavBar() {
                     </Link>)
                 }
                 {token && (
-                    <h1>Welcome, {userData.name}</h1>
+                    <h1>{userData.name}</h1>
                 )}
 
             </div>

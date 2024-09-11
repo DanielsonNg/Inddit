@@ -31,9 +31,9 @@ export default function RootLayout() {
 
     return (
         <>
-            <Button onClick={test}>
+            {/* <Button onClick={test}>
                 Test
-            </Button>
+            </Button> */}
             <Context.Provider value={{open, setOpen}} >
                 {/* <button onClick={handleLogout}>
                 Logout

@@ -4,6 +4,8 @@ import { Context } from '../layouts/RootLayout';
 import addIcon from '../assets/t.png'
 import axios from '../axios';
 import Loading from './Loading';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
 // import { uploadImage } from '../../cloudinary';
 
 
@@ -26,6 +28,10 @@ export default function CreateCommunityDialog() {
     const [errorLogo, setErrorLogo] = useState('')
     const [errorCategory, setErrorCategory] = useState('')
 
+    const navigate = useNavigate()
+
+    const {userData} = useAuth()
+
     const getCategories = async () => {
         const categories = await axios.get('/categories/get')
         setCategories(categories.data)
@@ -33,6 +39,7 @@ export default function CreateCommunityDialog() {
     }
 
     useEffect(() => {
+        console.log(userData)
         setLoading(true)
         getCategories()
     }, [])
@@ -58,41 +65,79 @@ export default function CreateCommunityDialog() {
         const file = e.target.files[0]
         setFileToBaseLogo(file)
         setPreviewLogo(URL.createObjectURL(file))
+        setErrorLogo('')
     }
 
     function handleBanner(e) {
         const file = e.target.files[0]
         setFileToBaseBanner(file)
         setPreviewBanner(URL.createObjectURL(file))
+        setErrorBanner('')
     }
 
-    function handleName(e){
-
+    function handleName(e) {
+        setName(e.target.value)
+        setErrorName('')
     }
 
-    function handleDescription(e){
-
+    function handleDescription(e) {
+        setDescription(e.target.value)
+        setErrorDescription('')
     }
 
-    function handleCategory(e){
-
+    function handleCategory(e) {
+        setSelectedCategory(e.target.value)
+        setErrorCategory('')
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault()
-        setLoading(true)
+    async function save() {
         const data = {
             name: name,
             description: description,
             logo: logo,
             banner: banner,
             category: selectedCategory,
+            user_id: userData._id
         }
-        const response = await axios.post('/community/create', data)
-        console.log(response.status)
+        await axios.post('/community/create', data)
+            .then(({ data }) => {
+                navigate(`/inddit/${data.data._id}`)
+                setLoading(false)
+                setOpen(false)
+            })
+            .catch((err) => {
+                setErrorLogo('File too Large')
+                setLoading(false)
+            })
+    }
 
-        setLoading(false)
+    async function handleSubmit(e) {
+        e.preventDefault()
+        setLoading(true)
+        if (!name) {
+            setErrorName('Please fill out Community Name')
+            setLoading(false)
+        }
+        if (!description) {
+            setErrorDescription('Please fill out Community Description')
+            setLoading(false)
+        }
+        if (!logo) {
+            setErrorLogo('Please Upload Community Logo')
+            setLoading(false)
+        }
+        if (!banner) {
+            setErrorBanner("Please upload Community Banner")
+            setLoading(false)
+        }
+        if (!selectedCategory) {
+            setErrorCategory('Please select community Category')
+            setLoading(false)
+        }
 
+        if (name && description && logo && banner && selectedCategory) {
+            save()
+        }
     }
 
     return (
@@ -132,8 +177,9 @@ export default function CreateCommunityDialog() {
                             color: 'inherit'
                         }}
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={handleName}
                     />
+                    {errorName && <p style={{ color: 'red' }}>{errorName}</p>}
                     <h2>Community Description</h2>
                     <textarea
                         type="text"
@@ -150,23 +196,17 @@ export default function CreateCommunityDialog() {
                             color: 'inherit'
                         }}
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        onChange={handleDescription}
                     />
+                    {errorDescription && <p style={{ color: 'red' }}>{errorDescription}</p>}
                     <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                         {/* logo */}
                         <div>
                             <h2>Logo</h2>
-                            {previewLogo ? (
-                                <img
-                                    src={previewLogo}
-                                    width={'150px'}
-                                    height={'100px'}
-                                />
-                            ) : ''}
-                            {!previewLogo && <label htmlFor="logo">
+                            <label htmlFor="logo">
                                 <IconButton component="span">
                                     <Avatar
-                                        src={addIcon}
+                                        src={previewLogo? previewLogo : addIcon}
                                         style={{
                                             // margin: "10px",
                                             width: "100px",
@@ -175,7 +215,7 @@ export default function CreateCommunityDialog() {
                                         }}
                                     />
                                 </IconButton>
-                            </label>}
+                            </label>
                             <input
                                 id="logo"
                                 title="test"
@@ -183,30 +223,24 @@ export default function CreateCommunityDialog() {
                                 style={{ visibility: "hidden" }}
                                 onChange={handleLogo}>
                             </input>
+                            {errorLogo && <p style={{ color: 'red' }}>{errorLogo}</p>}
                         </div>
                         {/* Banner */}
                         <div>
                             <h2>Banner</h2>
-                            {previewBanner ? (
-                                <img
-                                    src={previewBanner}
-                                    width={'150px'}
-                                    height={'100px'}
-                                />
-                            ) : ''}
-                            {!previewBanner && <label htmlFor="banner">
+                            <label htmlFor="banner">
                                 <IconButton component="span">
                                     <Avatar
-                                        src={addIcon}
+                                        src={previewBanner ? previewBanner : addIcon}
                                         style={{
                                             // margin: "10px",
-                                            width: "100px",
+                                            width: previewBanner ? "200px" : "100px",
                                             height: "100px",
                                             borderRadius: '0px'
                                         }}
                                     />
                                 </IconButton>
-                            </label>}
+                            </label>
                             <input
                                 id="banner"
                                 title="test"
@@ -214,11 +248,12 @@ export default function CreateCommunityDialog() {
                                 style={{ visibility: "hidden" }}
                                 onChange={handleBanner}>
                             </input>
+                            {errorBanner && <p style={{ color: 'red' }}>{errorBanner}</p>}
                         </div>
                     </div>
                     <h2>Category</h2>
                     {/* <SelectInput>Select Community</SelectInput> */}
-                    <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory} style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
+                    <select onChange={handleCategory} value={selectedCategory} style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
                         <option value={null}>Select Category</option>
                         {categories ? categories.map((c) => (
                             <option value={c.name} key={c.name}>{c.name}</option>
@@ -226,6 +261,7 @@ export default function CreateCommunityDialog() {
                             (<option>Category is Empty</option>)
                         }
                     </select>
+                    {errorCategory && <p style={{ color: 'red' }}>{errorCategory}</p>}
 
                 </DialogContent>
                 <DialogActions>

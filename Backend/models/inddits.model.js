@@ -12,6 +12,10 @@ const IndditSchema = mongoose.Schema(
             type: ObjectId,
             required: [true, "Category id is required"]
         },
+        owner_id:{
+            type: ObjectId,
+            required: [true, "Owner is required"]
+        },
         description:{
             type: String,
             required: [true, "Description is required"]
@@ -24,6 +28,9 @@ const IndditSchema = mongoose.Schema(
             type: String,
             required: [true, "Banner is required"]
         }
+    },
+    {
+        timestamps: true
     }
 )
 

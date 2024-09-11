@@ -35,7 +35,8 @@ module.exports = {
                 description: data.description,
                 banner: banner.secure_url,
                 logo: logo.secure_url,
-                category_id: category[0]._id
+                category_id: category[0]._id,
+                owner_id: data.user_id
             })
             return res.status(200).json({data: create, msg: 'Community Successfully Created' })
         }
