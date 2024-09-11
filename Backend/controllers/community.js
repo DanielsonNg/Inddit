@@ -38,7 +38,7 @@ module.exports = {
                 category_id: category[0]._id,
                 owner_id: data.user_id
             })
-            return res.status(200).json({data: create, msg: 'Community Successfully Created' })
+            return res.status(200).json({ data: create, msg: 'Community Successfully Created' })
         }
         catch (error) {
             console.log(error)
@@ -53,6 +53,17 @@ module.exports = {
             return res.status(200).json(communities)
         } catch (error) {
             console.log(error)
+            return res.status(500)
+        }
+    },
+
+    async getCommunity(req, res) {
+        try {
+            const community = await Inddit.findById(req.params.id)
+            return res.status(200).json(community)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
         }
     }
 

@@ -16,7 +16,7 @@ import axios from "../axios"
 export const Context = createContext()
 
 export default function RootLayout() {
-    const { logout } = useAuth()
+    const { logout, token } = useAuth()
     const [open, setOpen] = useState('')
 
     const handleLogout = () => {
@@ -34,10 +34,10 @@ export default function RootLayout() {
             {/* <Button onClick={test}>
                 Test
             </Button> */}
-            <Context.Provider value={{open, setOpen}} >
-                {/* <button onClick={handleLogout}>
-                Logout
-            </button> */}
+            <Context.Provider value={{ open, setOpen }} >
+                <Button onClick={handleLogout}>
+                    Logout
+                </Button>
                 {open && (
                     <CreateCommunityDialog />
                 )}
@@ -50,7 +50,7 @@ export default function RootLayout() {
                             <LeftCard name="Programming" icon={<CodeIcon />} />
                             <LeftCard name="Music" icon={<AudiotrackIcon />} />
                             <hr></hr>
-                            <LeftCard name="Create Community" icon={<AddIcon />} />
+                            {token && <LeftCard name="Create Community" icon={<AddIcon />} />}
                         </div>
                         <div className={styles.rightSide}>
                             <Outlet />

@@ -6,9 +6,11 @@ const create = Joi.object().keys({
     category: Joi.string().required(),
     banner: Joi.string().required(),
     logo: Joi.string().required(),
-    user_id: Joi.string().required()
+    user_id: Joi.string().required(),
+    token: Joi.string()
 })
 
+
 module.exports = {
-    create
+    create,
 }

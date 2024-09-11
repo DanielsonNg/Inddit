@@ -4,8 +4,24 @@ import RightCard from '../components/RightCard,';
 import loginImage from "../assets/Night.jpg"
 import s from '../../assets/s.jpg'
 import HotPost from './HotPost';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from '../axios';
 
 export default function IndditPage() {
+    const { id } = useParams()
+    const [community, setCommunity] = useState({})
+    useEffect(() => {
+        (async () => {
+            await axios.get(`/community/${id}`)
+            .then((res)=>{
+                console.log(res)
+            })
+        })()
+
+    }, [])
+
+
     return (
         <>
             <div style={{ width: '100%' }}>
@@ -15,7 +31,7 @@ export default function IndditPage() {
                         style={{ width: '90%', height: '140px', borderRadius: '20px' }}>
                     </img>
                 </div>
-                <div style={{display: 'flex', flexDirection: 'row', marginTop: '-55px', justifyContent: 'space-between', padding: '0px 100px' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', marginTop: '-55px', justifyContent: 'space-between', padding: '0px 100px' }}>
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
                         <div>
                             <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
@@ -27,9 +43,6 @@ export default function IndditPage() {
                     <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
                         <div>
                             <h3>Create Post</h3>
-                        </div>
-                        <div>
-                            <h3>Joined</h3>
                         </div>
                     </div>
                 </div>

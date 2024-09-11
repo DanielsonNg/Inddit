@@ -30,7 +30,7 @@ export default function CreateCommunityDialog() {
 
     const navigate = useNavigate()
 
-    const {userData} = useAuth()
+    const { userData, token } = useAuth()
 
     const getCategories = async () => {
         const categories = await axios.get('/categories/get')
@@ -39,7 +39,6 @@ export default function CreateCommunityDialog() {
     }
 
     useEffect(() => {
-        console.log(userData)
         setLoading(true)
         getCategories()
     }, [])
@@ -97,7 +96,8 @@ export default function CreateCommunityDialog() {
             logo: logo,
             banner: banner,
             category: selectedCategory,
-            user_id: userData._id
+            user_id: userData._id,
+            token: token,
         }
         await axios.post('/community/create', data)
             .then(({ data }) => {
@@ -206,7 +206,7 @@ export default function CreateCommunityDialog() {
                             <label htmlFor="logo">
                                 <IconButton component="span">
                                     <Avatar
-                                        src={previewLogo? previewLogo : addIcon}
+                                        src={previewLogo ? previewLogo : addIcon}
                                         style={{
                                             // margin: "10px",
                                             width: "100px",

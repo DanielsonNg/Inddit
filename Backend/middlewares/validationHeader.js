@@ -40,16 +40,20 @@ module.exports = {
         next()
     },
     async memberOnly(req, res, next) {
-        let newObjectId = new ObjectId(req.body.userId)
-        // Search User
-        const findId = await user.findOne(newObjectId)
-        // Get Role By id with User Role Id
-        newObjectId = new ObjectId(findId.role)
-        const findRoleId = await role.findOne(newObjectId)
-        if (findRoleId.name !== "member") {
+        try{
+            let newObjectId = new ObjectId(req.body.user_id)
+            // Search User
+            const findId = await user.findOne(newObjectId)
+            if (findId.role != "member") {
+                return res.sendStatus(401)
+            }
+     
+            next()
+        }catch(error){
+            console.log(error)
             return res.sendStatus(401)
         }
-        next()
+        
     },
 
     // async authRole(role) {
