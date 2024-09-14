@@ -71,7 +71,9 @@
     -webkit-box-orient: vertical;
 }
 
-
+.mobile{
+    display: none;
+}
 
 
 @media all and (max-width:1300px) {
@@ -80,9 +82,17 @@
     }
 }
 
-/*
-@media all and (max-width:1180px) {
-    .left {
+@media all and (max-width:830px) {
+    .head{
+        padding: 0px 0px;
+    }
+    .desktop{
         display: none;
     }
-} */
+    .mobile{
+        display: flex;
+        justify-content: space-between;
+        width: '100%';
+    }
+}
+

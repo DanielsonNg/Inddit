@@ -1,14 +1,25 @@
 import styles from "../css/landingpage.module.css"
 import HotPost from "./HotPost"
 import imageTest from '../assets/Night.jpg'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import addIcon from '../assets/t.png'
 import { Avatar, IconButton, Select } from "@mui/material"
 import SelectInput from "@mui/material/Select/SelectInput"
+import axios from "../axios"
 
 export default function PostCreate() {
     const [image, setImage] = useState([])
     const [preview, setPreview] = useState([])
+    const [communities, setCommunities] = useState([])
+
+    useEffect(() => {
+        (async () => {
+            const communities = await axios.get('/communities/get')
+            setCommunities(communities.data)
+            console.log(communities)
+        })()
+    }, [])
+
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -67,16 +78,16 @@ export default function PostCreate() {
                         <div>
                             <h2>Community</h2>
                             {/* <SelectInput>Select Community</SelectInput> */}
-                            <select style={{width:'150px', height:'50px', backgroundColor:'black', borderColor:'black', borderRadius:'10px'}}>
+                            <select style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
                                 <option>I/Test</option>
                                 <option>I/Error 400004</option>
                                 <option>I/Programming</option>
                                 <option>I/Gaming</option>
                             </select>
                         </div>
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px'}}>
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             <h2>Image</h2>
-                            <div style={{ display: 'flex', gap: '20px', width:'100%', flexWrap:'wrap' }}>
+                            <div style={{ display: 'flex', gap: '20px', width: '100%', flexWrap: 'wrap' }}>
                                 {preview ? preview.map((p) => (
                                     <img
                                         src={p}
@@ -115,6 +126,7 @@ export default function PostCreate() {
                     </div>
                 </form>
             </div>
+            {/* Right */}
             <div className={styles.right}>
                 <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
                     <img src={imageTest} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
@@ -129,13 +141,13 @@ export default function PostCreate() {
                 <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '10px ' }}>
                     25k Members
                 </div>
-                <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
+                {/* <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
                     Hot Posts
                 </div>
                 <HotPost />
                 <HotPost />
                 <HotPost />
-                <HotPost />
+                <HotPost /> */}
             </div>
         </>
     )

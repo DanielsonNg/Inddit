@@ -7,6 +7,7 @@ import HotPost from './HotPost';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../axios';
+import { Button } from '@mui/material';
 
 export default function IndditPage() {
     const { id } = useParams()
@@ -14,9 +15,9 @@ export default function IndditPage() {
     useEffect(() => {
         (async () => {
             await axios.get(`/community/${id}`)
-            .then((res)=>{
-                console.log(res)
-            })
+                .then(({data}) => {
+                    console.log(data)
+                })
         })()
 
     }, [])
@@ -26,25 +27,47 @@ export default function IndditPage() {
         <>
             <div style={{ width: '100%' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <img src={loginImage}
-                        style={{ width: '90%', height: '140px', borderRadius: '20px' }}>
-                    </img>
+                <div style={{ display: 'flex', justifyContent: 'center', minWidth: '300px', width: '100%' }}>
+                    <div style={{ width: '100%' }}>
+                        <img src={loginImage}
+                            style={{ width: '100%', height: '140px', borderRadius: '20px', }}>
+                        </img>
+                    </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'row', marginTop: '-55px', justifyContent: 'space-between', padding: '0px 100px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
-                        <div>
-                            <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
+                <div className={styles.desktop}>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginTop: '-55px', justifyContent: 'space-between', padding: '0px 50px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', flexWrap: 'wrap' }}>
+                            <div>
+                                <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
+                            </div>
+                            <div style={{ marginTop: '40px' }}>
+                                <h1>i/Programming</h1>
+                            </div>
                         </div>
-                        <div style={{ marginTop: '40px' }}>
-                            <h1>i/Programming</h1>
+                        <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
+                            <div>
+                                <Button color='secondary'>
+                                <h3>Create Post</h3>
+                                </Button>
+                            </div>
                         </div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
+                </div>
+                <div className={styles.mobile}>
+                    <div style={{display:'flex'}}>
                         <div>
-                            <h3>Create Post</h3>
+                            <img src={s} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                         </div>
+                        <h3>I/Programming</h3>
                     </div>
+                    <div>
+                        <Button color="secondary">
+                        Create Post
+                        </Button>
+                    </div>
+                </div>
+                <div className={styles.mobile} style={{ display: 'none' }}>
+                    <h1>de</h1>
                 </div>
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>

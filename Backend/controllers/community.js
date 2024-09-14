@@ -2,7 +2,6 @@ const { CommunitySchema } = require("../middlewares/ValidationBody")
 const Category = require("../models/categories.model")
 const Inddit = require("../models/inddits.model")
 const cloudinary = require("../utils/cloudinary")
-const category = require("./category")
 
 module.exports = {
     async createCommunity(req, res) {
@@ -49,7 +48,7 @@ module.exports = {
 
     async getCommunities(req, res) {
         try {
-            const communities = await Inddit.find({})
+            const communities = await Inddit.find({}, { _id: 1, name: 1 })
             return res.status(200).json(communities)
         } catch (error) {
             console.log(error)

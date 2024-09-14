@@ -62,11 +62,7 @@ hr {
     padding: 0;
 }
 
-/* @media all and (max-width:1530px) {
-    .right {
-        display: none;
-    }
-} */
+
 
 @media all and (max-width:1180px) {
     .left {
@@ -74,5 +70,19 @@ hr {
     }
     .rightSide{
         border-left: none;
+    }
+}
+@media all and (max-width:680px) {
+    .homeText{
+        display: none;
+    }
+    .search{
+        max-width: 300px;
+        min-width: 100px;
+        display: flex;
+        justify-content: center;
+    }
+    .mobile{
+        display: flex;
     }
 }
