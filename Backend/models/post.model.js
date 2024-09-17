@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const ObjectId = mongoose.Schema.ObjectId
+// const Integer = mongoose.Schema.Int32
 
 const PostSchema = mongoose.Schema(
     {
@@ -25,7 +26,7 @@ const PostSchema = mongoose.Schema(
             required: [true, "Image is required"]
         },
         likes: {
-            type: Int8Array
+            type: Number,
         }
     },
     {

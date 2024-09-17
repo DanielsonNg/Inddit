@@ -5,6 +5,7 @@ const { validateToken, adminOnly, memberOnly } = require('../middlewares/validat
 const { signup, signin } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity } = require('../controllers/community')
+const { createPost } = require('../controllers/post')
 const router = express.Router()
 
 // jwt
@@ -36,6 +37,8 @@ router.get('/categories/get', getCategories)
 router.post('/community/create', memberOnly, createCommunity)
 router.get('/communities/get', getCommunities)
 router.get('/community/:id', getCommunity)
+
+router.post('/post/create', createPost)
 
 
 module.exports = router

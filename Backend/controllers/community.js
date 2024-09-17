@@ -58,11 +58,19 @@ module.exports = {
 
     async getCommunity(req, res) {
         try {
-            const community = await Inddit.findById(req.params.id)
+            const data = req.params
+            const { error } = CommunitySchema.find.validate(data)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const community = await Inddit.findById(data.id)
             return res.status(200).json(community)
         } catch (error) {
             console.log(error)
-            return res.status(500)
+            return res.status(500).json({ msg: 'Data Not Found' })
         }
     }
 

@@ -6,30 +6,66 @@ import addIcon from '../assets/t.png'
 import { Avatar, IconButton, Select } from "@mui/material"
 import SelectInput from "@mui/material/Select/SelectInput"
 import axios from "../axios"
+import { useParams } from "react-router-dom"
 
 export default function PostCreate() {
     const [image, setImage] = useState([])
-    const [preview, setPreview] = useState([])
-    const [communities, setCommunities] = useState([])
+    const [preview, setPreview] = useState()
+    const [title, setTitle] = useState('')
+    const [content, setContent] = useState('')
+
+    const { id } = useParams()
+
+    const [community, setCommunity] = useState({
+        name: '',
+        description: '',
+        logo: ''
+    })
 
     useEffect(() => {
         (async () => {
-            const communities = await axios.get('/communities/get')
-            setCommunities(communities.data)
-            console.log(communities)
+            console.log(id)
+            await axios.get(`/community/${id}`)
+                .then(({ data }) => {
+                    setCommunity({
+                        name: data.name,
+                        description: data.description,
+                        logo: data.logo,
+                    })
+                    console.log(community)
+                })
         })()
     }, [])
 
+    function setFileToBase(file) {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onloadend = () => {
+            setImage(reader.result)
+        }
+    }
 
-    function handleSubmit(e) {
+
+    async function handleSubmit(e) {
         e.preventDefault()
-        console.log('submitting')
+        const data = {
+            title:title,
+            content:content,
+            image: image
+        }
+        await axios.post('/post/create', data)
+        .then((res)=>{
+            console.log(res)
+        })
+        .catch((error)=>{
+            console.log(error)
+        })
     }
 
     function handleImage(e) {
         const file = e.target.files[0]
-        setImage(prevImage => [...prevImage, file])
-        setPreview(prevPreview => [...prevPreview, URL.createObjectURL(file)])
+        setFileToBase(file)
+        setPreview(URL.createObjectURL(file))
     }
     return (
         <>
@@ -43,6 +79,8 @@ export default function PostCreate() {
                             <h2>Post Title *</h2>
                             <textarea
                                 type="text"
+                                value={title}
+                                onChange={(e)=>{setTitle(e.target.value)}}
                                 style={{
                                     width: '100%',
                                     fontSize: '16px',
@@ -61,6 +99,8 @@ export default function PostCreate() {
                             <h2>Content *</h2>
                             <textarea
                                 type="text"
+                                value={content}
+                                onChange={(e)=>setContent(e.target.value)}
                                 style={{
                                     width: '100%',
                                     fontSize: '16px',
@@ -75,50 +115,40 @@ export default function PostCreate() {
                                 }}
                             />
                         </div>
-                        <div>
-                            <h2>Community</h2>
-                            {/* <SelectInput>Select Community</SelectInput> */}
-                            <select style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
-                                <option>I/Test</option>
-                                <option>I/Error 400004</option>
-                                <option>I/Programming</option>
-                                <option>I/Gaming</option>
-                            </select>
-                        </div>
                         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             <h2>Image</h2>
                             <div style={{ display: 'flex', gap: '20px', width: '100%', flexWrap: 'wrap' }}>
-                                {preview ? preview.map((p) => (
+                                {preview ?
                                     <img
-                                        src={p}
+                                        src={preview}
                                         width={'150px'}
                                         height={'100px'}
                                     />
-                                )) :
-                                    ''}
-                                <label htmlFor="images">
-                                    <IconButton component="span">
-                                        <Avatar
-                                            src={addIcon}
-                                            style={{
-                                                // margin: "10px",
-                                                width: "100px",
-                                                height: "100px",
-                                                borderRadius: '0px'
-                                            }}
-                                        />
-                                    </IconButton>
-                                </label>
-                                <input
-                                    id="images"
-                                    title="test"
-                                    type="file"
-                                    style={{ visibility: "hidden" }}
-                                    onChange={handleImage}>
-                                </input>
+                                    :
+                                    <>
+                                        <label htmlFor="images">
+                                            <IconButton component="span">
+                                                <Avatar
+                                                    src={addIcon}
+                                                    style={{
+                                                        // margin: "10px",
+                                                        width: "100px",
+                                                        height: "100px",
+                                                        borderRadius: '0px'
+                                                    }}
+                                                />
+                                            </IconButton>
+                                        </label>
+                                        <input
+                                            id="images"
+                                            title="test"
+                                            type="file"
+                                            style={{ visibility: "hidden" }}
+                                            onChange={handleImage}>
+                                        </input>
+                                    </>
+                                }
                             </div>
-
-
                         </div>
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
                             <button style={{ height: '50px', fontSize: '20px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>Create New Post</button>
@@ -129,11 +159,11 @@ export default function PostCreate() {
             {/* Right */}
             <div className={styles.right}>
                 <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                    <img src={imageTest} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
-                    I/Memes
+                    <img src={community.logo} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
+                    I/{community.name}
                 </div>
                 <div style={{ marginTop: '10px' }}>
-                    Meme Community
+                    i/{community.description}
                 </div>
                 <div style={{ fontWeight: 'lighter' }}>
                     This description describe a description of a inddit good.

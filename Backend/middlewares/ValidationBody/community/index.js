@@ -10,7 +10,11 @@ const create = Joi.object().keys({
     token: Joi.string()
 })
 
+const find = Joi.object().keys({
+    id: Joi.string().required(),
+})
 
 module.exports = {
     create,
+    find
 }

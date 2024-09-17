@@ -4,19 +4,36 @@ import RightCard from '../components/RightCard,';
 import loginImage from "../assets/Night.jpg"
 import s from '../../assets/s.jpg'
 import HotPost from './HotPost';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../axios';
 import { Button } from '@mui/material';
+import Loading from './Loading';
 
 export default function IndditPage() {
     const { id } = useParams()
-    const [community, setCommunity] = useState({})
+    const navigate = useNavigate()
+    const [community, setCommunity] = useState({
+        name:'',
+        description:'',
+        logo:''
+    })
+
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         (async () => {
-            await axios.get(`/community/${id}`)
-                .then(({data}) => {
+            setLoading(true)
+            await axios.post(`/community/${id}`)
+                .then(({ data }) => {
                     console.log(data)
+                
+                    setLoading(false)
+                })
+                .catch((error) => {
+                    console.log(error)
+                    navigate('/')
+                    setLoading(false)
                 })
         })()
 
@@ -25,7 +42,12 @@ export default function IndditPage() {
 
     return (
         <>
-            <div style={{ width: '100%' }}>
+            {loading && 
+            <div style={{display:'flex', justifyContent:'center', width:'100%'}}>
+                <Loading />
+            </div>
+            }
+            {!loading && <div style={{ width: '100%' }}>
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'center', minWidth: '300px', width: '100%' }}>
                     <div style={{ width: '100%' }}>
@@ -46,24 +68,28 @@ export default function IndditPage() {
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
                             <div>
-                                <Button color='secondary'>
-                                <h3>Create Post</h3>
-                                </Button>
+                                <Link to={`/post/create/${id}`}>
+                                    <Button color='secondary'>
+                                        <h3>Create Post</h3>
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className={styles.mobile}>
-                    <div style={{display:'flex'}}>
+                    <div style={{ display: 'flex' }}>
                         <div>
                             <img src={s} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                         </div>
                         <h3>I/Programming</h3>
                     </div>
                     <div>
-                        <Button color="secondary">
-                        Create Post
-                        </Button>
+                        <Link to={'/post/create'}>
+                            <Button color="secondary">
+                                Create Post
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 <div className={styles.mobile} style={{ display: 'none' }}>
@@ -99,7 +125,7 @@ export default function IndditPage() {
                         <HotPost />
                     </div>
                 </div>
-            </div>
+            </div>}
         </>
     )
 }

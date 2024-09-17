@@ -5,6 +5,7 @@ const cloudinary = require ('../utils/cloudinary')
 module.exports = {
     async createPost(req, res) {
         try {
+            console.log(req.body)
             const data = req.body
             const {error} = PostSchema.create.validate(data)
             const valid = error == null
@@ -27,8 +28,7 @@ module.exports = {
             return res.status(200).json(create)
 
         } catch (error) {
-            console.log(error)
-            return res.status(500).json(error)
+            return res.status(500).json("Internal Server Error")
         }
     },
 

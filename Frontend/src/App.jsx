@@ -22,7 +22,7 @@ function App() {
         <Route path='/post' element={<Post />} />
         {/* <Route exact path="/inddit" render={() => (<IndditPage id={id} />)} /> */}
         <Route path='/inddit/:id' element={<IndditPage />} />
-        <Route path='/post/create' element={<PostCreate />} />
+        <Route path='/post/create/:id' element={<PostCreate />} />
       </Route>
       <Route path='/login' element={!isAuthenticated ? <LoginPage/> : <LandingPage />} />
       <Route path='/register' element={!isAuthenticated ? <RegisterPage/> : <LandingPage />} />
