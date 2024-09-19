@@ -24,10 +24,9 @@ export default function IndditPage() {
     useEffect(() => {
         (async () => {
             setLoading(true)
-            await axios.post(`/community/${id}`)
+            await axios.get(`/community/${id}`)
                 .then(({ data }) => {
                     console.log(data)
-                
                     setLoading(false)
                 })
                 .catch((error) => {

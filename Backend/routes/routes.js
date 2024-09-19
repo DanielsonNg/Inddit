@@ -1,11 +1,11 @@
 const express = require('express')
-const { testNode, getPosts, addProduct, getProduct, updateProduct, getProducts, deleteProduct } = require('../controllers/test')
+// const { testNode, getPosts, addProduct, getProduct, updateProduct, getProducts, deleteProduct } = require('../controllers/test')
 const { login, token, logout, register, handleRefreshToken, addRole } = require('../controllers/auth')
 const { validateToken, adminOnly, memberOnly } = require('../middlewares/validationHeader')
 const { signup, signin } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity } = require('../controllers/community')
-const { createPost } = require('../controllers/post')
+const { createPost, getPosts } = require('../controllers/post')
 const router = express.Router()
 
 // jwt
@@ -15,14 +15,14 @@ const router = express.Router()
 // router.get('/refresh', handleRefreshToken)
 
 //test api
-router.get('/test', validateToken ,testNode)
-router.get('/posts', validateToken, adminOnly, getPosts)
-router.post('/api/products',addProduct)
-router.get('/api/products',getProducts)
-router.get('/api/product/:id',getProduct)
-router.put('/api/product/:id', updateProduct)
-router.delete('/api/product/:id', deleteProduct)
-router.put('/role',adminOnly, addRole)
+// router.get('/test', validateToken ,testNode)
+// router.get('/posts', validateToken, adminOnly, getPosts)
+// router.post('/api/products',addProduct)
+// router.get('/api/products',getProducts)
+// router.get('/api/product/:id',getProduct)
+// router.put('/api/product/:id', updateProduct)
+// router.delete('/api/product/:id', deleteProduct)
+// router.put('/role',adminOnly, addRole)
 
 //auth
 router.post('/newregister', signup)
@@ -38,6 +38,7 @@ router.post('/community/create', memberOnly, createCommunity)
 router.get('/communities/get', getCommunities)
 router.get('/community/:id', getCommunity)
 
+router.get('/posts', getPosts)
 router.post('/post/create', createPost)
 
 

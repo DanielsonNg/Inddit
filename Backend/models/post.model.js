@@ -23,10 +23,10 @@ const PostSchema = mongoose.Schema(
         },
         image: {
             type: String,
-            required: [true, "Image is required"]
         },
         likes: {
             type: Number,
+            default: 0
         }
     },
     {
