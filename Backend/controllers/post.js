@@ -49,22 +49,22 @@ module.exports = {
                         from: "inddits",            // The collection to join
                         localField: "community_id",      // Field in the post collection (foreign key)
                         foreignField: "_id",            // Field in the community collection (primary key)
-                        as: "communityName"             // Output array of matched documents from community
+                        as: "community"             // Output array of matched documents from community
                     }
                 },
                 {
-                    $unwind: "$communityName"          // Unwind the array to make communityInfo a single object
+                    $unwind: "$community"          // Unwind the array to make communityInfo a single object
                 },
                 {
                     $lookup: {
                         from: "users",
                         localField: "author_id",
                         foreignField: "_id",
-                        as: "authorName"
+                        as: "author"
                     }
                 },
                 {
-                    $unwind: "$authorName"
+                    $unwind: "$author"
                 },
                 {
                     $project: {
@@ -74,8 +74,8 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
-                        "communityName.name": 1,
-                        "authorName.username": 1
+                        "community.name": 1,
+                        "author.username": 1
                     }
                 }
             ]);
@@ -84,5 +84,56 @@ module.exports = {
         } catch (error) {
             console.log(error)
         }
+    },
+
+    async getPost(req, res) {
+        try {
+            const id = req.params
+            console.log(id)
+            const post = await Post.aggregate([
+                {
+                    $match:{_id: new mongoose.Types.ObjectId(id)}
+                },
+                {
+                    $lookup: {
+                        from: "inddits",            // The collection to join
+                        localField: "community_id",      // Field in the post collection (foreign key)
+                        foreignField: "_id",            // Field in the community collection (primary key)
+                        as: "community"             // Output array of matched documents from community
+                    }
+                },
+                {
+                    $unwind: "$community"          // Unwind the array to make communityInfo a single object
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        "community.name": 1,
+                        "author.username": 1
+                    }
+                },
+            ]);
+            return res.status(200).json(post)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+
     }
 }

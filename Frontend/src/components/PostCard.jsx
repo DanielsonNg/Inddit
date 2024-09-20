@@ -10,8 +10,8 @@ export default function PostCard(props) {
             <div style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'row' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
-                    <Link to={'/inddit/123'} style={{color:'white'}}>
-                    <p style={{ fontWeight: 'lighter' }}>i/Programming</p>  
+                    <Link to={`/inddit/${props.post.community_id}`} style={{ color: 'white' }}>
+                        <p style={{ fontWeight: 'lighter' }}>i/{props.post.community.name}</p>
                     </Link>
                     &#160;&#160;&#160;
                     <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
@@ -20,18 +20,19 @@ export default function PostCard(props) {
                     Join Now
                 </div>
             </div>
-            <Link style={{ cursor: 'pointer', color: 'white' }} to={'/post'}>
+            <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
                 <div>
-                    <h2>React Framework</h2>
+                    <h2>{props.post.title}</h2>
                 </div>
                 <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    {props.post.description}
+                    {/* Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. */}
                 </div>
             </Link>
             <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
                     <EmojiEmotionsIcon />&#160;&#160;
-                    <p>51k</p>&#160;&#160;
+                    <p>{props.post.likes}</p>&#160;&#160;
                 </div>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
                     <InsertCommentIcon />&#160;

@@ -14,10 +14,12 @@ export default function IndditPage() {
     const { id } = useParams()
     const navigate = useNavigate()
     const [community, setCommunity] = useState({
-        name:'',
-        description:'',
-        logo:''
+        name: '',
+        description: '',
+        logo: ''
     })
+
+    const [posts, setPosts] = useState()
 
     const [loading, setLoading] = useState(false)
 
@@ -34,6 +36,11 @@ export default function IndditPage() {
                     navigate('/')
                     setLoading(false)
                 })
+
+            await axios.get('/posts')
+                .then(({ data }) => {
+                    setPosts(data)
+                })
         })()
 
     }, [])
@@ -41,10 +48,10 @@ export default function IndditPage() {
 
     return (
         <>
-            {loading && 
-            <div style={{display:'flex', justifyContent:'center', width:'100%'}}>
-                <Loading />
-            </div>
+            {loading &&
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                    <Loading />
+                </div>
             }
             {!loading && <div style={{ width: '100%' }}>
                 {/* Header */}
@@ -97,9 +104,12 @@ export default function IndditPage() {
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
+                        {posts ? posts.map((post)=>(
+                            <PostCard placement='landingpage' post={post} />
+                        )) :''}
+                        {/* <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' />
-                        <PostCard placement='landingpage' />
-                        <PostCard placement='landingpage' />
+                        <PostCard placement='landingpage' /> */}
                     </div>
                     <div className={styles.right}>
                         <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>

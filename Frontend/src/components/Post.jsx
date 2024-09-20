@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import PostCard from "./PostCard"
 import RightCard from "./RightCard,"
@@ -6,18 +6,26 @@ import styles from "../css/landingpage.module.css"
 import Comments from "./Comments"
 import imageTest from '../assets/Night.jpg'
 import HotPost from "./HotPost"
+import axios from "../axios"
 
 export default function Post() {
     let { id } = useParams()
+    const [post, setPost] = useState()
 
     useEffect(() => {
-
+        (async () => {
+            await axios.get(`/post/${id}`)
+            .then(({ data }) => {
+                setPost(data[0])
+                console.log(data[0])
+            })
+        })()
     }, [])
 
     return (
         <>
             <div className={styles.mid}>
-                <PostCard placement="post" />
+                {post ? <PostCard placement="post" post={post} /> : ''}
                 <Comments />
                 {/* <PostCard /> */}
             </div>

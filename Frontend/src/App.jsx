@@ -19,7 +19,7 @@ function App() {
     <Routes>
       <Route path='/' element={<RootLayout />}>
         <Route index element={<LandingPage />} /> 
-        <Route path='/post' element={<Post />} />
+        <Route path='/post/:id' element={<Post />} />
         {/* <Route exact path="/inddit" render={() => (<IndditPage id={id} />)} /> */}
         <Route path='/inddit/:id' element={<IndditPage />} />
         <Route path='/post/create/:id' element={<PostCreate />} />
