@@ -104,8 +104,8 @@ export default function IndditPage() {
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
-                        {posts ? posts.map((post)=>(
-                            <PostCard placement='landingpage' post={post} />
+                        {posts ? posts.map((post, index)=>(
+                            <PostCard key={index} placement='landingpage' post={post} />
                         )) :''}
                         {/* <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' />

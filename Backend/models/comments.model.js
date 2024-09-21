@@ -8,10 +8,7 @@ const CommentSchema = mongoose.Schema(
             type: String,
             required: [true, "Content is required"]
         },
-        comment_id: {
-            type: ObjectId,
-        },
-        post_id: {
+        parent_id: {
             type: ObjectId,
         }
     },

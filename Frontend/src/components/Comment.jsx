@@ -3,11 +3,15 @@ import imageTest from "../assets/Library.jpg"
 import Reply from "./Reply"
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
+import CommentBox from "./CommentBox";
 export default function Comment(props) {
+    console.log(props)
     let left = props.level * 5
     let right = 100 - left
-    const [openComment, setOpenComment] = useState(false)
+    const [openComment, setOpenCommentBox] = useState(false)
     const [openReply, setOpenReply] = useState(false)
+
+   
 
     return (
         <>
@@ -30,7 +34,7 @@ export default function Comment(props) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'lighter', marginTop: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}><EmojiEmotionsIcon /> &#160;169k &#160; &#160;</div>
-                            <div style={{ cursor: 'pointer' }} onClick={() => setOpenComment(prevValue => !prevValue)}>Reply</div>
+                            <div style={{ cursor: 'pointer' }} onClick={() => setOpenCommentBox(prevValue => !prevValue)}>Reply</div>
                         </div>
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0px' }}>
@@ -40,15 +44,7 @@ export default function Comment(props) {
                             </div>
                         </div>
                     </div>
-                    {openComment && <div style={{ marginTop: '20px', display: 'flex', width: '100%' }}>
-                        <formdata style={{ width: '100%' }}>
-                            <textarea type="text" style={{ minHeight: '50px', fontSize: '16px', borderRadius: '0px', width: '100%', resize: 'none'}} />
-                            <div style={{ display: 'flex', justifyContent: 'right' }}>
-                                <div style={{ height: '30px', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={() => setOpenComment((prev) => !prev)}>Close</div>
-                                <div style={{ height: '30px', borderRadius: '5px', cursor: 'pointer' }}>Comment</div>
-                            </div>
-                        </formdata>
-                    </div>}
+                    {openComment && <CommentBox setOpenCommentBox={setOpenCommentBox} />}
 
                     {openReply && <div style={{ display: 'flex', marginTop: '20px' }}>
                         {props.reply?.length > 0 && <div>

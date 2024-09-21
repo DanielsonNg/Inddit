@@ -11,14 +11,18 @@ import axios from "../axios"
 export default function Post() {
     let { id } = useParams()
     const [post, setPost] = useState()
+    // const [comments, setComments] = useState([])
 
     useEffect(() => {
         (async () => {
             await axios.get(`/post/${id}`)
-            .then(({ data }) => {
-                setPost(data[0])
-                console.log(data[0])
-            })
+                .then(({ data }) => {
+                    setPost(data[0])
+                })
+            // await axios.get(`/comments/${id}`)
+            //     .then(({ data }) => {
+            //         setComments(data)
+            //     })
         })()
     }, [])
 
@@ -26,19 +30,22 @@ export default function Post() {
         <>
             <div className={styles.mid}>
                 {post ? <PostCard placement="post" post={post} /> : ''}
-                <Comments />
+                {/* {comments ? comments.map((comment) =>> (
+                    <Comments postId={id} />
+                )) : ''} */}
+                <Comments postId={id} />
                 {/* <PostCard /> */}
             </div>
-            <div className={styles.right}>
+            {post && <div className={styles.right}>
                 <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
                     <img src={imageTest} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
-                    I/Memes
+                    I/{post.community.name}
                 </div>
                 <div style={{ marginTop: '10px' }}>
-                    Meme Community
+                    {post.category.name} Community
                 </div>
                 <div style={{ fontWeight: 'lighter' }}>
-                    This description describe a description of a inddit good.
+                    {post.community.description}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '10px ' }}>
                     25k Members
@@ -50,7 +57,7 @@ export default function Post() {
                 <HotPost />
                 <HotPost />
                 <HotPost />
-            </div>
+            </div>}
         </>
     )
 }

@@ -67,6 +67,17 @@ module.exports = {
                     $unwind: "$author"
                 },
                 {
+                    $lookup:{
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as:"category"
+                    }
+                },
+                {
+                    $unwind:"$category",
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -74,8 +85,11 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        "community.logo": 1,
+                        "community.description": 1,
                         "community.name": 1,
-                        "author.username": 1
+                        "author.username": 1,
+                        "category.name": 1
                     }
                 }
             ]);
@@ -89,7 +103,7 @@ module.exports = {
     async getPost(req, res) {
         try {
             const id = req.params
-            console.log(id)
+            // console.log(id)
             const post = await Post.aggregate([
                 {
                     $match:{_id: new mongoose.Types.ObjectId(id)}
@@ -117,6 +131,17 @@ module.exports = {
                     $unwind: "$author"
                 },
                 {
+                    $lookup:{
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as:"category"
+                    }
+                },
+                {
+                    $unwind:"$category",
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -124,8 +149,11 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        "community.logo": 1,
+                        "community.description": 1,
                         "community.name": 1,
-                        "author.username": 1
+                        "author.username": 1,
+                        "category.name": 1
                     }
                 },
             ]);
