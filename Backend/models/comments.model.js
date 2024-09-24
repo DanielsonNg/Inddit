@@ -10,6 +10,10 @@ const CommentSchema = mongoose.Schema(
         },
         parent_id: {
             type: ObjectId,
+        },
+        user_id: {
+            type: ObjectId,
+            required: [true , "User is required"]
         }
     },
     { timestamps: true}

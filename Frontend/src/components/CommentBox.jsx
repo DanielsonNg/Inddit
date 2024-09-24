@@ -1,12 +1,15 @@
 import { useState } from "react"
 import axios from "../axios"
+import { useAuth } from "../../context/AuthProvider"
 
 export default function CommentBox({ setOpenCommentBox, parentId }) {
     const [comment, setComment] = useState('')
+    const { userData } = useAuth()
 
     function handleSubmit() {
         const data = {
-            content: comment
+            content: comment,
+            userId: userData._id
         }
         axios.post(`/comment/${parentId}`, data)
             .then(({ data }) => {

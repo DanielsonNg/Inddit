@@ -4,6 +4,7 @@ const cloudinary = require('../utils/cloudinary')
 const User = require('../models/user.model')
 const Inddit = require("../models/inddits.model")
 const { default: mongoose } = require("mongoose")
+const ObjectId = mongoose.Types.ObjectId
 
 module.exports = {
     async createPost(req, res) {
@@ -102,11 +103,11 @@ module.exports = {
 
     async getPost(req, res) {
         try {
-            const id = req.params
+            const id = req.params.id
             // console.log(id)
             const post = await Post.aggregate([
                 {
-                    $match:{_id: new mongoose.Types.ObjectId(id)}
+                    $match:{_id: ObjectId.createFromHexString(id)}
                 },
                 {
                     $lookup: {

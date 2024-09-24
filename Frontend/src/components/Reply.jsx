@@ -1,5 +1,6 @@
 import imageTest from "../assets/Library.jpg"
 export default function Reply(props){
+    // console.log(props)
     return(
         <>
         <div style={{fontWeight:'lighter', display:'flex', flexDirection:'row', alignItems:'center'}}>
