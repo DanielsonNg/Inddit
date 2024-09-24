@@ -1,17 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import imageTest from "../assets/Library.jpg"
 import Reply from "./Reply"
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import CommentBox from "./CommentBox";
-export default function Comment(props) {
-    console.log(props)
-    let left = props.level * 5
+import axios from "../axios";
+export default function Comment({ comment, level }) {
+    // console.log(comment)
+    let left = level * 5
     let right = 100 - left
     const [openComment, setOpenCommentBox] = useState(false)
     const [openReply, setOpenReply] = useState(false)
 
-   
+    const [replies, setReplies] = useState([])
+
+    async function handleOpenReply() {
+        setOpenReply((prevValue) => !prevValue)
+        await axios.get(`/comments/${comment._id}`)
+            .then(({ data }) => {
+                setReplies(data)
+                console.log(data)
+            })
+    }
 
     return (
         <>
@@ -29,7 +39,7 @@ export default function Comment(props) {
                         <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
                     </div>
                     <div>
-                        {props.comment ? props.comment : ''}
+                        {comment.content ? comment.content : ''}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'lighter', marginTop: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
@@ -38,18 +48,22 @@ export default function Comment(props) {
                         </div>
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0px' }}>
-                                {props.reply && <div style={{cursor: 'pointer' }} onClick={() => setOpenReply((prevValue) => !prevValue)}>
+                                <div style={{ cursor: 'pointer' }} onClick={() => handleOpenReply()}>
                                     {openReply === false ? 'Show Replies' : 'Hide Replies'}
-                                </div>}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {openComment && <CommentBox setOpenCommentBox={setOpenCommentBox} />}
+                    {openComment && <CommentBox setOpenCommentBox={setOpenCommentBox} parentId={comment._id} />}
 
-                    {openReply && <div style={{ display: 'flex', marginTop: '20px' }}>
-                        {props.reply?.length > 0 && <div>
-                            <Comment comment={props.reply} reply={props.replyrep} level={props.level + 1} />
-                        </div>}
+                    {openReply && 
+                    <div style={{ display: 'flex', flexDirection:'column'}}>
+                        {replies ? replies.map((reply) => (
+                            <div style={{width:'100%', marginTop: '20px'}}>
+                                <Comment key={reply._id} comment={reply} level={level + 1} />
+                            </div>
+                        )) : ''
+                        }
                     </div>}
                 </div>
             </div>
