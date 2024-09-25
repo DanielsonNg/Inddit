@@ -1,6 +1,6 @@
 export default function NotFound(){
     
     return(
-        <h1>404 - Not Found</h1>
+        <h3>Data Not Found...</h3>
     )
 }

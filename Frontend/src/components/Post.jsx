@@ -7,32 +7,31 @@ import Comments from "./Comments"
 import imageTest from '../assets/Night.jpg'
 import HotPost from "./HotPost"
 import axios from "../axios"
+import Loading from "./Loading"
 
 export default function Post() {
     let { id } = useParams()
     const [post, setPost] = useState()
-    // const [comments, setComments] = useState([])
+
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
+      
         (async () => {
+            setLoading(true)
             await axios.get(`/post/${id}`)
                 .then(({ data }) => {
                     setPost(data[0])
+                    setLoading(false)
                 })
-            // await axios.get(`/comments/${id}`)
-            //     .then(({ data }) => {
-            //         setComments(data)
-            //     })
         })()
+      
     }, [])
 
     return (
         <>
             <div className={styles.mid}>
-                {post ? <PostCard placement="post" post={post} /> : ''}
-                {/* {comments ? comments.map((comment) =>> (
-                    <Comments postId={id} />
-                )) : ''} */}
+                {post ? <PostCard placement="post" post={post} /> : <Loading />}
                 <Comments postId={id} />
                 {/* <PostCard /> */}
             </div>

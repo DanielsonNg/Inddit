@@ -16,6 +16,7 @@ module.exports = {
                 })
             }
             const create = await Comment.create({ content: data.content, parent_id: id, user_id: data.userId })
+            const parent = await Comment.findByIdAndUpdate(id, { is_replied: 1 })
             return res.status(200).json(create)
 
         } catch (error) {
@@ -50,6 +51,8 @@ module.exports = {
                         content: 1,
                         createdAt: 1,
                         'user.username': 1,
+                        likes: 1,
+                        is_replied: 1,
                     }
                 }
             ])

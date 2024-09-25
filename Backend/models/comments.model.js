@@ -14,6 +14,14 @@ const CommentSchema = mongoose.Schema(
         user_id: {
             type: ObjectId,
             required: [true , "User is required"]
+        },
+        likes: {
+            type: Number,
+            default: 0
+        },
+        is_replied:{
+            type: Number,
+            default: 0
         }
     },
     { timestamps: true}

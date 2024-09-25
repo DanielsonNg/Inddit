@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import styles from "../css/registerpage.module.css"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import registerImage from "../assets/Library.jpg"
 import { useAuth } from "../../context/AuthProvider"
 import axios from "../axios"
@@ -21,6 +21,8 @@ export default function RegisterPage() {
     const [errorPwd, setErrorPwd] = useState('')
     const [errorEmail, setErrorEmail] = useState('')
     const [errorConfirm, setErrorConfirm] = useState('')
+
+    const navigate = useNavigate()
 
     const handleUsernameChange = (e) =>{
         setUsername(e.target.value)
@@ -90,7 +92,7 @@ export default function RegisterPage() {
             setLoading(false)
             if (res.status === 200) {
                 await login(data.token, data.user)
-                navigate('/')
+                await navigate('/')
             }
         } catch (err) {
             let error = err.response.data.message

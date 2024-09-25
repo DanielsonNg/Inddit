@@ -2,7 +2,7 @@ import { useState } from "react"
 import axios from "../axios"
 import { useAuth } from "../../context/AuthProvider"
 
-export default function CommentBox({ setOpenCommentBox, parentId }) {
+export default function CommentBox({ setOpenCommentBox, parentId, addComment }) {
     const [comment, setComment] = useState('')
     const { userData } = useAuth()
 
@@ -14,7 +14,10 @@ export default function CommentBox({ setOpenCommentBox, parentId }) {
         axios.post(`/comment/${parentId}`, data)
             .then(({ data }) => {
                 console.log(data)
+                addComment(data)
+                setOpenCommentBox((prev)=> !prev)
             })
+
     }
 
     return (
