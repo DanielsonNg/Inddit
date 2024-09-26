@@ -6,7 +6,7 @@ const { signup, signin } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity } = require('../controllers/community')
 const { createPost, getPosts, getPost } = require('../controllers/post')
-const { createComment, getComments } = require('../controllers/comment')
+const { createComment, getComments, editComment, deleteComment } = require('../controllers/comment')
 const router = express.Router()
 
 // jwt
@@ -45,6 +45,8 @@ router.get('/post/:id', getPost)
 
 router.post('/comment/:id', createComment)
 router.get('/comments/:id', getComments)
+router.post('/comment/edit/:id', editComment)
+router.delete('/comment/:id', deleteComment)
 
 
 module.exports = router

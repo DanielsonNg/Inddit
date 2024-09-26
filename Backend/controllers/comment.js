@@ -1,6 +1,8 @@
 const { default: mongoose } = require("mongoose");
 const { CommentSchema } = require("../middlewares/ValidationBody")
-const Comment = require("../models/comments.model")
+const Comment = require("../models/comments.model");
+const User = require("../models/user.model");
+const { deleteCommentAndChildren } = require("../utils");
 const ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
@@ -15,9 +17,26 @@ module.exports = {
                     response_message: error.message
                 })
             }
+            // const parent = await Comment.findById(id)
+            // if(parent !== null){
+            //     await parent.update({is_replied : 1})
+            // }
+            // console.log(parent)
             const create = await Comment.create({ content: data.content, parent_id: id, user_id: data.userId })
-            const parent = await Comment.findByIdAndUpdate(id, { is_replied: 1 })
-            return res.status(200).json(create)
+            const user = await User.findById(data.userId)
+            const params = {
+                content: create.content,
+                likes: create.likes,
+                is_replied: create.is_replied,
+                _id: create._id,
+                parent_id: create.parent_id,
+                user: {
+                    username: user.username,
+                    _id: user._id
+                },
+                createdAt: create.createdAt
+            }
+            return res.status(200).json(params)
 
         } catch (error) {
             console.log(error)
@@ -53,6 +72,7 @@ module.exports = {
                         'user.username': 1,
                         likes: 1,
                         is_replied: 1,
+                        'user._id': 1,
                     }
                 }
             ])
@@ -61,5 +81,30 @@ module.exports = {
             console.log(error)
             return res.status(500).json(error)
         }
+    },
+
+    async editComment(req, res) {
+        try {
+            const commentId = req.params.id
+            const { error } = CommentSchema.edit.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const edit = await Comment.findByIdAndUpdate(commentId, { content: req.body.newContent }, { new: true })
+            return res.status(200).json(edit)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+    },
+
+    async deleteComment(req, res) {
+        const commentId = req.params.id
+        const deleteReplies = await deleteCommentAndChildren(commentId)
+        // const del = await Comment.findByIdAndDelete(commentId)
+        return res.status(200).json(deleteReplies)
     }
 }

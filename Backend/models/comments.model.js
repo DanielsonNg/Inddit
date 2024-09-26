@@ -10,6 +10,8 @@ const CommentSchema = mongoose.Schema(
         },
         parent_id: {
             type: ObjectId,
+            ref: 'Comment',
+            onDelete:'cascade'
         },
         user_id: {
             type: ObjectId,
@@ -26,6 +28,18 @@ const CommentSchema = mongoose.Schema(
     },
     { timestamps: true}
 )
+
+CommentSchema.pre("deleteMany", async function(next){
+    try {
+        const replies = await Comment.find({parent_id: this._id})
+        for(reply of replies){
+            await Comment.remove()
+        }
+        next(replies)
+    } catch (error) {
+        next(error)
+    }
+})
 
 const Comment = mongoose.model("Comment", CommentSchema)
 module.exports = Comment

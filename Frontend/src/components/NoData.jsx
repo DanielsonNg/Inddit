@@ -1,8 +1,8 @@
-export default function NoData() {
+export default function NoData({type}) {
     return (
         <>
             <div style={{width:'100%', display:'flex'}}>
-                Data Not Found...
+                {type ? type : ''} Not Found...
             </div>
         </>
     )

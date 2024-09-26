@@ -1,3 +1,4 @@
+import EmojiEmotions from '@mui/icons-material/EmojiEmotions'
 import imageTest from '../assets/Night.jpg'
 
 export default function HotPost() {
@@ -12,7 +13,7 @@ export default function HotPost() {
             </div>
             <div style={{ display: 'flex' }}>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', fontSize: '14px' }}>
-                    <p>69k</p>&#160; Reaction &#160;&#160;&#160;
+                    <p>69k</p>&#160; <EmojiEmotions /> &#160;&#160;&#160;
                 </div>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', fontSize: '14px' }}>
                     <p>42k</p> &#160; Comments

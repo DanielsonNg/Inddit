@@ -5,6 +5,12 @@ const create = Joi.object().keys({
     userId: Joi.string().required()
 })
 
+const edit = Joi.object().keys({
+    userId: Joi.string().required(),
+    newContent: Joi.string().required(),
+})
+
 module.exports = {
-    create
+    create,
+    edit,
 }
