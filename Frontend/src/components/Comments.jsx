@@ -27,8 +27,10 @@ export default function Comments({ postId }) {
         setLoading(false)
     }
 
-    function editComment(newComment) {
-        
+    function deleteCommentInstant(index) {
+        const reducedArr = [...comments]
+        reducedArr.splice(index, 1)
+        setComments(reducedArr)
     }
 
     return (
@@ -42,8 +44,8 @@ export default function Comments({ postId }) {
             </div>
             {loading && <Loading />}
             {!loading && <div className={styles.commentCard}>
-                {comments.length > 0 ? comments.map((comment) => (
-                    <Comment key={comment._id} addComment={addCommentInstant} comment={comment} level={0} />
+                {comments.length > 0 ? comments.map((comment, index) => (
+                    <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} index={index} comment={comment} level={0} />
                 )) : <NoData type='Comment' />}
             </div>}
         </>

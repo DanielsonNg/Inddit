@@ -6,7 +6,7 @@ import addIcon from '../assets/t.png'
 import { Avatar, IconButton, Select } from "@mui/material"
 import SelectInput from "@mui/material/Select/SelectInput"
 import axios from "../axios"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useAuth } from "../../context/AuthProvider"
 import Loading from "./Loading"
 
@@ -25,6 +25,8 @@ export default function PostCreate() {
         description: '',
         logo: ''
     })
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         (async () => {
@@ -62,9 +64,9 @@ export default function PostCreate() {
             user_id: userData._id
         }
         await axios.post('/post/create', data)
-            .then((res) => {
-                console.log(res)
+            .then(({data}) => {
                 setLoading(false)
+                navigate(`/post/${data._id}`)
             })
             .catch((error) => {
                 console.log(error)

@@ -28,7 +28,8 @@ export default function IndditPage() {
             setLoading(true)
             await axios.get(`/community/${id}`)
                 .then(({ data }) => {
-                    console.log(data)
+                    // console.log(data)
+                    setCommunity(data)
                     setLoading(false)
                 })
                 .catch((error) => {
@@ -69,7 +70,7 @@ export default function IndditPage() {
                                 <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                             </div>
                             <div style={{ marginTop: '40px' }}>
-                                <h1>i/Programming</h1>
+                                <h1>i/{community.name}</h1>
                             </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
@@ -88,7 +89,7 @@ export default function IndditPage() {
                         <div>
                             <img src={s} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                         </div>
-                        <h3>I/Programming</h3>
+                        <h3>I/{community.name}</h3>
                     </div>
                     <div>
                         <Link to={'/post/create'}>
@@ -100,6 +101,9 @@ export default function IndditPage() {
                 </div>
                 <div className={styles.mobile} style={{ display: 'none' }}>
                     <h1>de</h1>
+                </div>
+                <div style={{padding:'0px 50px 10px 50px', width:'100%', flexWrap:'wrap', fontSize:'16px', fontWeight:'lighter'}}>
+                    {community.description}
                 </div>
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>

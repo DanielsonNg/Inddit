@@ -5,7 +5,7 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import CommentBox from "./CommentBox";
 import axios from "../axios";
-export default function Comment({ comment, level, addComment }) {
+export default function Comment({ comment, level, deleteCommentInstant, index }) {
     // console.log(comment)
     let left = level * 5
     let right = 100 - left
@@ -52,6 +52,7 @@ export default function Comment({ comment, level, addComment }) {
         axios.delete(`/comment/${comment._id}`)
             .then(({ data }) => {
                 console.log(data)
+                deleteCommentInstant(index)
             })
     }
 
