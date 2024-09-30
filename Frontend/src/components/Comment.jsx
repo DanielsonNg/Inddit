@@ -5,7 +5,7 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import CommentBox from "./CommentBox";
 import axios from "../axios";
-export default function Comment({ comment, level, deleteCommentInstant, index }) {
+export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply }) {
     // console.log(comment)
     let left = level * 5
     let right = 100 - left
@@ -23,6 +23,7 @@ export default function Comment({ comment, level, deleteCommentInstant, index })
         await axios.get(`/comments/${comment._id}`)
             .then(({ data }) => {
                 setReplies(data)
+                // console.log(data)
             })
     }
 
@@ -30,6 +31,12 @@ export default function Comment({ comment, level, deleteCommentInstant, index })
         setReplies(prevReplies => [...prevReplies, newComment])
         comment.is_replied = 1
         setOpenReply(true)
+    }
+
+    function deleteReplyInstant(index) {
+        const reducedArr = [...replies]
+        reducedArr.splice(index, 1)
+        setReplies(reducedArr)
     }
 
     async function handleEdit(e) {
@@ -51,9 +58,14 @@ export default function Comment({ comment, level, deleteCommentInstant, index })
     async function deleteComment() {
         axios.delete(`/comment/${comment._id}`)
             .then(({ data }) => {
-                console.log(data)
+                // console.log(data)
+                reSetReply(data.is_replied)
                 deleteCommentInstant(index)
             })
+    }
+
+    async function rreSetReply(value){
+        comment.is_replied = value
     }
 
     return (
@@ -102,8 +114,8 @@ export default function Comment({ comment, level, deleteCommentInstant, index })
                     {openReply &&
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             {replies ? replies.map((reply) => (
-                                <div style={{ width: '100%', marginTop: '20px' }}>
-                                    <Comment key={reply._id} comment={reply} level={level + 1} />
+                                <div key={reply._id} style={{ width: '100%', marginTop: '20px' }}>
+                                    <Comment key={reply._id} comment={reply} level={level + 1} deleteCommentInstant={deleteReplyInstant} reSetReply={rreSetReply} />
                                 </div>
                             )) : ''
                             }

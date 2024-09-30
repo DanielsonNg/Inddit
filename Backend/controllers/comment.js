@@ -17,11 +17,10 @@ module.exports = {
                     response_message: error.message
                 })
             }
-            // const parent = await Comment.findById(id)
-            // if(parent !== null){
-            //     await parent.update({is_replied : 1})
-            // }
-            // console.log(parent)
+            const parent = await Comment.findById(id)
+            if (parent !== null) {
+                await Comment.findByIdAndUpdate(id, { is_replied: 1 })
+            }
             const create = await Comment.create({ content: data.content, parent_id: id, user_id: data.userId })
             const user = await User.findById(data.userId)
             const params = {
@@ -102,9 +101,23 @@ module.exports = {
     },
 
     async deleteComment(req, res) {
-        const commentId = req.params.id
-        const deleteReplies = await deleteCommentAndChildren(commentId)
-        // const del = await Comment.findByIdAndDelete(commentId)
-        return res.status(200).json(deleteReplies)
+        try {
+            const commentId = req.params.id
+            const comment = await Comment.findById(commentId)
+            const sibling = await Comment.find({ parent_id: comment.parent_id })
+            let is_replied = 1
+            if (sibling.length === 1) {
+                //set is replied to empty if no sibling found
+                is_replied = 0
+                await Comment.findByIdAndUpdate(comment.parent_id, { is_replied: 0 })
+            }
+            const deleteReplies = await deleteCommentAndChildren(commentId)
+            const del = await Comment.findByIdAndDelete(commentId)
+            return res.status(200).json({msg:"Comment Deleted", is_replied : is_replied})
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+
     }
 }
