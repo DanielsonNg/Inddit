@@ -2,16 +2,32 @@ import styles from '../css/landingpage.module.css'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import s from '../../assets/s.jpg'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Dropdown } from '@mui/base/Dropdown';
+import { Menu } from '@mui/base/Menu';
+import { MenuButton } from '@mui/base/MenuButton';
+import { MenuItem, styled } from '@mui/material';
+import React from 'react';
+import { cardColor } from '../utils/index'
+import axios from '../axios'
 
 export default function PostCard(props) {
-    // const style={
-    //     overflow:'hidden'
-    // }
+    const navigate = useNavigate()
+    const editPost = () => {
+        //edit post
+    }
 
-    // function showMore() {
-    //     style.overflow = 'show'
-    // }
+    const deletePost = async () => {
+        axios.delete(`/post/${props.post._id}`)
+            .then(({ data }) => {
+                if (props.placement === 'landingpage') {
+
+                } else {
+                    navigate('/')
+                }
+            })
+    }
+
     return (
         <>
             <div className={props.placement === 'landingpage' ? styles.cardmidLimited : styles.cardmid}>
@@ -24,8 +40,16 @@ export default function PostCard(props) {
                         &#160;&#160;&#160;
                         <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
                     </div>
-                    <div style={{ fontWeight: 'lighter' }}>
+                    <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px' }}>
                         Join Now
+                        <Dropdown >
+                            <MenuButton style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
+                            <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
+                                <MenuItem onClick={() => editPost()}>Edit Post</MenuItem>
+                                <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem>
+                                {/* <MenuItem onClick={createHandleMenuClick('Log out')}>Log out</MenuItem> */}
+                            </Menu>
+                        </Dropdown>
                     </div>
                 </div>
                 <div style={{ fontSize: '16px', fontWeight: 'lighter' }}>
@@ -39,7 +63,7 @@ export default function PostCard(props) {
                         {props.post.description}
                     </div>
                     <div style={{ padding: '50px', display: 'flex', justifyContent: 'center', maxWidth: '100%' }}>
-                        <img src={props.post.image} style={{maxWidth:'100%'}}></img>
+                        <img src={props.post.image} style={{ maxWidth: '100%' }}></img>
                     </div>
                 </Link>
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>

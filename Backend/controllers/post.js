@@ -5,6 +5,8 @@ const User = require('../models/user.model')
 const Inddit = require("../models/inddits.model")
 const { default: mongoose } = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
+const Comment = require('../models/comments.model')
+const { deleteCommentAndChildren } = require("../utils")
 
 module.exports = {
     async createPost(req, res) {
@@ -30,6 +32,7 @@ module.exports = {
                 title: data.title,
                 description: data.content,
                 image: data.image.length > 0 ? image.secure_url : null,
+                image_public_id: data.image.length > 0 ? image.public_id : null,
                 author_id: data.user_id,
                 community_id: data.community_id
             })
@@ -68,15 +71,15 @@ module.exports = {
                     $unwind: "$author"
                 },
                 {
-                    $lookup:{
+                    $lookup: {
                         from: "categories",
                         localField: "community.category_id",
                         foreignField: "_id",
-                        as:"category"
+                        as: "category"
                     }
                 },
                 {
-                    $unwind:"$category",
+                    $unwind: "$category",
                 },
                 {
                     $project: {
@@ -104,10 +107,9 @@ module.exports = {
     async getPost(req, res) {
         try {
             const id = req.params.id
-            // console.log(id)
             const post = await Post.aggregate([
                 {
-                    $match:{_id: ObjectId.createFromHexString(id)}
+                    $match: { _id: ObjectId.createFromHexString(id) }
                 },
                 {
                     $lookup: {
@@ -132,15 +134,15 @@ module.exports = {
                     $unwind: "$author"
                 },
                 {
-                    $lookup:{
+                    $lookup: {
                         from: "categories",
                         localField: "community.category_id",
                         foreignField: "_id",
-                        as:"category"
+                        as: "category"
                     }
                 },
                 {
-                    $unwind:"$category",
+                    $unwind: "$category",
                 },
                 {
                     $project: {
@@ -163,6 +165,25 @@ module.exports = {
             console.log(error)
             return res.status(500)
         }
+    },
 
+    async deletePost(req, res) {
+        try {
+            const id = req.params.id
+            const comments = await Comment.find({ parent_id: id })
+            if (comments.length > 0) {
+                for (const comment of comments) {
+                    await deleteCommentAndChildren(comment._id)
+                }
+            }
+            const post = await Post.findById(id)
+            await cloudinary.uploader.destroy(post.image_public_id)
+            const deletePost = await Post.findByIdAndDelete(id)
+
+            return res.status(200).json({ msg: 'Post Deleted Successfully' })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error.message)
+        }
     }
 }

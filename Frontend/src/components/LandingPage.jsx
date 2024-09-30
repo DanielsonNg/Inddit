@@ -3,15 +3,24 @@ import styles from '../css/landingpage.module.css'
 import RightCard from '../components/RightCard,';
 import { useEffect, useState } from 'react';
 import axios from '../axios';
+import NotFound from './NotFound'
+import Loading from './Loading';
 
 export default function LandingPage() {
     const [posts, setPosts] = useState([])
 
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         (async () => {
+            setLoading(true)
             await axios.get('/posts')
                 .then(({ data }) => {
                     setPosts(data)
+                    setLoading(false)
+                })
+                .catch((err) => {
+                    setLoading(false)
                 })
         })()
     }, [])
@@ -19,12 +28,12 @@ export default function LandingPage() {
     return (
         <>
             <div className={styles.mid}>
-                {posts ? posts.map((post, index) => (
-                      <PostCard placement='landingpage' key={index} post={post} />
-                )) : ''}
-                {/* <PostCard placement='landingpage' />
-                <PostCard placement='landingpage' />
-                <PostCard placement='landingpage' /> */}
+                {loading && <Loading />}
+                {!loading && <>
+                    {posts ? posts.map((post, index) => (
+                        <PostCard placement='landingpage' key={index} post={post} />
+                    )) : <NotFound />}
+                </>}
             </div>
             <div className={styles.right}>
                 <h3>Trending</h3>
