@@ -23,6 +23,12 @@ export default function IndditPage() {
 
     const [loading, setLoading] = useState(false)
 
+    function deletePostInstant(index) {
+        const reducedArr = [...posts]
+        reducedArr.splice(index, 1)
+        setPosts(reducedArr)
+    }
+
     useEffect(() => {
         (async () => {
             setLoading(true)
@@ -109,7 +115,7 @@ export default function IndditPage() {
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
                         {posts ? posts.map((post, index)=>(
-                            <PostCard key={index} placement='landingpage' post={post} />
+                            <PostCard key={index} placement='landingpage' post={post} index={index} deletePostInstant={deletePostInstant} />
                         )) :''}
                         {/* <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' />

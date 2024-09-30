@@ -7,21 +7,24 @@ import { Dropdown } from '@mui/base/Dropdown';
 import { Menu } from '@mui/base/Menu';
 import { MenuButton } from '@mui/base/MenuButton';
 import { MenuItem, styled } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { cardColor } from '../utils/index'
 import axios from '../axios'
 
 export default function PostCard(props) {
+    const [open, setOpen] = useState(false)
     const navigate = useNavigate()
     const editPost = () => {
         //edit post
+        setOpen(false)
     }
 
     const deletePost = async () => {
         axios.delete(`/post/${props.post._id}`)
             .then(({ data }) => {
                 if (props.placement === 'landingpage') {
-
+                    props.deletePostInstant(props.index)
+                    setOpen(false)
                 } else {
                     navigate('/')
                 }
@@ -42,8 +45,8 @@ export default function PostCard(props) {
                     </div>
                     <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px' }}>
                         Join Now
-                        <Dropdown >
-                            <MenuButton style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
+                        <Dropdown open={open}>
+                            <MenuButton onClick={() => setOpen(true)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
                             <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
                                 <MenuItem onClick={() => editPost()}>Edit Post</MenuItem>
                                 <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem>

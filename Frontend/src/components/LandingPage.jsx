@@ -11,6 +11,12 @@ export default function LandingPage() {
 
     const [loading, setLoading] = useState(false)
 
+    function deletePostInstant(index) {
+        const reducedArr = [...posts]
+        reducedArr.splice(index, 1)
+        setPosts(reducedArr)
+    }
+
     useEffect(() => {
         (async () => {
             setLoading(true)
@@ -31,7 +37,7 @@ export default function LandingPage() {
                 {loading && <Loading />}
                 {!loading && <>
                     {posts ? posts.map((post, index) => (
-                        <PostCard placement='landingpage' key={index} post={post} />
+                        <PostCard placement='landingpage' key={index} index={index} post={post} deletePostInstant={deletePostInstant} />
                     )) : <NotFound />}
                 </>}
             </div>
