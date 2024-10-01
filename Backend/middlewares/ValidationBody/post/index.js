@@ -8,6 +8,11 @@ const create = Joi.object().keys({
     community_id: Joi.string().required()
 })
 
+const edit = Joi.object().keys({
+    content: Joi.string().required()
+})
+
 module.exports = {
     create,
+    edit,
 }

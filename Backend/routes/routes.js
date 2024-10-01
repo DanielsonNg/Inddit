@@ -5,7 +5,7 @@ const { validateToken, adminOnly, memberOnly } = require('../middlewares/validat
 const { signup, signin } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity } = require('../controllers/community')
-const { createPost, getPosts, getPost, deletePost } = require('../controllers/post')
+const { createPost, getPosts, getPost, deletePost, editPost } = require('../controllers/post')
 const { createComment, getComments, editComment, deleteComment } = require('../controllers/comment')
 const router = express.Router()
 
@@ -43,6 +43,7 @@ router.get('/posts', getPosts)
 router.post('/post/create', createPost)
 router.get('/post/:id', getPost)
 router.delete('/post/:id', deletePost)
+router.put('/post/:id', editPost)
 
 router.post('/comment/:id', createComment)
 router.get('/comments/:id', getComments)

@@ -13,9 +13,9 @@ export default function CommentBox({ setOpenCommentBox, parentId, addComment }) 
         }
         axios.post(`/comment/${parentId}`, data)
             .then(({ data }) => {
-                console.log(data)
+                // console.log(data)
                 addComment(data)
-                setOpenCommentBox((prev)=> !prev)
+                setOpenCommentBox((prev) => !prev)
             })
 
     }
@@ -26,8 +26,8 @@ export default function CommentBox({ setOpenCommentBox, parentId, addComment }) 
                 <form style={{ width: '100%' }}>
                     <textarea value={comment} onChange={(e) => setComment(e.target.value)} type="text" style={{ minHeight: '50px', fontSize: '16px', borderRadius: '0px', width: '100%', resize: 'none' }} />
                     <div style={{ display: 'flex', justifyContent: 'right' }}>
-                        <div style={{ height: '30px', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={() => setOpenCommentBox((prev) => !prev)}>Close</div>
-                        <div style={{ height: '30px', borderRadius: '5px', cursor: 'pointer' }} onClick={handleSubmit}>Comment</div>
+                        <div style={{ height: '30px', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={() => setOpenCommentBox(false)}>Close</div>
+                        <div style={{ height: '30px', borderRadius: '5px', cursor: 'pointer' }} onClick={() => handleSubmit()}>Comment</div>
                     </div>
                 </form>
             </div>

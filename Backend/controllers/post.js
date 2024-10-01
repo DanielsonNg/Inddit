@@ -185,5 +185,24 @@ module.exports = {
             console.log(error)
             return res.status(500).json(error.message)
         }
-    }
+    },
+
+    async editPost(req, res) {
+        try {
+            const { error } = PostSchema.edit.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json(
+                    response_message = error.message
+                )
+            }
+            const id = req.params.id
+            const post = await Post.findByIdAndUpdate(id, { description: req.body.content }, { new: true })
+
+            return res.status(200).json(post)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
 }

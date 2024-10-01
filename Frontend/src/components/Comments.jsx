@@ -33,6 +33,8 @@ export default function Comments({ postId }) {
         setComments(reducedArr)
     }
 
+
+
     return (
         <>
             {openNewComment && <CommentBox setOpenCommentBox={setOpenNewComment} parentId={postId} addComment={addCommentInstant} />}
@@ -45,7 +47,11 @@ export default function Comments({ postId }) {
             {loading && <Loading />}
             {!loading && <div className={styles.commentCard}>
                 {comments.length > 0 ? comments.map((comment, index) => (
-                    <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} index={index} comment={comment} level={0} />
+                    <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} 
+                    index={index} comment={comment} level={0} 
+                    reSetReply={function reSetReply(value) {
+                        comment.is_replied = value
+                    }} />
                 )) : <NoData type='Comment' />}
             </div>}
         </>

@@ -10,12 +10,17 @@ import { MenuItem, styled } from '@mui/material';
 import React, { useState } from 'react';
 import { cardColor } from '../utils/index'
 import axios from '../axios'
+import PostBox from './PostBox'
 
 export default function PostCard(props) {
     const [open, setOpen] = useState(false)
+    const [openEdit, setOpenEdit] = useState(false)
+    const [content, setContent] = useState(props.post.description)
+
     const navigate = useNavigate()
-    const editPost = () => {
-        //edit post
+
+    const editPost = (value) => {
+        setContent(value)
         setOpen(false)
     }
 
@@ -28,6 +33,19 @@ export default function PostCard(props) {
                 } else {
                     navigate('/')
                 }
+            })
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault()
+        const data = {
+            content: content
+        }
+        axios.put(`/post/${props.post._id}`, data)
+            .then(({ data }) => {
+                editPost(data.description)
+                setContent(data.description)
+                setOpenEdit(false)
             })
     }
 
@@ -46,9 +64,9 @@ export default function PostCard(props) {
                     <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px' }}>
                         Join Now
                         <Dropdown open={open}>
-                            <MenuButton onClick={() => setOpen(true)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
+                            <MenuButton onClick={() => setOpen((prevVal) => !prevVal)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
                             <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
-                                <MenuItem onClick={() => editPost()}>Edit Post</MenuItem>
+                                <MenuItem onClick={() => setOpenEdit(true)}>Edit Post</MenuItem>
                                 <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem>
                                 {/* <MenuItem onClick={createHandleMenuClick('Log out')}>Log out</MenuItem> */}
                             </Menu>
@@ -62,13 +80,28 @@ export default function PostCard(props) {
                     <div>
                         <h2>{props.post.title}</h2>
                     </div>
-                    <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
-                        {props.post.description}
+                </Link>
+                {openEdit && <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
+                    <div style={{ marginTop: '20px', display: 'flex', width: '99%' }}>
+                        <form style={{ width: '100%' }}>
+                            <textarea value={content} onChange={(e) => setContent(e.target.value)} type="text" style={{ minHeight: '50px', fontSize: '16px', borderRadius: '0px', width: '100%', resize: 'none' }} />
+                            <div style={{ display: 'flex', justifyContent: 'right' }}>
+                                <div style={{ height: '30px', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={() => setOpenEdit(false)}>Close</div>
+                                <div style={{ height: '30px', borderRadius: '5px', cursor: 'pointer' }} onClick={(e)=>handleSubmit(e)}>Edit</div>
+                            </div>
+                        </form>
                     </div>
+                </div>}
+                {!openEdit && <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
+                    <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
+                        {content}
+                    </Link>
+                </div>}
+                <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
                     <div style={{ padding: '50px', display: 'flex', justifyContent: 'center', maxWidth: '100%' }}>
                         <img src={props.post.image} style={{ maxWidth: '100%' }}></img>
                     </div>
-                </Link>
+                </Link >
                 <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>
                     <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
                         <EmojiEmotionsIcon />&#160;&#160;
@@ -79,7 +112,7 @@ export default function PostCard(props) {
                         71k
                     </div>
                 </div>
-            </div>
+            </div >
             {/* <div style={{
                 display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'black', marginTop: "-40px",
                 borderRadius: '0px 0px 50px 50px', fontSize: '18px', cursor: 'pointer'}} 
