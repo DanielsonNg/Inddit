@@ -18,6 +18,10 @@ const join = Joi.object().keys({
     user_id: Joi.string().required()
 })
 
+const leave = Joi.object().keys({
+    user_id: Joi.string().required()
+})
+
 const permission = Joi.object().keys({
     user_id: Joi.string().required(),
     community_id: Joi.string().required()
@@ -27,5 +31,6 @@ module.exports = {
     create,
     find,
     join,
+    leave,
     permission,
 }

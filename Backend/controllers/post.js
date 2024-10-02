@@ -7,6 +7,7 @@ const { default: mongoose } = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
 const Comment = require('../models/comments.model')
 const { deleteCommentAndChildren } = require("../utils")
+const Tracker = require('../models/tracker.model')
 
 module.exports = {
     async createPost(req, res) {
@@ -21,6 +22,13 @@ module.exports = {
             }
 
             //check if user joined community
+            const track = await Tracker.findOne({user_id:data.user_id, community_id:data.community_id})
+            if(!track){
+                return res.status(401).json({
+                    response_message: 'User Not Authorized to Create Post'
+                })
+            }
+
             let image
             //upload cloudinary
             if (data.image.length > 0) {
@@ -101,6 +109,7 @@ module.exports = {
             return res.status(200).json(posts)
         } catch (error) {
             console.log(error)
+            return res.status(500)
         }
     },
 

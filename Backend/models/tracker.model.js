@@ -12,6 +12,11 @@ const TrackerSchema = mongoose.Schema(
             type: ObjectId,
             required: [true, 'User Id is required']
         },
+        //permission code
+        //0 Request Join
+        //1 Member
+        //2 Admin
+        //3 Owner
         permission: {
             type: Number,
             default: 0

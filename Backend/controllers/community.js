@@ -91,13 +91,34 @@ module.exports = {
                 })
             }
 
-            const track = await Tracker.find({ community_id: req.params.id, user_id: req.body.user_id })
-            if (track.length === 0) {
+            const track = await Tracker.findOne({ community_id: req.params.id, user_id: req.body.user_id })
+            if (!track) {
                 const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id })
                 return res.status(200).json({ create: create, is_join: 1 })
             } else {
-                const del = await Tracker.findByIdAndDelete(track[0]._id)
+                return res.status(500)
+            }
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async leaveCommunity(req, res) {
+        try {
+            const { error } = CommunitySchema.leave.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const track = await Tracker.findOne({ community_id: req.params.id, user_id: req.body.user_id })
+            if (track) {
+                const del = await Tracker.findByIdAndDelete(track._id)
                 return res.status(200).json({ del: del, is_join: 0 })
+            } else {
+                return res.status(500)
             }
         } catch (error) {
             console.log(error)
@@ -172,9 +193,9 @@ module.exports = {
     async getPermission(req, res) {
         try {
             const data = req.body
-            const {error} = CommunitySchema.permission.validate(data)
+            const { error } = CommunitySchema.permission.validate(data)
             const valid = error == null
-            if(!valid){
+            if (!valid) {
                 return res.status(422).json({
                     response_message: error.message
                 })
