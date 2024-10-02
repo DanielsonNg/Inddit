@@ -14,7 +14,18 @@ const find = Joi.object().keys({
     id: Joi.string().required(),
 })
 
+const join = Joi.object().keys({
+    user_id: Joi.string().required()
+})
+
+const permission = Joi.object().keys({
+    user_id: Joi.string().required(),
+    community_id: Joi.string().required()
+})
+
 module.exports = {
     create,
-    find
+    find,
+    join,
+    permission,
 }

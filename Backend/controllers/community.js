@@ -1,7 +1,11 @@
+const { default: mongoose } = require("mongoose")
 const { CommunitySchema } = require("../middlewares/ValidationBody")
 const Category = require("../models/categories.model")
 const Inddit = require("../models/inddits.model")
+const Post = require("../models/post.model")
+const Tracker = require("../models/tracker.model")
 const cloudinary = require("../utils/cloudinary")
+const ObjectId = mongoose.Types.ObjectId
 
 module.exports = {
     async createCommunity(req, res) {
@@ -37,6 +41,9 @@ module.exports = {
                 category_id: category[0]._id,
                 owner_id: data.user_id
             })
+
+            const track = await Tracker.create({ community_id: create._id, user_id: data.user_id, permission: 3 })
+
             return res.status(200).json({ data: create, msg: 'Community Successfully Created' })
         }
         catch (error) {
@@ -72,6 +79,117 @@ module.exports = {
             console.log(error)
             return res.status(500).json({ msg: 'Data Not Found' })
         }
+    },
+
+    async joinCommunity(req, res) {
+        try {
+            const { error } = CommunitySchema.join.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+
+            const track = await Tracker.find({ community_id: req.params.id, user_id: req.body.user_id })
+            if (track.length === 0) {
+                const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id })
+                return res.status(200).json({ create: create, is_join: 1 })
+            } else {
+                const del = await Tracker.findByIdAndDelete(track[0]._id)
+                return res.status(200).json({ del: del, is_join: 0 })
+            }
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async getPostsByCommunity(req, res) {
+        try {
+            const posts = await Post.aggregate([
+                {
+                    $match: {
+                        community_id: ObjectId.createFromHexString(req.params.id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "inddits",            // The collection to join
+                        localField: "community_id",      // Field in the post collection (foreign key)
+                        foreignField: "_id",            // Field in the community collection (primary key)
+                        as: "community"             // Output array of matched documents from community
+                    }
+                },
+                {
+                    $unwind: "$community"          // Unwind the array to make communityInfo a single object
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $unwind: "$category",
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        "community.logo": 1,
+                        "community.description": 1,
+                        "community.name": 1,
+                        "author.username": 1,
+                        "category.name": 1
+                    }
+                }
+            ]);
+            return res.status(200).json(posts)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async getPermission(req, res) {
+        try {
+            const data = req.body
+            const {error} = CommunitySchema.permission.validate(data)
+            const valid = error == null
+            if(!valid){
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const track = await Tracker.findOne({ user_id: data.user_id, community_id: data.community_id })
+            if (track) {
+                return res.status(200).json({ permission: 1 })
+            } else {
+                return res.status(200).json({ permission: 0 })
+            }
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+
     }
 
 }

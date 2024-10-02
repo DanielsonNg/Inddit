@@ -11,6 +11,10 @@ const TrackerSchema = mongoose.Schema(
         user_id: {
             type: ObjectId,
             required: [true, 'User Id is required']
+        },
+        permission: {
+            type: Number,
+            default: 0
         }
     },
     {
@@ -18,5 +22,5 @@ const TrackerSchema = mongoose.Schema(
     }
 )
 
-const Tracker = mongoose.model("Tracker",TrackerSchema)
+const Tracker = mongoose.model("Tracker", TrackerSchema)
 module.exports = Tracker

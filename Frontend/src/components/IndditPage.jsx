@@ -9,8 +9,10 @@ import { useEffect, useState } from 'react';
 import axios from '../axios';
 import { Button } from '@mui/material';
 import Loading from './Loading';
+import { useAuth } from "../../context/AuthProvider"
 
 export default function IndditPage() {
+    const { userData } = useAuth()
     const { id } = useParams()
     const navigate = useNavigate()
     const [community, setCommunity] = useState({
@@ -22,6 +24,10 @@ export default function IndditPage() {
     const [posts, setPosts] = useState()
 
     const [loading, setLoading] = useState(false)
+    const [join, setJoin] = useState(0)
+    const [postPermission, setPostPermission] = useState(false)
+
+
 
     function deletePostInstant(index) {
         const reducedArr = [...posts]
@@ -29,28 +35,52 @@ export default function IndditPage() {
         setPosts(reducedArr)
     }
 
+    async function setPermission() {
+        const data = {
+            user_id: userData?._id,
+            community_id: id
+        }
+        if(userData._id){
+            await axios.post(`/community/permission`, data)
+                .then(({ data }) => {
+                    setJoin(data.permission)
+                })
+        }
+    }
+
     useEffect(() => {
         (async () => {
             setLoading(true)
             await axios.get(`/community/${id}`)
                 .then(({ data }) => {
-                    // console.log(data)
                     setCommunity(data)
-                    setLoading(false)
                 })
                 .catch((error) => {
-                    console.log(error)
                     navigate('/')
-                    setLoading(false)
                 })
-
-            await axios.get('/posts')
+            await axios.get(`/community/posts/${id}`)
                 .then(({ data }) => {
                     setPosts(data)
+                    setLoading(false)
                 })
         })()
 
     }, [])
+
+    useEffect(() => {
+        setPermission()
+    }, [userData])
+
+    function handleJoin(e) {
+        e.preventDefault()
+        const data = {
+            user_id: userData._id
+        }
+        axios.post(`/community/join/${community._id}`, data)
+            .then(async ({ data }) => {
+                setJoin(data.is_join)
+            })
+    }
 
 
     return (
@@ -80,13 +110,17 @@ export default function IndditPage() {
                             </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
-                            <div>
+                            <div onClick={(e)=>handleJoin(e)}
+                                style={{ borderBlock: '2px solid gray', cursor: 'pointer', width: '100px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                {join === 0 ? 'Join' : 'Joined'}
+                            </div>
+                            {join === 1 && <div>
                                 <Link to={`/post/create/${id}`}>
                                     <Button color='secondary'>
                                         <h3>Create Post</h3>
                                     </Button>
                                 </Link>
-                            </div>
+                            </div>}
                         </div>
                     </div>
                 </div>
@@ -98,6 +132,9 @@ export default function IndditPage() {
                         <h3>I/{community.name}</h3>
                     </div>
                     <div>
+                        <div>
+                            Join
+                        </div>
                         <Link to={'/post/create'}>
                             <Button color="secondary">
                                 Create Post
@@ -108,15 +145,15 @@ export default function IndditPage() {
                 <div className={styles.mobile} style={{ display: 'none' }}>
                     <h1>de</h1>
                 </div>
-                <div style={{padding:'0px 50px 10px 50px', width:'100%', flexWrap:'wrap', fontSize:'16px', fontWeight:'lighter'}}>
+                <div style={{ padding: '0px 50px 10px 50px', width: '100%', flexWrap: 'wrap', fontSize: '16px', fontWeight: 'lighter' }}>
                     {community.description}
                 </div>
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
-                        {posts ? posts.map((post, index)=>(
+                        {posts ? posts.map((post, index) => (
                             <PostCard key={index} placement='landingpage' post={post} index={index} deletePostInstant={deletePostInstant} />
-                        )) :''}
+                        )) : ''}
                         {/* <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' /> */}
