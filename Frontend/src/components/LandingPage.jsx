@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import axios from '../axios';
 import NotFound from './NotFound'
 import Loading from './Loading';
+import { useAuth } from '../../context/AuthProvider';
 
 export default function LandingPage() {
     const [posts, setPosts] = useState([])
-
+    const { userData } = useAuth()
     const [loading, setLoading] = useState(false)
 
     function deletePostInstant(index) {
@@ -20,7 +21,10 @@ export default function LandingPage() {
     useEffect(() => {
         (async () => {
             setLoading(true)
-            await axios.get('/posts')
+            const data = {
+                user_id: userData._id
+            }
+            await axios.post('/posts', data)
                 .then(({ data }) => {
                     setPosts(data)
                     setLoading(false)
@@ -29,7 +33,7 @@ export default function LandingPage() {
                     setLoading(false)
                 })
         })()
-    }, [])
+    }, [userData])
 
     return (
         <>

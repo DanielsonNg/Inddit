@@ -43,7 +43,7 @@ router.post('/community/leave/:id', leaveCommunity)
 router.get('/community/posts/:id', getPostsByCommunity)
 router.post('/community/permission', getPermission)
 
-router.get('/posts', getPosts)
+router.post('/posts', getPosts)
 router.post('/post/create', createPost)
 router.get('/post/:id', getPost)
 router.delete('/post/:id', deletePost)

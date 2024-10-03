@@ -8,6 +8,7 @@ const ObjectId = mongoose.Types.ObjectId
 const Comment = require('../models/comments.model')
 const { deleteCommentAndChildren } = require("../utils")
 const Tracker = require('../models/tracker.model')
+// const community = require("./community")
 
 module.exports = {
     async createPost(req, res) {
@@ -22,8 +23,8 @@ module.exports = {
             }
 
             //check if user joined community
-            const track = await Tracker.findOne({user_id:data.user_id, community_id:data.community_id})
-            if(!track){
+            const track = await Tracker.findOne({ user_id: data.user_id, community_id: data.community_id })
+            if (!track) {
                 return res.status(401).json({
                     response_message: 'User Not Authorized to Create Post'
                 })
@@ -55,6 +56,8 @@ module.exports = {
 
     async getPosts(req, res) {
         try {
+            const data = req.body
+
             const posts = await Post.aggregate([
                 {
                     $lookup: {
@@ -89,6 +92,36 @@ module.exports = {
                 {
                     $unwind: "$category",
                 },
+                // {
+                //     $lookup: {
+                //         from: "tracker",
+                //         let: { com_id: "community._id", u_id: data.user_id },
+                //         pipeline: [
+                //             {
+                //                 $match: {
+                //                     $expr: {
+                //                         $and: [
+                //                             { $eq: ["$community._id", "$$com_id"] },
+                //                             { $eq: ["$user_id", "$$u_id"] }
+                //                         ]
+                //                     }
+                //                 }
+                //             }
+                //         ],
+                //         as: "tracker",
+                //     }
+                // },
+                {
+                    $lookup: {
+                        from: "tracker",
+                        localField: "community_id",
+                        foreignField: "community_id",
+                        as: "tracker",
+                    }
+                },
+                // {
+                //     $unwind:"$tracker"
+                // },
                 {
                     $project: {
                         _id: 1,
@@ -101,11 +134,12 @@ module.exports = {
                         "community.description": 1,
                         "community.name": 1,
                         "author.username": 1,
-                        "category.name": 1
+                        "category.name": 1,
+                        "tracker" : 1,
                     }
                 }
             ]);
-
+            console.log(posts)
             return res.status(200).json(posts)
         } catch (error) {
             console.log(error)
