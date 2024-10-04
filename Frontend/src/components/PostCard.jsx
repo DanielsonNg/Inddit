@@ -13,6 +13,7 @@ import axios from '../axios'
 import PostBox from './PostBox'
 
 export default function PostCard(props) {
+    console.log(props.post.tracker)
     const [open, setOpen] = useState(false)
     const [openEdit, setOpenEdit] = useState(false)
     const [content, setContent] = useState(props.post.description)
@@ -25,7 +26,7 @@ export default function PostCard(props) {
     }
 
     const deletePost = async () => {
-        axios.delete(`/post/${props.post._id}`)
+        await axios.delete(`/post/${props.post._id}`)
             .then(({ data }) => {
                 if (props.placement === 'landingpage') {
                     props.deletePostInstant(props.index)
@@ -36,12 +37,12 @@ export default function PostCard(props) {
             })
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault()
         const data = {
             content: content
         }
-        axios.put(`/post/${props.post._id}`, data)
+        await axios.put(`/post/${props.post._id}`, data)
             .then(({ data }) => {
                 editPost(data.description)
                 setContent(data.description)

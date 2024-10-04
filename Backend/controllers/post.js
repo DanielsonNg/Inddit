@@ -58,7 +58,16 @@ module.exports = {
         try {
             const data = req.body
 
-            const posts = await Post.aggregate([
+            const { error } = PostSchema.getAll.validate(data)
+            const valid = error == null
+
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+
+            const pipeline = [
                 {
                     $lookup: {
                         from: "inddits",            // The collection to join
@@ -68,7 +77,8 @@ module.exports = {
                     }
                 },
                 {
-                    $unwind: "$community"          // Unwind the array to make communityInfo a single object
+                    $unwind: "$community",          // Unwind the array to make communityInfo a single object
+                    // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
                 },
                 {
                     $lookup: {
@@ -92,36 +102,120 @@ module.exports = {
                 {
                     $unwind: "$category",
                 },
-                // {
-                //     $lookup: {
-                //         from: "tracker",
-                //         let: { com_id: "community._id", u_id: data.user_id },
-                //         pipeline: [
-                //             {
-                //                 $match: {
-                //                     $expr: {
-                //                         $and: [
-                //                             { $eq: ["$community._id", "$$com_id"] },
-                //                             { $eq: ["$user_id", "$$u_id"] }
-                //                         ]
-                //                     }
-                //                 }
-                //             }
-                //         ],
-                //         as: "tracker",
-                //     }
-                // },
                 {
                     $lookup: {
-                        from: "tracker",
-                        localField: "community_id",
-                        foreignField: "community_id",
-                        as: "tracker",
+                        from: "trackers", // The name of the Tracker collection
+                        localField: "community_id", // Field from Post model
+                        foreignField: "community_id", // Field from Tracker model
+                        as: "tracker" // Output array field for matches
                     }
                 },
-                // {
-                //     $unwind:"$tracker"
-                // },
+                {
+                    $unwind: {
+                        path: "$tracker", // Unwind the tracker array
+                        preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                    }
+                },
+
+
+                {
+                    $match: {
+                        "tracker.user_id": ObjectId.createFromHexString(data.user_id)
+                        // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        "community.logo": 1,
+                        "community.description": 1,
+                        "community.name": 1,
+                        "author.username": 1,
+                        "author._id": 1,
+                        "category.name": 1,
+                        "tracker.permission": 1
+                    }
+                }
+                // pipeline.push(
+                //     {
+                //         $match: {
+                //             "tracker.user_id": ObjectId.createFromHexString(data.user_id)
+                //             // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                //         }
+                //     },
+                // )
+
+
+                // pipeline.push({
+                //     $project: {
+                //         _id: 1,
+                //         title: 1,
+                //         description: 1,
+                //         likes: 1,
+                //         image: 1,
+                //         community_id: 1,
+                //         "community.logo": 1,
+                //         "community.description": 1,
+                //         "community.name": 1,
+                //         "author.username": 1,
+                //         "author._id": 1,
+                //         "category.name": 1,
+                //         "tracker.permission": 1
+                //     }
+                // })
+            ]
+            const posts = await Post.aggregate(pipeline);
+
+
+            return res.status(200).json(posts)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+    },
+
+    async getPostsGuest(req, res) {
+        try {
+            const posts = await Post.aggregate([
+                {
+                    $lookup: {
+                        from: "inddits",            // The collection to join
+                        localField: "community_id",      // Field in the post collection (foreign key)
+                        foreignField: "_id",            // Field in the community collection (primary key)
+                        as: "community"             // Output array of matched documents from community
+                    }
+                },
+                {
+                    $unwind: "$community",          // Unwind the array to make communityInfo a single object
+                    // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $unwind: "$category",
+                },
                 {
                     $project: {
                         _id: 1,
@@ -135,11 +229,11 @@ module.exports = {
                         "community.name": 1,
                         "author.username": 1,
                         "category.name": 1,
-                        "tracker" : 1,
+                        "tracker.permission": 1,
                     }
                 }
             ]);
-            console.log(posts)
+            // console.log(posts)
             return res.status(200).json(posts)
         } catch (error) {
             console.log(error)

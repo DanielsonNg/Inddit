@@ -7,7 +7,7 @@ import NotFound from './NotFound'
 import Loading from './Loading';
 import { AuthContext } from '../../context/AuthProvider';
 
-export default function LandingPage() {
+export default function LandingPageGuest() {
     const [posts, setPosts] = useState([])
     const { userData, isAuthenticated } = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
@@ -15,10 +15,7 @@ export default function LandingPage() {
     useEffect(() => {
             (async () => {
                 setLoading(true)
-                const data = {
-                    user_id: userData?._id
-                }
-                await axios.post('/posts', data)
+                await axios.post('/postsGuest', data)
                     .then(({ data }) => {
                         setPosts(data)
                         setLoading(false)
@@ -27,7 +24,7 @@ export default function LandingPage() {
                         setLoading(false)
                     })
             })()
-    }, [userData])
+    }, [])
 
     function deletePostInstant(index) {
         const reducedArr = [...posts]

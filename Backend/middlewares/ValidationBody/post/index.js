@@ -12,7 +12,12 @@ const edit = Joi.object().keys({
     content: Joi.string().required()
 })
 
+const getAll = Joi.object().keys({
+    user_id: Joi.string().required()
+})
+
 module.exports = {
     create,
     edit,
+    getAll
 }
