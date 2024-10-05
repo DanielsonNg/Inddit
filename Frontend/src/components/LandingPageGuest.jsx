@@ -15,7 +15,7 @@ export default function LandingPageGuest() {
     useEffect(() => {
             (async () => {
                 setLoading(true)
-                await axios.post('/postsGuest', data)
+                await axios.get('/postsGuest')
                     .then(({ data }) => {
                         setPosts(data)
                         setLoading(false)

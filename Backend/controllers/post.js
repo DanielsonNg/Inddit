@@ -117,11 +117,16 @@ module.exports = {
                     }
                 },
 
-
                 {
-                    $match: {
-                        "tracker.user_id": ObjectId.createFromHexString(data.user_id)
-                        // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                    // Add a conditional field to filter the tracker data based on user_id
+                    $addFields: {
+                        tracker: {
+                            $cond: {
+                                if: { $eq: ["$tracker.user_id", ObjectId.createFromHexString(data.user_id)] },
+                                then: "$tracker", // If the user_id matches, keep the tracker
+                                else: []          // Otherwise, set tracker to an empty array
+                            }
+                        }
                     }
                 },
                 {
@@ -141,33 +146,6 @@ module.exports = {
                         "tracker.permission": 1
                     }
                 }
-                // pipeline.push(
-                //     {
-                //         $match: {
-                //             "tracker.user_id": ObjectId.createFromHexString(data.user_id)
-                //             // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
-                //         }
-                //     },
-                // )
-
-
-                // pipeline.push({
-                //     $project: {
-                //         _id: 1,
-                //         title: 1,
-                //         description: 1,
-                //         likes: 1,
-                //         image: 1,
-                //         community_id: 1,
-                //         "community.logo": 1,
-                //         "community.description": 1,
-                //         "community.name": 1,
-                //         "author.username": 1,
-                //         "author._id": 1,
-                //         "category.name": 1,
-                //         "tracker.permission": 1
-                //     }
-                // })
             ]
             const posts = await Post.aggregate(pipeline);
 
