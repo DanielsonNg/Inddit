@@ -41,6 +41,7 @@ export default function IndditPage() {
         if (userData?._id) {
             await axios.post(`/community/permission`, data)
                 .then(({ data }) => {
+                    console.log(data)
                     setJoin(data.permission)
                 })
         }
@@ -48,7 +49,7 @@ export default function IndditPage() {
 
     useEffect(() => {
         (async () => {
-            if(userData){
+            if (userData) {
                 setLoading(true)
                 const data = {
                     user_id: userData?._id,
@@ -66,31 +67,43 @@ export default function IndditPage() {
                         setPosts(data)
                         setLoading(false)
                     })
-                setPermission()
+                await setPermission()
             }
         })()
     }, [userData])
 
-    function handleJoin(e) {
+    async function handleJoin(e) {
         e.preventDefault()
         const data = {
             user_id: userData._id
         }
-        axios.post(`/community/join/${community._id}`, data)
+        await axios.post(`/community/join/${community._id}`, data)
             .then(async ({ data }) => {
                 setJoin(data.is_join)
             })
+        await axios.post(`/community/posts/${id}`, data)
+            .then(({ data }) => {
+                setPosts(data)
+                setLoading(false)
+            })
+        await setPermission()
     }
 
-    function handleLeave(e) {
+    async function handleLeave(e) {
         e.preventDefault()
         const data = {
             user_id: userData._id
         }
-        axios.post(`/community/leave/${community._id}`, data)
+        await axios.post(`/community/leave/${community._id}`, data)
             .then(async ({ data }) => {
                 setJoin(data.is_join)
             })
+        await axios.post(`/community/posts/${id}`, data)
+            .then(({ data }) => {
+                setPosts(data)
+                setLoading(false)
+            })
+        await setPermission()
     }
 
 

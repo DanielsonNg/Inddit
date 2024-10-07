@@ -90,10 +90,9 @@ module.exports = {
                     response_message: error.message
                 })
             }
-
             const track = await Tracker.findOne({ community_id: req.params.id, user_id: req.body.user_id })
             if (!track) {
-                const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id })
+                const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id, permission: 1 })
                 return res.status(200).json({ create: create, is_join: 1 })
             } else {
                 return res.status(500)
@@ -170,25 +169,22 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "trackers", 
-                        localField: "community_id", 
-                        foreignField: "community_id", 
-                        as: "tracker" 
+                        from: "trackers", // The name of the Tracker collection
+                        localField: "community_id", // Field from Post model
+                        foreignField: "community_id", // Field from Tracker model
+                        as: "tracker" // Output array field for matches
                     }
                 },
                 {
-                    $unwind: {
-                        path: "$tracker",
-                        preserveNullAndEmptyArrays: true 
-                    }
-                },
-                {
+                    // Add a conditional field to filter the tracker data based on user_id
                     $addFields: {
                         tracker: {
-                            $cond: {
-                                if: { $eq: ["$tracker.user_id", ObjectId.createFromHexString(data.user_id)] },
-                                then: "$tracker", 
-                                else: []         
+                            $filter: {
+                                input: "$tracker",        // The tracker array to filter
+                                as: "tr",                 // Alias for each element in the array
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)] // Filter by user_id
+                                }
                             }
                         }
                     }
@@ -231,8 +227,10 @@ module.exports = {
             }
             const track = await Tracker.findOne({ user_id: data.user_id, community_id: data.community_id })
             if (track) {
+                // console.log('tracked')
                 return res.status(200).json({ permission: 1 })
             } else {
+                // console.log('leave')
                 return res.status(200).json({ permission: 0 })
             }
         } catch (error) {

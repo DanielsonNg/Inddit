@@ -65,7 +65,7 @@ export default function PostCard(props) {
                         <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
                     </div>
                     <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px', cursor: 'pointer' }}>
-                        {!props.post.tracker[0]?.permission && 'Join Now'}
+                        {!props.post.tracker[0]?.permission ? 'Join Now' : ''}
                         {props.post.tracker[0]?.permission < ADMIN_ROLE ?
                             props.post.author._id === props.user_id &&
                             <Dropdown open={open}>
