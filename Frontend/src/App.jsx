@@ -12,6 +12,7 @@ import RootLayout from './layouts/RootLayout'
 import IndditPage from './components/IndditPage'
 import PostCreate from './components/PostCreate'
 import LandingPageGuest from './components/LandingPageGuest'
+import IndditPageGuest from './components/IndditPageGuest'
 
 function App() {  
   const {isAuthenticated} = useAuth()
@@ -19,10 +20,11 @@ function App() {
     <>
     <Routes>
       <Route path='/' element={<RootLayout />}>
-        <Route index element={!isAuthenticated ? <LandingPageGuest/> : <LandingPage />} /> 
+        <Route index element={isAuthenticated ? <LandingPage /> : <LandingPageGuest/> } /> 
         <Route path='/post/:id' element={<Post />} />
         {/* <Route exact path="/inddit" render={() => (<IndditPage id={id} />)} /> */}
         <Route path='/inddit/:id' element={<IndditPage />} />
+        <Route path='/inddit/guest/:id' element={<IndditPageGuest />} />
         <Route path='/post/create/:id' element={<PostCreate />} />
       </Route>
       <Route path='/login' element={!isAuthenticated ? <LoginPage/> : <LandingPage />} />

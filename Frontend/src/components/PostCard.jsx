@@ -8,12 +8,14 @@ import { Menu } from '@mui/base/Menu';
 import { MenuButton } from '@mui/base/MenuButton';
 import { MenuItem, styled } from '@mui/material';
 import React, { useState } from 'react';
-import { cardColor } from '../utils/index'
+import { ADMIN_ROLE, cardColor } from '../utils/index'
 import axios from '../axios'
 import PostBox from './PostBox'
 
 export default function PostCard(props) {
-    console.log(props.post.tracker)
+    // console.log('user: '+props.user_id)
+    // console.log(props.post)
+    // console.log(props.post.tracker[0])
     const [open, setOpen] = useState(false)
     const [openEdit, setOpenEdit] = useState(false)
     const [content, setContent] = useState(props.post.description)
@@ -62,16 +64,27 @@ export default function PostCard(props) {
                         &#160;&#160;&#160;
                         <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
                     </div>
-                    <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px' }}>
-                        Join Now
-                        <Dropdown open={open}>
-                            <MenuButton onClick={() => setOpen((prevVal) => !prevVal)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
-                            <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
-                                <MenuItem onClick={() => setOpenEdit(true)}>Edit Post</MenuItem>
-                                <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem>
-                                {/* <MenuItem onClick={createHandleMenuClick('Log out')}>Log out</MenuItem> */}
-                            </Menu>
-                        </Dropdown>
+                    <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px', cursor: 'pointer' }}>
+                        {!props.post.tracker[0]?.permission && 'Join Now'}
+                        {props.post.tracker[0]?.permission < ADMIN_ROLE ?
+                            props.post.author._id === props.user_id &&
+                            <Dropdown open={open}>
+                                <MenuButton onClick={() => setOpen((prevVal) => !prevVal)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
+                                <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
+                                    <MenuItem onClick={() => setOpenEdit(true)}>Edit Post</MenuItem>
+                                    <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem>
+                                </Menu>
+                            </Dropdown>
+                            :
+                            props.post.tracker[0]?.permission ? <Dropdown open={open}>
+                                <MenuButton onClick={() => setOpen((prevVal) => !prevVal)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
+                                <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
+                                    {props.post.author._id === props.user_id ? <MenuItem onClick={() => setOpenEdit(true)}>Edit Post</MenuItem> : ''}
+                                    {props.post.author._id === props.user_id || props.post.tracker[0]?.permission >= ADMIN_ROLE ?
+                                        <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem> : ''
+                                    }
+                                </Menu>
+                            </Dropdown> : ''}
                     </div>
                 </div>
                 <div style={{ fontSize: '16px', fontWeight: 'lighter' }}>
@@ -88,7 +101,7 @@ export default function PostCard(props) {
                             <textarea value={content} onChange={(e) => setContent(e.target.value)} type="text" style={{ minHeight: '50px', fontSize: '16px', borderRadius: '0px', width: '100%', resize: 'none' }} />
                             <div style={{ display: 'flex', justifyContent: 'right' }}>
                                 <div style={{ height: '30px', borderRadius: '5px', marginRight: '10px', cursor: 'pointer' }} onClick={() => setOpenEdit(false)}>Close</div>
-                                <div style={{ height: '30px', borderRadius: '5px', cursor: 'pointer' }} onClick={(e)=>handleSubmit(e)}>Edit</div>
+                                <div style={{ height: '30px', borderRadius: '5px', cursor: 'pointer' }} onClick={(e) => handleSubmit(e)}>Edit</div>
                             </div>
                         </form>
                     </div>

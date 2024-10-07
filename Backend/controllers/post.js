@@ -111,20 +111,15 @@ module.exports = {
                     }
                 },
                 {
-                    $unwind: {
-                        path: "$tracker", // Unwind the tracker array
-                        preserveNullAndEmptyArrays: true // Keep posts even if no matches found
-                    }
-                },
-
-                {
                     // Add a conditional field to filter the tracker data based on user_id
                     $addFields: {
                         tracker: {
-                            $cond: {
-                                if: { $eq: ["$tracker.user_id", ObjectId.createFromHexString(data.user_id)] },
-                                then: "$tracker", // If the user_id matches, keep the tracker
-                                else: []          // Otherwise, set tracker to an empty array
+                            $filter: {
+                                input: "$tracker",        // The tracker array to filter
+                                as: "tr",                 // Alias for each element in the array
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)] // Filter by user_id
+                                }
                             }
                         }
                     }
@@ -149,7 +144,7 @@ module.exports = {
             ]
             const posts = await Post.aggregate(pipeline);
 
-
+            // console.log(posts)
             return res.status(200).json(posts)
         } catch (error) {
             console.log(error)
@@ -222,6 +217,8 @@ module.exports = {
     async getPost(req, res) {
         try {
             const id = req.params.id
+            const data = req.body
+            // console.log(data)
             const post = await Post.aggregate([
                 {
                     $match: { _id: ObjectId.createFromHexString(id) }
@@ -260,6 +257,28 @@ module.exports = {
                     $unwind: "$category",
                 },
                 {
+                    $lookup: {
+                        from: "trackers", // The name of the Tracker collection
+                        localField: "community_id", // Field from Post model
+                        foreignField: "community_id", // Field from Tracker model
+                        as: "tracker" // Output array field for matches
+                    }
+                },
+                {
+                    // Add a conditional field to filter the tracker data based on user_id
+                    $addFields: {
+                        tracker: {
+                            $filter: {
+                                input: "$tracker",        // The tracker array to filter
+                                as: "tr",                 // Alias for each element in the array
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)] // Filter by user_id
+                                }
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -267,14 +286,17 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        "author._id": 1,
                         "community.logo": 1,
                         "community.description": 1,
                         "community.name": 1,
                         "author.username": 1,
-                        "category.name": 1
+                        "category.name": 1,
+                        "tracker.permission": 1,
                     }
                 },
             ]);
+            // console.log(post)
             return res.status(200).json(post)
         } catch (error) {
             console.log(error)

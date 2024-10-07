@@ -10,9 +10,8 @@ import axios from '../axios';
 import { Button } from '@mui/material';
 import Loading from './Loading';
 import { useAuth } from "../../context/AuthProvider"
-import NotFound from './NotFound';
 
-export default function IndditPage() {
+export default function IndditPageGuest() {
     const { userData } = useAuth()
     const { id } = useParams()
     const navigate = useNavigate()
@@ -26,7 +25,7 @@ export default function IndditPage() {
 
     const [loading, setLoading] = useState(false)
     const [join, setJoin] = useState(0)
-
+    
     function deletePostInstant(index) {
         const reducedArr = [...posts]
         reducedArr.splice(index, 1)
@@ -38,7 +37,7 @@ export default function IndditPage() {
             user_id: userData?._id,
             community_id: id
         }
-        if (userData?._id) {
+        if (userData._id) {
             await axios.post(`/community/permission`, data)
                 .then(({ data }) => {
                     setJoin(data.permission)
@@ -48,27 +47,25 @@ export default function IndditPage() {
 
     useEffect(() => {
         (async () => {
-            if(userData){
-                setLoading(true)
-                const data = {
-                    user_id: userData?._id,
-                    community_id: id
-                }
-                await axios.get(`/community/${id}`)
-                    .then(({ data }) => {
-                        setCommunity(data)
-                    })
-                    .catch((error) => {
-                        navigate('/')
-                    })
-                await axios.post(`/community/posts/${id}`, data)
-                    .then(({ data }) => {
-                        setPosts(data)
-                        setLoading(false)
-                    })
-                setPermission()
-            }
+            setLoading(true)
+            await axios.get(`/community/${id}`)
+                .then(({ data }) => {
+                    setCommunity(data)
+                })
+                .catch((error) => {
+                    navigate('/')
+                })
+            await axios.get(`/community/posts/${id}`)
+                .then(({ data }) => {
+                    setPosts(data)
+                    setLoading(false)
+                })
         })()
+
+    }, [])
+
+    useEffect(() => {
+        setPermission()
     }, [userData])
 
     function handleJoin(e) {
@@ -117,7 +114,7 @@ export default function IndditPage() {
                                 <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                             </div>
                             <div style={{ marginTop: '40px' }}>
-                                <h1>i/{community?.name}</h1>
+                                <h1>i/{community.name}</h1>
                             </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
@@ -125,7 +122,7 @@ export default function IndditPage() {
                                 style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 Join Community
                             </div>}
-                            {join === 1 && userData?._id !== community.owner_id && <div onClick={(e) => handleLeave(e)}
+                            {join === 1 && <div onClick={(e) => handleLeave(e)}
                                 style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 Leave Community
                             </div>}
@@ -144,7 +141,7 @@ export default function IndditPage() {
                         <div>
                             <img src={s} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                         </div>
-                        <h3>I/{community?.name}</h3>
+                        <h3>I/{community.name}</h3>
                     </div>
                     <div>
                         <div>
@@ -161,16 +158,14 @@ export default function IndditPage() {
                     <h1>de</h1>
                 </div>
                 <div style={{ padding: '0px 50px 10px 50px', width: '100%', flexWrap: 'wrap', fontSize: '16px', fontWeight: 'lighter' }}>
-                    {community?.description}
+                    {community.description}
                 </div>
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
-                        {posts?.length > 0 ? posts.map((post, index) => (
-                            <PostCard key={index} placement='landingpage' user_id={userData?._id} post={post} index={index} deletePostInstant={deletePostInstant} />
-                        )) :
-                            <NotFound />
-                        }
+                        {posts ? posts.map((post, index) => (
+                            <PostCard key={index} placement='landingpage' post={post} index={index} deletePostInstant={deletePostInstant} />
+                        )) : ''}
                         {/* <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' /> */}

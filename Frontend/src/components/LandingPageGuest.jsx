@@ -6,6 +6,7 @@ import axios from '../axios';
 import NotFound from './NotFound'
 import Loading from './Loading';
 import { AuthContext } from '../../context/AuthProvider';
+import PostCardGuest from './PostCardGuest';
 
 export default function LandingPageGuest() {
     const [posts, setPosts] = useState([])
@@ -38,7 +39,7 @@ export default function LandingPageGuest() {
                 {loading && <Loading />}
                 {!loading && <>
                     {posts ? posts.map((post, index) => (
-                        <PostCard placement='landingpage' key={index} index={index} post={post} deletePostInstant={deletePostInstant} />
+                        <PostCardGuest placement='landingpage' key={index} index={index} post={post} deletePostInstant={deletePostInstant} />
                     )) : <NotFound />}
                 </>}
             </div>

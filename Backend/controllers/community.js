@@ -128,6 +128,7 @@ module.exports = {
 
     async getPostsByCommunity(req, res) {
         try {
+            const data = req.body
             const posts = await Post.aggregate([
                 {
                     $match: {
@@ -168,6 +169,31 @@ module.exports = {
                     $unwind: "$category",
                 },
                 {
+                    $lookup: {
+                        from: "trackers", 
+                        localField: "community_id", 
+                        foreignField: "community_id", 
+                        as: "tracker" 
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$tracker",
+                        preserveNullAndEmptyArrays: true 
+                    }
+                },
+                {
+                    $addFields: {
+                        tracker: {
+                            $cond: {
+                                if: { $eq: ["$tracker.user_id", ObjectId.createFromHexString(data.user_id)] },
+                                then: "$tracker", 
+                                else: []         
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -175,13 +201,16 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        owner_id: 1,
+                        "author._id": 1,
                         "community.logo": 1,
                         "community.description": 1,
                         "community.name": 1,
                         "author.username": 1,
-                        "category.name": 1
+                        "category.name": 1,
+                        "tracker.permission": 1,
                     }
-                }
+                },
             ]);
             return res.status(200).json(posts)
         } catch (error) {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import PostCard from "./PostCard"
 import RightCard from "./RightCard,"
 import styles from "../css/landingpage.module.css"
@@ -8,30 +8,42 @@ import imageTest from '../assets/Night.jpg'
 import HotPost from "./HotPost"
 import axios from "../axios"
 import Loading from "./Loading"
+import { useAuth } from "../../context/AuthProvider"
 
 export default function Post() {
     let { id } = useParams()
     const [post, setPost] = useState()
+    const {userData} = useAuth()
 
     const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
-      
         (async () => {
+            // console.log(userData)
             setLoading(true)
-            await axios.get(`/post/${id}`)
-                .then(({ data }) => {
-                    setPost(data[0])
-                    setLoading(false)
-                })
+            const data = {
+                user_id: userData?._id
+            }
+            if(userData){
+                await axios.post(`/post/${id}`, data)
+                    .then(({ data }) => {
+                        setPost(data[0])
+                        setLoading(false)
+                    })
+            }
         })()
       
-    }, [])
+    }, [userData])
+
+    function deletePostInstant(index) {
+        navigate('/')
+    }
 
     return (
         <>
             <div className={styles.mid}>
-                {post ? <PostCard placement="post" post={post} /> : <Loading />}
+                {post ? <PostCard placement="post" key={post._id} deletePostInstant={deletePostInstant} user_id={userData?._id} post={post} /> : <Loading />}
                 <Comments postId={id} />
                 {/* <PostCard /> */}
             </div>

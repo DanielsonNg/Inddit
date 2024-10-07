@@ -41,7 +41,7 @@ export default function LandingPage() {
                 {loading && <Loading />}
                 {!loading && <>
                     {posts ? posts.map((post, index) => (
-                        <PostCard placement='landingpage' key={index} index={index} post={post} deletePostInstant={deletePostInstant} />
+                        <PostCard placement='landingpage' key={index} index={index} post={post} deletePostInstant={deletePostInstant} user_id={userData?._id} />
                     )) : <NotFound />}
                 </>}
             </div>
