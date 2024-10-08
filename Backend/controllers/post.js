@@ -317,7 +317,7 @@ module.exports = {
             await cloudinary.uploader.destroy(post.image_public_id)
             const deletePost = await Post.findByIdAndDelete(id)
 
-            return res.status(200).json({ msg: 'Post Deleted Successfully' })
+            return res.status(200).json({post:post, delete:deletePost, msg: 'Post Deleted Successfully' })
         } catch (error) {
             console.log(error)
             return res.status(500).json(error.message)

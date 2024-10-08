@@ -7,7 +7,8 @@ const create = Joi.object().keys({
     banner: Joi.string().required(),
     logo: Joi.string().required(),
     user_id: Joi.string().required(),
-    token: Joi.string()
+    join_approval: Joi.boolean().required(),
+    token: Joi.string(),
 })
 
 const find = Joi.object().keys({

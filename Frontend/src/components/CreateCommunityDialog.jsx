@@ -1,4 +1,4 @@
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, tabScrollButtonClasses, TextField } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Switch, tabScrollButtonClasses, TextField } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { Context } from '../layouts/RootLayout';
 import addIcon from '../assets/t.png'
@@ -22,6 +22,8 @@ export default function CreateCommunityDialog() {
     const [selectedCategory, setSelectedCategory] = useState('')
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(false)
+    const [joinApproval, setJoinApproval] = useState(true)
+
     const [errorName, setErrorName] = useState('')
     const [errorDescription, setErrorDescription] = useState('')
     const [errorBanner, setErrorBanner] = useState('')
@@ -31,6 +33,8 @@ export default function CreateCommunityDialog() {
     const navigate = useNavigate()
 
     const { userData, token } = useAuth()
+
+    const label = { inputProps: { 'aria-label': 'Join Need Approval' } };
 
     const getCategories = async () => {
         const categories = await axios.get('/categories/get')
@@ -98,12 +102,14 @@ export default function CreateCommunityDialog() {
             category: selectedCategory,
             user_id: userData._id,
             token: token,
+            join_approval: joinApproval
         }
         await axios.post('/community/create', data)
             .then(({ data }) => {
-                navigate(`/inddit/${data.data._id}`)
                 setLoading(false)
                 setOpen(false)
+                navigate(`/inddit/${data.data._id}`)
+                window.location.reload()
             })
             .catch((err) => {
                 setErrorLogo('File too Large')
@@ -138,6 +144,10 @@ export default function CreateCommunityDialog() {
         if (name && description && logo && banner && selectedCategory) {
             save()
         }
+    }
+
+    async function handleJoinApproval() {
+        setJoinApproval(prevJoin => !prevJoin)
     }
 
     return (
@@ -199,7 +209,7 @@ export default function CreateCommunityDialog() {
                         onChange={handleDescription}
                     />
                     {errorDescription && <p style={{ color: 'red' }}>{errorDescription}</p>}
-                    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly'}}>
                         {/* logo */}
                         <div>
                             <h2>Logo</h2>
@@ -251,17 +261,24 @@ export default function CreateCommunityDialog() {
                             {errorBanner && <p style={{ color: 'red' }}>{errorBanner}</p>}
                         </div>
                     </div>
-                    <h2>Category</h2>
-                    {/* <SelectInput>Select Community</SelectInput> */}
-                    <select onChange={handleCategory} value={selectedCategory} style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
-                        <option value={null}>Select Category</option>
-                        {categories ? categories.map((c) => (
-                            <option value={c.name} key={c.name}>{c.name}</option>
-                        )) :
-                            (<option>Category is Empty</option>)
-                        }
-                    </select>
-                    {errorCategory && <p style={{ color: 'red' }}>{errorCategory}</p>}
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly'}}>
+                        <div style={{width:'100%'}}>
+                            <h2>Category</h2>
+                            <select onChange={handleCategory} value={selectedCategory} style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
+                                <option value={null}>Select Category</option>
+                                {categories ? categories.map((c) => (
+                                    <option value={c.name} key={c.name}>{c.name}</option>
+                                )) :
+                                    (<option>Category is Empty</option>)
+                                }
+                            </select>
+                            {errorCategory && <p style={{ color: 'red' }}>{errorCategory}</p>}
+                        </div>
+                        <div style={{width:'100%'}}>
+                            <h2>Join Approval</h2>
+                            <Switch value={joinApproval} onChange={() => handleJoinApproval()} />
+                        </div>
+                    </div>
 
                 </DialogContent>
                 <DialogActions>

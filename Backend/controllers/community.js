@@ -9,6 +9,8 @@ const ObjectId = mongoose.Types.ObjectId
 
 module.exports = {
     async createCommunity(req, res) {
+        let logo
+        let banner
         try {
             const data = req.body
             const { error } = CommunitySchema.create.validate(data)
@@ -26,10 +28,10 @@ module.exports = {
             }
 
             const category = await Category.find({ name: data.category })
-            const logo = await cloudinary.uploader.upload(data.logo, {
+            logo = await cloudinary.uploader.upload(data.logo, {
                 folder: "Inddit"
             })
-            const banner = await cloudinary.uploader.upload(data.banner, {
+            banner = await cloudinary.uploader.upload(data.banner, {
                 folder: "Inddit"
             })
 
@@ -40,8 +42,7 @@ module.exports = {
                 logo: logo.secure_url,
                 category_id: category[0]._id,
                 owner_id: data.user_id,
-                auto_join: data.auto_join,
-
+                join_approval: data.join_approval
             })
 
             const track = await Tracker.create({ community_id: create._id, user_id: data.user_id, permission: 3 })
@@ -50,6 +51,12 @@ module.exports = {
         }
         catch (error) {
             console.log(error)
+            if (logo) {
+                await cloudinary.uploader.destroy(logo.public_id)
+            }
+            if (banner) {
+                await cloudinary.uploader.destroy(banner.public_id)
+            }
             return res.status(500).json({ msg: error.message })
         }
 
@@ -96,12 +103,12 @@ module.exports = {
             const community = await Inddit.findById(req.params.id)
             if (!track) {
                 //auto join
-                if(community.auto_join === 1){
+                if (community.join_approval === 0) {
                     const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id, permission: 1 })
                     return res.status(200).json({ create: create, is_join: 1 })
                 }
                 //need approval from admin/owner
-                if(community.auto_join === 0){
+                if (community.join_approval === 1) {
                     const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id, permission: 0 })
                     return res.status(200).json({ create: create, is_join: 0 })
                 }
@@ -237,19 +244,21 @@ module.exports = {
                 })
             }
             const track = await Tracker.findOne({ user_id: data.user_id, community_id: data.community_id })
-            // if (track) {
-            //     // console.log('tracked')
-            //     return res.status(200).json({ permission: 1 })
-            // } else {
-            //     // console.log('leave')
-            //     return res.status(200).json({ permission: 0 })
-            // }
             return res.status(200).json(track)
         } catch (error) {
             console.log(error)
             return res.status(500)
         }
 
+    },
+
+    async deleteCommunity(req, res) {
+        try {
+
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({ msg: error })
+        }
     }
 
 }
