@@ -30,7 +30,11 @@ const IndditSchema = mongoose.Schema(
         },
         join_approval:{
             type: Number,
-            required: [true, "Auto Join value is required"]
+            required: [true, "Join Approval is required"]
+        },
+        post_approval:{
+            type: Number,
+            required: [true, "Post Approval is required"]
         }
     },
     {

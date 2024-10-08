@@ -23,6 +23,7 @@ export default function CreateCommunityDialog() {
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(false)
     const [joinApproval, setJoinApproval] = useState(true)
+    const [postApproval, setPostApproval] = useState(true)
 
     const [errorName, setErrorName] = useState('')
     const [errorDescription, setErrorDescription] = useState('')
@@ -102,7 +103,8 @@ export default function CreateCommunityDialog() {
             category: selectedCategory,
             user_id: userData._id,
             token: token,
-            join_approval: joinApproval
+            join_approval: joinApproval,
+            post_approval: postApproval,
         }
         await axios.post('/community/create', data)
             .then(({ data }) => {
@@ -150,6 +152,10 @@ export default function CreateCommunityDialog() {
         setJoinApproval(prevJoin => !prevJoin)
     }
 
+    async function handlePostApproval() {
+        setPostApproval(prevPost => !prevPost)
+    }
+
     return (
         <Dialog
             open={open}
@@ -168,10 +174,10 @@ export default function CreateCommunityDialog() {
             {loading && <Loading />}
             {!loading && <>
                 <DialogContent>
-                    <h1>
+                    {/* <h1>
                         New Community
-                    </h1>
-                    <h2>Community Name</h2>
+                    </h1> */}
+                    <h2 style={{marginTop:'-20px'}}>Community Name</h2>
                     <textarea
                         type="text"
                         style={{
@@ -209,7 +215,7 @@ export default function CreateCommunityDialog() {
                         onChange={handleDescription}
                     />
                     {errorDescription && <p style={{ color: 'red' }}>{errorDescription}</p>}
-                    <div style={{ display: 'flex', justifyContent: 'space-evenly'}}>
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                         {/* logo */}
                         <div>
                             <h2>Logo</h2>
@@ -261,8 +267,8 @@ export default function CreateCommunityDialog() {
                             {errorBanner && <p style={{ color: 'red' }}>{errorBanner}</p>}
                         </div>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-evenly'}}>
-                        <div style={{width:'100%'}}>
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                        <div style={{ width: '100%' }}>
                             <h2>Category</h2>
                             <select onChange={handleCategory} value={selectedCategory} style={{ width: '150px', height: '50px', backgroundColor: 'black', borderColor: 'black', borderRadius: '10px' }}>
                                 <option value={null}>Select Category</option>
@@ -274,10 +280,14 @@ export default function CreateCommunityDialog() {
                             </select>
                             {errorCategory && <p style={{ color: 'red' }}>{errorCategory}</p>}
                         </div>
-                        <div style={{width:'100%'}}>
+                        <div style={{ width: '100%' }}>
                             <h2>Join Approval</h2>
-                            <Switch value={joinApproval} onChange={() => handleJoinApproval()} />
+                            <Switch checked={joinApproval} value={joinApproval} onChange={() => handleJoinApproval()} />
                         </div>
+                    </div>
+                    <div style={{ width: '100%' }}>
+                        <h2>Post Approval</h2>
+                        <Switch checked={postApproval} value={postApproval} onChange={() => handlePostApproval()} />
                     </div>
 
                 </DialogContent>

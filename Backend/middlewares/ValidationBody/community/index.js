@@ -8,6 +8,7 @@ const create = Joi.object().keys({
     logo: Joi.string().required(),
     user_id: Joi.string().required(),
     join_approval: Joi.boolean().required(),
+    post_approval: Joi.boolean().required(),
     token: Joi.string(),
 })
 

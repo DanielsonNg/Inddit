@@ -42,7 +42,8 @@ module.exports = {
                 logo: logo.secure_url,
                 category_id: category[0]._id,
                 owner_id: data.user_id,
-                join_approval: data.join_approval
+                join_approval: data.join_approval ? 1 : 0,
+                post_approval: data.post_approval ? 1 : 0,
             })
 
             const track = await Tracker.create({ community_id: create._id, user_id: data.user_id, permission: 3 })
