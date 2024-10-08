@@ -20,7 +20,7 @@ export default function PostCardGuest(props) {
             <div className={props.placement === 'landingpage' ? styles.cardmidLimited : styles.cardmid}>
                 <div style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'row' }}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
+                        <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }} loading='lazy'></img>&#160;
                         <Link to={`/inddit/guest/${props.post.community_id}`} style={{ color: 'white' }}>
                             <p style={{ fontWeight: 'lighter' }}>i/{props.post.community.name}</p>
                         </Link>

@@ -38,7 +38,7 @@ export default function LandingPageGuest() {
             <div className={styles.mid}>
                 {loading && <Loading />}
                 {!loading && <>
-                    {posts ? posts.map((post, index) => (
+                    {posts.length > 0 ? posts.map((post, index) => (
                         <PostCardGuest placement='landingpage' key={index} index={index} post={post} deletePostInstant={deletePostInstant} />
                     )) : <NotFound />}
                 </>}

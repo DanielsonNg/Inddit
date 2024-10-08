@@ -39,12 +39,14 @@ module.exports = {
                 banner: banner.secure_url,
                 logo: logo.secure_url,
                 category_id: category[0]._id,
-                owner_id: data.user_id
+                owner_id: data.user_id,
+                auto_join: data.auto_join,
+
             })
 
             const track = await Tracker.create({ community_id: create._id, user_id: data.user_id, permission: 3 })
 
-            return res.status(200).json({ data: create, msg: 'Community Successfully Created' })
+            return res.status(200).json({ data: create, track: track, msg: 'Community Successfully Created' })
         }
         catch (error) {
             console.log(error)
@@ -91,9 +93,18 @@ module.exports = {
                 })
             }
             const track = await Tracker.findOne({ community_id: req.params.id, user_id: req.body.user_id })
+            const community = await Inddit.findById(req.params.id)
             if (!track) {
-                const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id, permission: 1 })
-                return res.status(200).json({ create: create, is_join: 1 })
+                //auto join
+                if(community.auto_join === 1){
+                    const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id, permission: 1 })
+                    return res.status(200).json({ create: create, is_join: 1 })
+                }
+                //need approval from admin/owner
+                if(community.auto_join === 0){
+                    const create = await Tracker.create({ community_id: req.params.id, user_id: req.body.user_id, permission: 0 })
+                    return res.status(200).json({ create: create, is_join: 0 })
+                }
             } else {
                 return res.status(500)
             }
@@ -226,13 +237,14 @@ module.exports = {
                 })
             }
             const track = await Tracker.findOne({ user_id: data.user_id, community_id: data.community_id })
-            if (track) {
-                // console.log('tracked')
-                return res.status(200).json({ permission: 1 })
-            } else {
-                // console.log('leave')
-                return res.status(200).json({ permission: 0 })
-            }
+            // if (track) {
+            //     // console.log('tracked')
+            //     return res.status(200).json({ permission: 1 })
+            // } else {
+            //     // console.log('leave')
+            //     return res.status(200).json({ permission: 0 })
+            // }
+            return res.status(200).json(track)
         } catch (error) {
             console.log(error)
             return res.status(500)

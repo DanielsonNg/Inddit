@@ -10,6 +10,7 @@ import axios from '../axios';
 import { Button } from '@mui/material';
 import Loading from './Loading';
 import { useAuth } from "../../context/AuthProvider"
+import NotFound from './NotFound';
 
 export default function IndditPageGuest() {
     const { userData } = useAuth()
@@ -163,9 +164,9 @@ export default function IndditPageGuest() {
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
-                        {posts ? posts.map((post, index) => (
+                        {posts.length > 0 ? posts.map((post, index) => (
                             <PostCard key={index} placement='landingpage' post={post} index={index} deletePostInstant={deletePostInstant} />
-                        )) : ''}
+                        )) : <NotFound />}
                         {/* <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' />
                         <PostCard placement='landingpage' /> */}

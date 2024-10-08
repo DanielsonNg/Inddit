@@ -41,8 +41,7 @@ export default function IndditPage() {
         if (userData?._id) {
             await axios.post(`/community/permission`, data)
                 .then(({ data }) => {
-                    console.log(data)
-                    setJoin(data.permission)
+                    data ? setJoin(data.permission) : setJoin(null)
                 })
         }
     }
@@ -118,8 +117,8 @@ export default function IndditPage() {
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'center', minWidth: '300px', width: '100%' }}>
                     <div style={{ width: '100%' }}>
-                        <img src={loginImage}
-                            style={{ width: '100%', height: '140px', borderRadius: '20px', }}>
+                        <img src={community.banner} loading='lazy'
+                            style={{ width: '100%', height: '140px', borderRadius: '20px' }}>
                         </img>
                     </div>
                 </div>
@@ -127,27 +126,36 @@ export default function IndditPage() {
                     <div style={{ display: 'flex', flexDirection: 'row', marginTop: '-55px', justifyContent: 'space-between', padding: '0px 50px', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', flexWrap: 'wrap' }}>
                             <div>
-                                <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
+                                <img src={community.logo} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                             </div>
                             <div style={{ marginTop: '40px' }}>
                                 <h1>i/{community?.name}</h1>
                             </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
-                            {join === 0 && <div onClick={(e) => handleJoin(e)}
+
+                            {join === null && <div onClick={(e) => handleJoin(e)}
                                 style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 Join Community
                             </div>}
-                            {join === 1 && userData?._id !== community.owner_id && <div onClick={(e) => handleLeave(e)}
+                            {join === 0 && <div
+                                style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                Requesting Join
+                            </div>}
+                            {join > 0 && userData?._id !== community.owner_id && <div onClick={(e) => handleLeave(e)}
                                 style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 Leave Community
                             </div>}
-                            {join === 1 && <div>
+                            {join > 0 && <div>
                                 <Link to={`/post/create/${id}`}>
                                     <Button color='secondary' style={{ borderRadius: '20px', height: '40px' }}>
                                         <h3 style={{ fontWeight: 'lighter' }}>Create Post</h3>
                                     </Button>
                                 </Link>
+                            </div>}
+                            {join > 1 && <div onClick={() => navigate(`/community/manage/${id}`)}
+                                style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                Manage Community
                             </div>}
                         </div>
                     </div>

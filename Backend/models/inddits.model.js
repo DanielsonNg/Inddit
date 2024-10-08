@@ -27,6 +27,10 @@ const IndditSchema = mongoose.Schema(
         banner:{
             type: String,
             required: [true, "Banner is required"]
+        },
+        auto_join:{
+            type: Number,
+            required: [true, "Auto Join value is required"]
         }
     },
     {
