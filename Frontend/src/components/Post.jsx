@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import PostCard from "./PostCard"
 import RightCard from "./RightCard,"
@@ -9,11 +9,13 @@ import HotPost from "./HotPost"
 import axios from "../axios"
 import Loading from "./Loading"
 import { useAuth } from "../../context/AuthProvider"
+import { PostProvider, usePost } from "../../context/PostProvider"
 
 export default function Post() {
     let { id } = useParams()
     const [post, setPost] = useState()
     const {userData} = useAuth()
+    const {setPermission} = usePost()
 
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
@@ -29,6 +31,7 @@ export default function Post() {
                 await axios.post(`/post/${id}`, data)
                     .then(({ data }) => {
                         setPost(data[0])
+                        setPermission(data[0]?.tracker[0]?.permission ? data[0].tracker[0].permission : null)
                         setLoading(false)
                     })
             }

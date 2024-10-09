@@ -5,12 +5,14 @@ import CommentBox from "./CommentBox"
 import axios from "../axios"
 import Loading from "./Loading"
 import NoData from "./NoData"
+import { useAuth } from "../../context/AuthProvider"
 
 export default function Comments({ postId }) {
     const [openNewComment, setOpenNewComment] = useState(false)
     const [comments, setComments] = useState([])
 
     const [loading, setLoading] = useState(false)
+    const {userData} = useAuth()
 
     useEffect(() => {
         setLoading(true)
@@ -48,7 +50,7 @@ export default function Comments({ postId }) {
             {!loading && <div className={styles.commentCard}>
                 {comments.length > 0 ? comments.map((comment, index) => (
                     <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} 
-                    index={index} comment={comment} level={0} 
+                    index={index} comment={comment} level={0} userId={userData._id}
                     reSetReply={function reSetReply(value) {
                         comment.is_replied = value
                     }} />

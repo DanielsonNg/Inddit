@@ -5,8 +5,11 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import CommentBox from "./CommentBox";
 import axios from "../axios";
-export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply }) {
-    // console.log(comment)
+import { usePost } from "../../context/PostProvider";
+import { useAuth } from "../../context/AuthProvider";
+import { ADMIN_ROLE } from "../utils";
+export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply, userId }) {
+    // console.log(userId)
     let left = level * 5
     let right = 100 - left
     const [openComment, setOpenCommentBox] = useState(false)
@@ -17,6 +20,8 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
     const [content, setContent] = useState(comment.content)
     const [edit, setEdit] = useState(comment.content)
     const [openEdit, setOpenEdit] = useState(false)
+
+    const { permission } = usePost()
 
     async function handleOpenReply() {
         setOpenReply((prevValue) => !prevValue)
@@ -45,7 +50,7 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
 
     async function submitEdit() {
         const params = {
-            userId: comment.user._id,
+            userId: comment?.user?._id ? comment.user._id : null,
             newContent: edit
         }
         axios.post(`/comment/edit/${comment._id}`, params)
@@ -64,9 +69,13 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
             })
     }
 
-    async function rreSetReply(value){
+    async function rreSetReply(value) {
         comment.is_replied = value
     }
+
+    // useEffect(() => {
+    //     console.log(permission)
+    // }, [permission])
 
     return (
         <>
@@ -99,8 +108,27 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}><EmojiEmotionsIcon /> &#160;{comment.likes} &#160; &#160;</div>
                             <div style={{ cursor: 'pointer' }} onClick={() => setOpenCommentBox(prevValue => !prevValue)}>Reply</div>&#160; &#160;
+
+                            {permission < ADMIN_ROLE ?
+                                comment.user._id === userId &&
+                                <>
+                                    <div style={{ cursor: 'pointer' }} onClick={() => setOpenEdit(prevValue => !prevValue)}>Edit</div> &#160; &#160;
+                                    <div style={{ cursor: 'pointer' }} onClick={() => deleteComment()}>Delete</div>
+                                </>
+                                :
+                                permission ?
+                                    <>
+                                        {comment.user._id === userId ?
+                                            <>
+                                                <div style={{ cursor: 'pointer' }} onClick={() => setOpenEdit(prevValue => !prevValue)}>Edit</div> &#160; &#160;
+                                            </> : ''}
+                                        {comment.user._id === userId || permission >= ADMIN_ROLE ?
+                                            <div style={{ cursor: 'pointer' }} onClick={() => deleteComment()}>Delete</div> : ''
+                                        }
+                                    </> : ''}
+                            {/* 
                             <div style={{ cursor: 'pointer' }} onClick={() => setOpenEdit(prevValue => !prevValue)}>Edit</div>&#160; &#160;
-                            <div style={{ cursor: 'pointer' }} onClick={() => deleteComment()}>Delete</div>
+                            <div style={{ cursor: 'pointer' }} onClick={() => deleteComment()}>Delete</div> */}
                         </div>
                         <div>
                             {comment.is_replied === 1 ? <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0px' }}>
@@ -115,13 +143,13 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             {replies ? replies.map((reply) => (
                                 <div key={reply._id} style={{ width: '100%', marginTop: '20px' }}>
-                                    <Comment key={reply._id} comment={reply} level={level + 1} deleteCommentInstant={deleteReplyInstant} reSetReply={rreSetReply} />
+                                    <Comment key={reply._id} comment={reply} level={level + 1} deleteCommentInstant={deleteReplyInstant} reSetReply={rreSetReply} userId={userId} />
                                 </div>
                             )) : ''
                             }
                         </div>}
                 </div>
-            </div>
+            </div >
         </>
     )
 }
