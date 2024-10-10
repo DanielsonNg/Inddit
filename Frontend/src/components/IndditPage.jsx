@@ -153,7 +153,7 @@ export default function IndditPage() {
                                     </Button>
                                 </Link>
                             </div>}
-                            {join > 1 && <div onClick={() => navigate(`/community/manage/${id}`)}
+                            {join > 1 && <div onClick={() => navigate(`/inddit/manage/${id}`)}
                                 style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 Manage Community
                             </div>}
