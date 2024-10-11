@@ -35,7 +35,15 @@ const IndditSchema = mongoose.Schema(
         post_approval:{
             type: Number,
             required: [true, "Post Approval is required"]
-        }
+        },
+        logo_public_id: {
+            type: String, 
+            required: [true, "Logo public id is required"]
+        },
+        banner_public_id: {
+            type: String, 
+            required: [true, "Banner public id is required"]
+        },
     },
     {
         timestamps: true

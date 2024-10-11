@@ -5,6 +5,8 @@ const Inddit = require("../models/inddits.model")
 const Post = require("../models/post.model")
 const Tracker = require("../models/tracker.model")
 const cloudinary = require("../utils/cloudinary")
+const Comment = require("../models/comments.model")
+const { deleteCommentAndChildren } = require("../utils")
 const ObjectId = mongoose.Types.ObjectId
 
 module.exports = {
@@ -39,7 +41,9 @@ module.exports = {
                 name: data.name,
                 description: data.description,
                 banner: banner.secure_url,
+                banner_public_id: banner.public_id,
                 logo: logo.secure_url,
+                logo_public_id: logo.public_id,
                 category_id: category[0]._id,
                 owner_id: data.user_id,
                 join_approval: data.join_approval ? 1 : 0,
@@ -255,7 +259,32 @@ module.exports = {
 
     async deleteCommunity(req, res) {
         try {
+            const posts = await Post.find({ community_id: req.params.id })
+            if (posts.length > 0) {
+                for (let post of posts) {
+                    const comments = await Comment.find({ parent_id: post._id })
+                    if (comments.length > 0) {
+                        for (const comment of comments) {
+                            await deleteCommentAndChildren(comment._id)
+                        }
+                    }
+                    const postTemp = await Post.findById(post._id)
+                    await cloudinary.uploader.destroy(postTemp.image_public_id)
+                    const deletePost = await Post.findByIdAndDelete(post._id)
+                }
+            }
+            const community = await Inddit.findById(req.params.id)
+            await cloudinary.uploader.destroy(community.logo_public_id)
+            await cloudinary.uploader.destroy(community.banner_public_id)
+            const tracker = await Tracker.find({community_id: req.params.id})
+            if(tracker.length > 0){
+                for(let track of tracker){
+                    const deleteTrack = await Tracker.findByIdAndDelete(track._id)
+                }
+            }
+            const deleteCommunity = await Inddit.findByIdAndDelete(req.params.id)
 
+            return res.status(200).json(deleteCommunity)
         } catch (error) {
             console.log(error)
             return res.status(500).json({ msg: error })
