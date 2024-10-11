@@ -258,6 +258,8 @@ module.exports = {
     },
 
     async deleteCommunity(req, res) {
+        let logo
+        let banner
         try {
             const posts = await Post.find({ community_id: req.params.id })
             if (posts.length > 0) {
@@ -276,9 +278,9 @@ module.exports = {
             const community = await Inddit.findById(req.params.id)
             await cloudinary.uploader.destroy(community.logo_public_id)
             await cloudinary.uploader.destroy(community.banner_public_id)
-            const tracker = await Tracker.find({community_id: req.params.id})
-            if(tracker.length > 0){
-                for(let track of tracker){
+            const tracker = await Tracker.find({ community_id: req.params.id })
+            if (tracker.length > 0) {
+                for (let track of tracker) {
                     const deleteTrack = await Tracker.findByIdAndDelete(track._id)
                 }
             }
@@ -288,6 +290,59 @@ module.exports = {
         } catch (error) {
             console.log(error)
             return res.status(500).json({ msg: error })
+        }
+    },
+
+    async editCommunity(req, res) {
+        try {
+            const { error } = CommunitySchema.edit.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+
+            const id = req.params.id
+            const data = req.body
+
+            const communityTemp = await Inddit.findById(id)
+
+            const updateFields = {
+                description: data.description,
+                join_approval: data.join_approval ? 1 : 0,
+                post_approval: data.post_approval ? 1 : 0,
+            }
+
+            if (req.body.logo) {
+                await cloudinary.uploader.destroy(communityTemp.logo_public_id)
+                logo = await cloudinary.uploader.upload(data.logo, {
+                    folder: 'Inddit'
+                })
+                updateFields.logo = logo.secure_url
+                updateFields.logo_public_id = logo.public_id
+            }
+            if (req.body.banner) {
+                await cloudinary.uploader.destroy(communityTemp.banner_public_id)
+                banner = await cloudinary.uploader.upload(data.banner, {
+                    folder: 'Inddit'
+                })
+                updateFields.banner = banner.secure_url
+                updateFields.banner_public_id = banner.public_id
+            }
+
+            const community = await Inddit.findByIdAndUpdate(id, updateFields, {new:true})
+
+            return res.status(200).json({ communityTemp })
+        } catch (error) {
+            if (logo) {
+                await cloudinary.uploader.destroy(logo.public_id)
+            }
+            if (banner) {
+                await cloudinary.uploader.destroy(banner.public_id)
+            }
+            console.log(error)
+            return res.status(500).json(error)
         }
     }
 

@@ -29,10 +29,19 @@ const permission = Joi.object().keys({
     community_id: Joi.string().required()
 })
 
+const edit = Joi.object().keys({
+    description: Joi.string().required(),
+    join_approval: Joi.boolean().required(),
+    post_approval: Joi.boolean().required(),
+    banner: Joi.string().allow(null),
+    logo:Joi.string().allow(null)
+})
+
 module.exports = {
     create,
     find,
     join,
     leave,
     permission,
+    edit
 }
