@@ -7,6 +7,8 @@ const Tracker = require("../models/tracker.model")
 const cloudinary = require("../utils/cloudinary")
 const Comment = require("../models/comments.model")
 const { deleteCommentAndChildren } = require("../utils")
+const User = require("../models/user.model")
+const { permission } = require("../middlewares/ValidationBody/community")
 const ObjectId = mongoose.Types.ObjectId
 
 module.exports = {
@@ -331,7 +333,7 @@ module.exports = {
                 updateFields.banner_public_id = banner.public_id
             }
 
-            const community = await Inddit.findByIdAndUpdate(id, updateFields, {new:true})
+            const community = await Inddit.findByIdAndUpdate(id, updateFields, { new: true })
 
             return res.status(200).json({ communityTemp })
         } catch (error) {
@@ -341,6 +343,17 @@ module.exports = {
             if (banner) {
                 await cloudinary.uploader.destroy(banner.public_id)
             }
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+    async memberToApprove(req, res) {
+        try {
+            const id = req.params.id
+            const members = await User.find({ community_id: id, permission: 0})
+
+            return res.status(200).json(members)
+        } catch (error) {
             console.log(error)
             return res.status(500).json(error)
         }

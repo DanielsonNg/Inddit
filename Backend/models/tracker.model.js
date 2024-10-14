@@ -20,7 +20,7 @@ const TrackerSchema = mongoose.Schema(
         permission: {
             type: Number,
             default: 0
-        }
+        },
     },
     {
         timestamps: true

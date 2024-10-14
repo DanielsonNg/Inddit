@@ -1,14 +1,12 @@
 const { PostSchema } = require("../middlewares/ValidationBody")
 const Post = require('../models/post.model')
 const cloudinary = require('../utils/cloudinary')
-const User = require('../models/user.model')
 const Inddit = require("../models/inddits.model")
 const { default: mongoose } = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
 const Comment = require('../models/comments.model')
 const { deleteCommentAndChildren } = require("../utils")
 const Tracker = require('../models/tracker.model')
-// const community = require("./community")
 
 module.exports = {
     async createPost(req, res) {
@@ -31,6 +29,8 @@ module.exports = {
             }
 
             let image
+
+            const community = await Inddit.findOne({ _id: data.community_id })
             //upload cloudinary
             if (data.image.length > 0) {
                 image = await cloudinary.uploader.upload(data.image, {
@@ -43,7 +43,8 @@ module.exports = {
                 image: data.image.length > 0 ? image.secure_url : null,
                 image_public_id: data.image.length > 0 ? image.public_id : null,
                 author_id: data.user_id,
-                community_id: data.community_id
+                community_id: data.community_id,
+                status: community.post_approval === 1 ? 0 : 1
             })
 
             return res.status(200).json(create)
@@ -317,7 +318,7 @@ module.exports = {
             await cloudinary.uploader.destroy(post.image_public_id)
             const deletePost = await Post.findByIdAndDelete(id)
 
-            return res.status(200).json({post:post, delete:deletePost, msg: 'Post Deleted Successfully' })
+            return res.status(200).json({ post: post, delete: deletePost, msg: 'Post Deleted Successfully' })
         } catch (error) {
             console.log(error)
             return res.status(500).json(error.message)
@@ -342,4 +343,16 @@ module.exports = {
             return res.status(500).json(error)
         }
     },
+
+    async postToApprove(req, res) {
+        try {
+            const id = req.params.id
+            const post = await Post.find({community_id: id, status: 0})
+
+            return res.status(200).json(post)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    }
 }
