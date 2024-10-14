@@ -348,7 +348,7 @@ module.exports = {
             return res.status(500).json(error)
         }
     },
-    async memberToApprove(req, res) {
+    async membersToApprove(req, res) {
         try {
             const id = req.params.id
             const tracks = await Tracker.find({ community_id: id, permission: 0 })
@@ -372,6 +372,71 @@ module.exports = {
             const id = req.params.id
             const approve = await Tracker.findByIdAndUpdate(id, { status: 1 })
             return res.status(200).json(approve)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async getMembers(req, res) {
+        try {
+            const id = req.params.id
+            const tracks = await Tracker.find({ community_id: id, permission: { $gt: 0 } })
+
+            let members = []
+            for (let track of tracks) {
+                const member = await User.aggregate([
+                    {
+                        $match: {
+                            _id: track.user_id,
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'trackers',
+                            localField: '_id',
+                            foreignField: 'user_id',
+                            as: 'tracker'
+                        }
+                    },
+                    {
+                        $match: {
+                            'tracker.community_id': track.community_id,
+                        }
+                    },
+                    {
+                        $unwind: '$tracker'
+                    },
+                    {
+                        $project: {
+                            _id: 1,
+                            username: 1,
+                            image: 1,
+                            'tracker.permission': 1,
+                            email: 1
+                        }
+                    },
+                ])
+                let role = ''
+                switch (member[0].tracker.permission) {
+                    case 0:
+                        role = 'Requester'
+                        break;
+                    case 1:
+                        role = 'Member'
+                        break;
+                    case 2:
+                        role = 'Admin'
+                        break;
+                    case 3:
+                        role = 'Owner'
+                        break;
+                }
+                member[0].role = role
+                members.push(member[0])
+            }
+            // console.log(members)
+            return res.status(200).json(members)
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)

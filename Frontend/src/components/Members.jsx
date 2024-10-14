@@ -3,16 +3,18 @@ import axios from "../axios"
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { cardColor } from "../utils";
 
-export default function MembersToApprove({ id }) {
+export default function Members({ id }) {
     const [members, setMembers] = useState([])
 
     useEffect(() => {
+
         (async () => {
-            await axios.get(`/community/membersToApprove/${id}`)
+            await axios.get(`/community/members/${id}`)
                 .then(({ data }) => {
                     setMembers(data)
                 })
         })()
+
     }, [])
 
     return (
@@ -23,6 +25,7 @@ export default function MembersToApprove({ id }) {
                         <TableRow>
                             <TableCell sx={{ color: 'white' }} >User</TableCell>
                             <TableCell sx={{ color: 'white' }} >Email</TableCell>
+                            <TableCell sx={{ color: 'white' }} >Role</TableCell>
                             <TableCell sx={{ color: 'white' }} >Action</TableCell>
                         </TableRow>
                     </TableHead>
@@ -32,15 +35,18 @@ export default function MembersToApprove({ id }) {
                                 key={member.name}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row" sx={{ color: 'white', display: 'flex', alignItems: 'center' }}>
-                                    <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={member.image}></img>
-                                    &#160; &#160;
+                                <TableCell component="th" scope="row" sx={{ color: 'white', display:'flex', alignItems:'center' }}>
+                                    <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={member.image}></img> 
+                                    &#160; &#160; 
                                     {member.username}
                                 </TableCell>
                                 <TableCell sx={{ color: 'white' }} >{member.email}</TableCell>
-                                <TableCell sx={{ color: 'white' }} >Accept / Reject</TableCell>
+                                <TableCell sx={{ color: 'white' }} >{member.role}</TableCell>
+                                <TableCell sx={{ color: 'white' }} >Promote/Kick</TableCell>
                             </TableRow>
-                        )) : <TableCell sx={{ color: 'white' }} >No Data</TableCell>}
+                        )) : 
+                        <TableCell sx={{ color: 'white' }} >No Data</TableCell>
+                        }
                     </TableBody>
                 </Table>
             </TableContainer>

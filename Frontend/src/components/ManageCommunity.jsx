@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../axios';
 import GeneralSetting from './GeneralSetting';
-import MembersToApprove from "./MembersToApprove";
+import MembersPage from "./MembersPage";
 export default function ManageCommunity() {
     const navigate = useNavigate()
     const [selectedSetting, setSelectedSetting] = useState(0)
@@ -22,12 +22,16 @@ export default function ManageCommunity() {
         setSelectedSetting(prevValue => value)
     }
 
+    const style = {
+        backgroundColor: 'gray'
+    }
+
     return (
         <>
             <div style={{ display: 'flex', padding: '10px', gap: '2em', }}>
                 {/* Left */}
                 <div style={{ width: '15%', display: 'flex', flexDirection: 'column' }}>
-                    <div onClick={() => handleSetting(0)}>
+                    <div onClick={() => handleSetting(0)} >
                         <LeftCardManage name="General" />
                     </div>
                     <div onClick={() => handleSetting(1)}>
@@ -43,7 +47,7 @@ export default function ManageCommunity() {
                     {/* General Setting */}
                     {selectedSetting === 0 && <GeneralSetting community={community} />}
                     {/* Manage Members */}
-                    {selectedSetting === 1 && <MembersToApprove community={community} />}
+                    {selectedSetting === 1 && <MembersPage community={community} />}
                 </div>
 
             </div>
