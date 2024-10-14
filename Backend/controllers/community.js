@@ -156,7 +156,8 @@ module.exports = {
             const posts = await Post.aggregate([
                 {
                     $match: {
-                        community_id: ObjectId.createFromHexString(req.params.id)
+                        community_id: ObjectId.createFromHexString(req.params.id),
+                        status: 1
                     }
                 },
                 {
@@ -350,13 +351,13 @@ module.exports = {
     async memberToApprove(req, res) {
         try {
             const id = req.params.id
-            const members = await User.find({ community_id: id, permission: 0})
+            const members = await User.find({ community_id: id, permission: 0 })
 
             return res.status(200).json(members)
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)
         }
-    }
+    },
 
 }

@@ -70,6 +70,9 @@ module.exports = {
 
             const pipeline = [
                 {
+                    $match: { status: 1 }
+                },
+                {
                     $lookup: {
                         from: "inddits",            // The collection to join
                         localField: "community_id",      // Field in the post collection (foreign key)
@@ -344,12 +347,69 @@ module.exports = {
         }
     },
 
-    async postToApprove(req, res) {
-        try {
-            const id = req.params.id
-            const post = await Post.find({community_id: id, status: 0})
 
-            return res.status(200).json(post)
+    async postsToApprove(req, res) {
+        try {
+            const data = req.body
+            const posts = await Post.aggregate([
+                {
+                    $match: {
+                        community_id: ObjectId.createFromHexString(req.params.id),
+                        status: 0
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "inddits",            // The collection to join
+                        localField: "community_id",      // Field in the post collection (foreign key)
+                        foreignField: "_id",            // Field in the community collection (primary key)
+                        as: "community"             // Output array of matched documents from community
+                    }
+                },
+                {
+                    $unwind: "$community"          // Unwind the array to make communityInfo a single object
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $unwind: "$category",
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        owner_id: 1,
+                        "author._id": 1,
+                        "community.logo": 1,
+                        "community.description": 1,
+                        "community.name": 1,
+                        "author.username": 1,
+                        "category.name": 1,
+                    }
+                },
+            ]);
+            return res.status(200).json(posts)
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)

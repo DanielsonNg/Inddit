@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../axios';
 import GeneralSetting from './GeneralSetting';
+import MembersToApprove from "./MembersToApprove";
 export default function ManageCommunity() {
     const navigate = useNavigate()
     const [selectedSetting, setSelectedSetting] = useState(0)
@@ -42,11 +43,7 @@ export default function ManageCommunity() {
                     {/* General Setting */}
                     {selectedSetting === 0 && <GeneralSetting community={community} />}
                     {/* Manage Members */}
-                    {selectedSetting === 1 &&
-                        <>
-                            dasads
-                        </>
-                    }
+                    {selectedSetting === 1 && <MembersToApprove community={community} />}
                 </div>
 
             </div>
