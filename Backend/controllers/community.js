@@ -360,4 +360,15 @@ module.exports = {
         }
     },
 
+    async approveMember(req, res) {
+        try {
+            const id = req.params.id
+            const approve = await Tracker.findByIdAndUpdate(id, { status: 1 })
+            return res.status(200).json(approve)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    }
+
 }
