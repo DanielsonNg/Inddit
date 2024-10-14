@@ -351,7 +351,14 @@ module.exports = {
     async memberToApprove(req, res) {
         try {
             const id = req.params.id
-            const members = await User.find({ community_id: id, permission: 0 })
+            const tracks = await Tracker.find({ community_id: id, permission: 0 })
+
+            let members = []
+
+            for (let track of tracks) {
+                const member = await User.findById(track.user_id)
+                members.push(member)
+            }
 
             return res.status(200).json(members)
         } catch (error) {
