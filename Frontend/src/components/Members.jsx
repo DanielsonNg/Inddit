@@ -6,33 +6,39 @@ import { ADMIN_ROLE, cardColor, darkRed, lightRed, OWNER_ROLE, purple } from "..
 export default function Members({ id, permission }) {
     const [members, setMembers] = useState([])
     useEffect(() => {
-
         (async () => {
             await axios.get(`/community/members/${id}`)
                 .then(({ data }) => {
                     setMembers(data)
                 })
         })()
-
     }, [])
 
-    async function handlePromote(tracker_id) {
+    async function handlePromote(tracker_id, index) {
         await axios.put(`/community/member/promote/${tracker_id}`)
-            .then(({ data }) => {
-                console.log(data)
+            .then(async ({ data }) => {
+                let updated = [...members]
+                updated[index].tracker.permission = data.permission
+                updated[index].role = 'Admin'
+                setMembers(updated)
             })
     }
 
-    async function handleDemote(tracker_id) {
+    async function handleDemote(tracker_id, index) {
         await axios.put(`/community/member/demote/${tracker_id}`)
             .then(({ data }) => {
-                console.log(data)
+                let updated = [...members]
+                updated[index].tracker.permission = data.permission
+                updated[index].role = 'Member'
+                setMembers(updated)
             })
     }
-    async function handleKick(tracker_id) {
+    async function handleKick(tracker_id, index) {
         await axios.put(`/community/member/kick/${tracker_id}`)
             .then(({ data }) => {
-                console.log(data)
+                const reduced = [...members]
+                reduced.splice(index, 1)
+                setMembers(reduced)
             })
     }
 
@@ -49,7 +55,7 @@ export default function Members({ id, permission }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {members ? members.map((member) => (
+                        {members ? members.map((member, index) => (
                             <TableRow
                                 key={member.username}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -72,10 +78,10 @@ export default function Members({ id, permission }) {
                                                 member.role === 'Member' ?
                                                     // Action to Member
                                                     <>
-                                                        <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => handlePromote(member.tracker._id)}>
+                                                        <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => handlePromote(member.tracker._id, index)}>
                                                             Promote
                                                         </Button>
-                                                        <Button variant="contained" style={{ backgroundColor: darkRed }} onClick={() => handleKick(member.tracker._id)}>
+                                                        <Button variant="contained" style={{ backgroundColor: darkRed }} onClick={() => handleKick(member.tracker._id, index)}>
                                                             Kick
                                                         </Button>
                                                     </>
@@ -83,17 +89,17 @@ export default function Members({ id, permission }) {
                                                     // Action to Admin
                                                     member.role === 'Admin' ?
                                                         <>
-                                                            <Button variant="contained" style={{ backgroundColor: lightRed }} onClick={()=>handleDemote(member.tracker._id)}>
+                                                            <Button variant="contained" style={{ backgroundColor: lightRed }} onClick={() => handleDemote(member.tracker._id, index)}>
                                                                 Demote
                                                             </Button>
-                                                            <Button variant="contained" style={{ backgroundColor: darkRed }} onClick={() => handlePromote(member.tracker._id)}>
+                                                            <Button variant="contained" style={{ backgroundColor: darkRed }} onClick={() => handlePromote(member.tracker._id, index)}>
                                                                 Kick
                                                             </Button>
                                                         </> : '' : ''
                                             }
                                             {permission === ADMIN_ROLE &&
                                                 member.role === 'Member' &&
-                                                <Button variant="contained" style={{ backgroundColor: darkRed }}>
+                                                <Button variant="contained" style={{ backgroundColor: darkRed }} onClick={() => handleKick(member.tracker._id, index)}>
                                                     Kick
                                                 </Button>
                                             }

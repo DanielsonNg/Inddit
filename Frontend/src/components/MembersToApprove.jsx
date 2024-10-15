@@ -15,17 +15,21 @@ export default function MembersToApprove({ id }) {
         })()
     }, [])
 
-    async function handleAccept(tracker_id) {
+    async function handleAccept(tracker_id, index) {
         await axios.put(`/community/member/accept/${tracker_id}`)
             .then(({ data }) => {
-                console.log(data)
+                const reduced = [...members]
+                reduced.splice(index, 1)
+                setMembers(reduced)
             })
     }
 
-    async function handleReject(tracker_id) {
+    async function handleReject(tracker_id, index) {
         await axios.put(`/community/member/kick/${tracker_id}`)
             .then(({ data }) => {
-                console.log(data)
+                const reduced = [...members]
+                reduced.splice(index, 1)
+                setMembers(reduced)
             })
     }
 
@@ -41,21 +45,24 @@ export default function MembersToApprove({ id }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {members ? members.map((member) => (
+                        {members ? members.map((member, index) => (
                             <TableRow
                                 key={member.username}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell component="th" scope="row" sx={{ color: 'white', display: 'flex', alignItems: 'center' }}>
-                                    <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={member.image}></img>
-                                    &#160; &#160;
-                                    {member.username}
+                                <TableCell component="th" scope="row" sx={{ color: 'white' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img style={{ height: '50px', borderRadius: '50%' }} src={member.image}></img>
+                                        &#160; &#160;
+                                        {member.username}
+                                    </div>
                                 </TableCell>
                                 <TableCell sx={{ color: 'white' }} >{member.email}</TableCell>
-                                <TableCell sx={{ color: 'white', display: 'flex', gap: '20px' }} >
-
-                                    <Button variant='contained' color='secondary' style={{ backgroundColor: purple }} onClick={()=>handleAccept(member.tracker._id)}>Accept</Button>
-                                    <Button variant='contained' color='secondary' style={{ backgroundColor: darkRed }} onClick={()=>handleReject(member.tracker._id)}>Reject</Button>
+                                <TableCell>
+                                    <div style={{ color: 'white', display: 'flex', gap: '20px' }}>
+                                        <Button variant='contained' color='secondary' style={{ backgroundColor: purple }} onClick={() => handleAccept(member.tracker._id, index)}>Accept</Button>
+                                        <Button variant='contained' color='secondary' style={{ backgroundColor: darkRed }} onClick={() => handleReject(member.tracker._id, index)}>Reject</Button>
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         )) :
