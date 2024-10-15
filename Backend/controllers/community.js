@@ -356,22 +356,59 @@ module.exports = {
             let members = []
 
             for (let track of tracks) {
-                const member = await User.findById(track.user_id)
-                members.push(member)
+                const member = await User.aggregate([
+                    {
+                        $match: {
+                            _id: track.user_id,
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'trackers',
+                            localField: '_id',
+                            foreignField: 'user_id',
+                            as: 'tracker'
+                        }
+                    },
+                    {
+                        $match: {
+                            'tracker.community_id': track.community_id,
+                        }
+                    },
+                    {
+                        $unwind: '$tracker'
+                    },
+                    {
+                        $project: {
+                            _id: 1,
+                            username: 1,
+                            image: 1,
+                            'tracker.permission': 1,
+                            'tracker._id': 1,
+                            email: 1
+                        }
+                    },
+                ])
+                let role = ''
+                switch (member[0].tracker.permission) {
+                    case 0:
+                        role = 'Requester'
+                        break;
+                    case 1:
+                        role = 'Member'
+                        break;
+                    case 2:
+                        role = 'Admin'
+                        break;
+                    case 3:
+                        role = 'Owner'
+                        break;
+                }
+                member[0].role = role
+                members.push(member[0])
             }
 
             return res.status(200).json(members)
-        } catch (error) {
-            console.log(error)
-            return res.status(500).json(error)
-        }
-    },
-
-    async approveMember(req, res) {
-        try {
-            const id = req.params.id
-            const approve = await Tracker.findByIdAndUpdate(id, { status: 1 })
-            return res.status(200).json(approve)
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)
@@ -413,6 +450,7 @@ module.exports = {
                             username: 1,
                             image: 1,
                             'tracker.permission': 1,
+                            'tracker._id': 1,
                             email: 1
                         }
                     },
@@ -435,12 +473,58 @@ module.exports = {
                 member[0].role = role
                 members.push(member[0])
             }
-            // console.log(members)
             return res.status(200).json(members)
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)
         }
-    }
+    },
+
+    async promoteMember(req, res) {
+        try {
+            const id = req.params.id
+            const trackUpdate = await Tracker.findByIdAndUpdate(id, { permission: 2 }, { new: 1 })
+            return res.status(200).json(trackUpdate)
+
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async demoteMember(req, res) {
+        try {
+            const id = req.params.id
+            const trackUpdate = await Tracker.findByIdAndUpdate(id, { permission: 1 }, { new: 1 })
+            return res.status(200).json(trackUpdate)
+
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async kickMember(req, res) {
+        try {
+            const id = req.params.id
+            const trackUpdate = await Tracker.findByIdAndDelete(id)
+            return res.status(200).json('User Kicked Successfully')
+
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async acceptMember(req, res) {
+        try {
+            const id = req.params.id
+            const approve = await Tracker.findByIdAndUpdate(id, { permission: 1 }, { new: 1 })
+            return res.status(200).json(approve)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
 
 }

@@ -36,7 +36,7 @@ function a11yProps(index) {
     };
 }
 
-export default function MembersPage({ community }) {
+export default function MembersPage({ community, permission }) {
     const [members, setMembers] = useState('')
     const [value, setValue] = useState(0);
 
@@ -64,10 +64,10 @@ export default function MembersPage({ community }) {
                     </Tabs>
                 </Box>
                 <CustomTabPanel value={value} index={0}>
-                    <Members id={community._id} />
+                    <Members id={community._id} permission={permission} />
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
-                    <MembersToApprove id={community._id} />
+                    <MembersToApprove id={community._id} permission={permission} />
                 </CustomTabPanel>
             </Box>
 
