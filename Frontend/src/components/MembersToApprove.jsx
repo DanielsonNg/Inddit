@@ -45,7 +45,7 @@ export default function MembersToApprove({ id }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {members ? members.map((member, index) => (
+                        {members.length > 0 ? members.map((member, index) => (
                             <TableRow
                                 key={member.username}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -66,7 +66,12 @@ export default function MembersToApprove({ id }) {
                                 </TableCell>
                             </TableRow>
                         )) :
-                            <TableCell sx={{ color: 'white' }} >No Data</TableCell>
+                            <TableRow
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell sx={{ color: 'white' }} >No Data...</TableCell>
+                            </TableRow>
+
                         }
                     </TableBody>
                 </Table>
