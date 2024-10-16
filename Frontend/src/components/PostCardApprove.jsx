@@ -55,24 +55,7 @@ export default function PostCardApprove(props) {
                 <div style={{ padding: '50px', display: 'flex', justifyContent: 'center', maxWidth: '100%' }}>
                     <img src={props.post.image} style={{ maxWidth: '100%' }}></img>
                 </div>
-
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>
-                    <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
-                        <EmojiEmotionsIcon />&#160;&#160;
-                        <p>{props.post.likes}</p>&#160;&#160;
-                    </div>
-                    <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
-                        <InsertCommentIcon />&#160;
-                        71k
-                    </div>
-                </div>
             </div >
-            {/* <div style={{
-                display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'black', marginTop: "-40px",
-                borderRadius: '0px 0px 50px 50px', fontSize: '18px', cursor: 'pointer'}} 
-                onClick={showMore}>
-                Show More
-            </div> */}
         </>
     )
 }

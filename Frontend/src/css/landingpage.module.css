@@ -32,8 +32,7 @@
 
 .cardmid {
     border-color: gray;
-    border-radius: 20px;
-    /* width: 100%; */
+    border-radius: 20px 20px 0px 0px;
     padding: 25px;
     align-items: center;
     text-decoration: none;
@@ -42,10 +41,22 @@
     background-color: rgb(28, 26, 26);
 }
 
-.cardmidLimited{
+.cardmidBottom {
     border-color: gray;
-    border-radius: 20px;
-    /* width: 100%; */
+    border-radius: 0px 0px 20px 20px;
+    padding: 0px 25px;
+    align-items: center;
+    text-decoration: none;
+    color: whitesmoke;
+    display: flex;
+    gap: 50px;
+    flex-direction: row;
+    background-color: rgb(28, 26, 26);
+}
+
+.cardmidLimited {
+    border-color: gray;
+    border-radius: 20px 20px 0px 0px;
     padding: 25px;
     align-items: center;
     text-decoration: none;
@@ -87,7 +98,7 @@
     -webkit-box-orient: vertical;
 }
 
-.mobile{
+.mobile {
     display: none;
 }
 
@@ -99,19 +110,21 @@
 }
 
 @media all and (max-width:830px) {
-    .head{
+    .head {
         padding: 0px 0px;
     }
-    .desktop{
+
+    .desktop {
         display: none;
     }
-    .mobile{
+
+    .mobile {
         display: flex;
         justify-content: space-between;
         width: '100%';
     }
-    .mid{
+
+    .mid {
         width: 100%;
     }
 }
-
