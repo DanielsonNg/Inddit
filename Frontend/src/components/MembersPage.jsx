@@ -6,6 +6,7 @@ import MembersToApprove from './MembersToApprove';
 import { useEffect, useState } from 'react';
 import axios from "../axios";
 import Members from './Members';
+import PostsToApprove from './PostsToApprove';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;

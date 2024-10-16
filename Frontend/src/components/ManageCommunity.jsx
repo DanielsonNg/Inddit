@@ -6,11 +6,12 @@ import axios from '../axios';
 import GeneralSetting from './GeneralSetting';
 import MembersPage from "./MembersPage";
 import { useAuth } from "../../context/AuthProvider";
+import PostsToApprove from "./PostsToApprove";
 export default function ManageCommunity() {
     const navigate = useNavigate()
     const [selectedSetting, setSelectedSetting] = useState(0)
     const { id } = useParams()
-    const {userData} = useAuth()
+    const { userData } = useAuth()
     const [community, setCommunity] = useState('')
     const [join, setJoin] = useState('')
 
@@ -65,6 +66,9 @@ export default function ManageCommunity() {
                     <div onClick={() => handleSetting(1)}>
                         <LeftCardManage name="Members" />
                     </div>
+                    <div onClick={() => handleSetting(2)}>
+                        <LeftCardManage name="Posts" />
+                    </div>
                     <div onClick={() => navigate(-1)}>
                         <LeftCardManage name="Back" />
                     </div>
@@ -73,9 +77,11 @@ export default function ManageCommunity() {
                 {/* Right */}
                 <div style={{ width: '72%', minHeight: '100vh', borderLeft: '1px solid rgb(97, 93, 93)', padding: '10px 50px 20px 50px', display: 'flex', flexDirection: 'column', gap: '0' }}>
                     {/* General Setting */}
-                    {selectedSetting === 0 && <GeneralSetting community={community}  />}
+                    {selectedSetting === 0 && <GeneralSetting community={community} />}
                     {/* Manage Members */}
                     {selectedSetting === 1 && <MembersPage community={community} permission={join} />}
+                    {/* Approve Posts */}
+                    {selectedSetting === 2 && <PostsToApprove id={community._id} permission={join} />}
                 </div>
 
             </div>
