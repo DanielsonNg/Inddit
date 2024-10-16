@@ -17,7 +17,6 @@ export default function PostCardContent(props) {
     }
 
     const navigate = useNavigate()
-
     const deletePost = async () => {
         await axios.delete(`/post/${props.post._id}`)
             .then(({ data }) => {
@@ -97,7 +96,7 @@ export default function PostCardContent(props) {
                         </form>
                     </div>
                 </div>}
-                {!openEdit && <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
+                {!openEdit && <div style={{ fontWeight: 'lighter' }}>
                     <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
                         {content}
                     </Link>

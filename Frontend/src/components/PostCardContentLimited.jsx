@@ -8,7 +8,6 @@ import { ADMIN_ROLE, cardColor } from '../utils'
 import { useState } from 'react'
 
 export default function PostCardContentLimited(props) {
-    console.log(props)
     const [open, setOpen] = useState(false)
     const [openEdit, setOpenEdit] = useState(false)
     const [content, setContent] = useState(props.post.description)

@@ -23,13 +23,13 @@ export default function PostCard(props) {
                     <PostCardContent placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} />
                 }
                 {!expand ?
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'black', fontSize: '18px', cursor: 'pointer' }}
+                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'rgba(45, 45, 46, 0.5)', fontSize: '18px', cursor: 'pointer' }}
                         onClick={() => {
                             setExpand((prevExpand) => !prevExpand)
                         }}>
                         Show More
                     </div> :
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'black', fontSize: '18px', cursor: 'pointer' }}
+                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'rgba(45, 45, 46, 0.5)', fontSize: '18px', cursor: 'pointer' }}
                         onClick={() => {
                             setExpand((prevExpand) => !prevExpand)
                         }}>
@@ -47,12 +47,6 @@ export default function PostCard(props) {
                         71k
                     </div>
                 </div>
-                {/* {expand && <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'black', fontSize: '18px', cursor: 'pointer' }}
-                    onClick={() => {
-                        setExpand((prevExpand) => !prevExpand)
-                    }}>
-                    Show Less
-                </div>} */}
             </div>
 
         </>
