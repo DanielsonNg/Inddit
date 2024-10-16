@@ -7,6 +7,7 @@ const ObjectId = mongoose.Types.ObjectId
 const Comment = require('../models/comments.model')
 const { deleteCommentAndChildren } = require("../utils")
 const Tracker = require('../models/tracker.model')
+const LikeTracker = require('../models/likeTrackers.model')
 
 module.exports = {
     async createPost(req, res) {
@@ -147,6 +148,11 @@ module.exports = {
                 }
             ]
             const posts = await Post.aggregate(pipeline);
+
+            // for(let post of posts)
+
+            // const count = await Post.countDocuments(posts)
+            // console.log(count)
 
             // console.log(posts)
             return res.status(200).json(posts)
@@ -422,6 +428,46 @@ module.exports = {
             const approve = await Post.findByIdAndUpdate(id, { status: 1 })
 
             return res.status(200).json(approve)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async likePost(req, res) {
+        try {
+            const id = req.params.id
+            const post = await Post.findByIdAndUpdate(id, { $inc: { likes: 1 } })
+            const like = await LikeTracker.create({ post_id: id, user_id: req.body.user_id })
+            return res.status(200).json(like)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async unlikePost(req, res) {
+        try {
+            const id = req.params.id
+
+            const post = await Post.findByIdAndUpdate(id, { $inc: { likes: -1 } })
+            const findLike = await LikeTracker.findOne({ post_id: id, user_id: req.body.user_id })
+            const unlike = await LikeTracker.findByIdAndDelete(findLike._id)
+            return res.status(200).json(unlike)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async getLike(req, res) {
+        try {
+            const id = req.params.id
+            const findLike = await LikeTracker.findOne({ post_id: id, user_id: req.body.user_id })
+            if (findLike) {
+                return res.status(200).json({ like: true })
+            }
+            return res.status(200).json({ like: false })
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)
