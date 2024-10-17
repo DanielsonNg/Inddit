@@ -224,6 +224,7 @@ module.exports = {
                         image: 1,
                         community_id: 1,
                         owner_id: 1,
+                        createdAt: 1,
                         "author._id": 1,
                         "community.logo": 1,
                         "community.description": 1,

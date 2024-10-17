@@ -5,6 +5,9 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from '../context/AuthProvider.jsx'
 import { PostProvider } from '../context/PostProvider.jsx'
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
+TimeAgo.addDefaultLocale(en)
 
 
 

@@ -137,6 +137,7 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        createdAt: 1,
                         "community.logo": 1,
                         "community.description": 1,
                         "community.name": 1,
@@ -148,13 +149,6 @@ module.exports = {
                 }
             ]
             const posts = await Post.aggregate(pipeline);
-
-            // for(let post of posts)
-
-            // const count = await Post.countDocuments(posts)
-            // console.log(count)
-
-            // console.log(posts)
             return res.status(200).json(posts)
         } catch (error) {
             console.log(error)
@@ -207,6 +201,7 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        createdAt: 1,
                         "community.logo": 1,
                         "community.description": 1,
                         "community.name": 1,
@@ -296,6 +291,7 @@ module.exports = {
                         likes: 1,
                         image: 1,
                         community_id: 1,
+                        createdAt: 1,
                         "author._id": 1,
                         "community.logo": 1,
                         "community.description": 1,

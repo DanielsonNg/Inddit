@@ -3,9 +3,10 @@ import styles from '../css/landingpage.module.css'
 import { Dropdown } from '@mui/base/Dropdown'
 import { Menu } from '@mui/base/Menu';
 import { MenuButton } from '@mui/base/MenuButton';
-import { MenuItem} from '@mui/material';
+import { MenuItem } from '@mui/material';
 import { ADMIN_ROLE, cardColor } from '../utils'
 import { useState } from 'react'
+import ReactTimeAgo from 'react-time-ago'
 
 export default function PostCardContent(props) {
     const [open, setOpen] = useState(false)
@@ -51,7 +52,7 @@ export default function PostCardContent(props) {
                             <p style={{ fontWeight: 'lighter' }}>i/{props.post.community.name}</p>
                         </Link>
                         &#160;&#160;&#160;
-                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
+                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> <ReactTimeAgo date={props.post.createdAt} locale='en-US' /></p>
                     </div>
                     <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px', cursor: 'pointer' }}>
                         {!props.post.tracker[0]?.permission ? 'Join Now' : ''}
@@ -81,7 +82,7 @@ export default function PostCardContent(props) {
                     u/{props.post.author.username}
                 </div>
                 <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
-                    <div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '100%', wordBreak: 'break-all' }}>
                         <h2>{props.post.title}</h2>
                     </div>
                 </Link>
