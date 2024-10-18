@@ -14,6 +14,7 @@ import PostCreate from './components/PostCreate'
 import LandingPageGuest from './components/LandingPageGuest'
 import IndditPageGuest from './components/IndditPageGuest'
 import ManageCommunity from './components/ManageCommunity'
+import UserPage from './components/UserPage'
 
 function App() {  
   const {isAuthenticated} = useAuth()
@@ -27,12 +28,12 @@ function App() {
         <Route path='/inddit/:id' element={<IndditPage />} />
         <Route path='/inddit/guest/:id' element={<IndditPageGuest />} />
         <Route path='/post/create/:id' element={<PostCreate />} />
- 
       </Route>
       <Route path='/login' element={!isAuthenticated ? <LoginPage/> : <LandingPage />} />
       <Route path='/register' element={!isAuthenticated ? <RegisterPage/> : <LandingPage />} />
       <Route path="*" element={<NotFound />} />
       <Route path='/inddit/manage/:id' element={<ManageCommunity />} />
+      <Route path= '/user/:id' element={<UserPage />} />
       {/* <Route path='/post/:id' element= {<Post />} /> */}
      
 

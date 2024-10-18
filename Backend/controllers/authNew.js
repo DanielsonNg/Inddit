@@ -76,13 +76,27 @@ module.exports = {
                 user: {
                     _id: user._id,
                     name: user.username,
-                    role: user.role
+                    role: user.role,
+                    image: user.image,
                 }
 
             })
 
         } catch (error) {
             console.log((error))
+        }
+    },
+
+    async getEmail(req, res) {
+        try {
+            const id = req.params.id
+            const user = await User.findById(id)
+
+            return res.status(200).json({ email: user.email })
+
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
         }
     }
 }
