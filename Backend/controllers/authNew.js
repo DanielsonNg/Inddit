@@ -98,5 +98,58 @@ module.exports = {
             console.log(error)
             return res.status(500).json(error)
         }
+    },
+
+    async changePasswordRequest(req, res) {
+        try {
+            const { error } = LoginSchema.login.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+
+            const { email, password } = req.body
+            const user = await User.findOne({ email })
+
+            const isPasswordValid = await bcrypt.compare(password, user.password)
+            if (!isPasswordValid) {
+                return res.status(401).json({ isValid: false })
+            }
+
+            return res.status(200).json({ isValid: true })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async changePassword(req, res) {
+        try {
+            const { error } = RegisterSchema.register.validate(req.body)
+            const valid = error == null
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const { email, password } = req.body
+            const user = await User.findOne({ email: email })
+
+            const hashedPwd = await bcrypt.hash(password, 10)
+
+            //store db
+            const update = await User.findByIdAndUpdate({ password: hashedPwd })
+
+            // const token = jwt.sign({ _id: userCreate.id }, process.env.SECRET_KEY, { expiresIn: '90d' })
+            return res.status(200).json({
+                status: 'success',
+                message: 'Password Change Success',
+            })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
     }
 }
