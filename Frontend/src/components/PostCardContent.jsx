@@ -52,7 +52,7 @@ export default function PostCardContent(props) {
                             <p style={{ fontWeight: 'lighter' }}>i/{props.post.community.name}</p>
                         </Link>
                         &#160;&#160;&#160;
-                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> <ReactTimeAgo date={props.post.createdAt} locale='en-US' /></p>
+                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> <ReactTimeAgo date={new Date(props.post.createdAt).getTime()} locale='en-US' /></p>
                     </div>
                     <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px', cursor: 'pointer' }}>
                         {!props.post.tracker[0]?.permission ? 'Join Now' : ''}

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import LeftCardManage from "./LeftCardManageCommunity";
 import ProfileSetting from "./ProfileSetting";
+import { useNavigate } from "react-router-dom";
 
 
 export default function UserPage() {
     const [selectedSetting, setSelectedSetting] = useState(0)
+    const navigate = useNavigate()
+    
     async function handleSetting(value) {
         setSelectedSetting(prevValue => value)
     }
@@ -23,11 +26,11 @@ export default function UserPage() {
                     <div onClick={() => handleSetting(2)}>
                         <LeftCardManage name="Saved Post" />
                     </div>
-                    <div onClick={() => handleSetting(2)}>
+                    <div onClick={() => handleSetting(3)}>
                         <LeftCardManage name="Liked Post" />
                     </div>
                     <div onClick={() => navigate(-1)}>
-                        <LeftCardManage name="Back" />
+                        <LeftCardManage name="Back" onClick={() => navigate(-1)} />
                     </div>
                 </div>
 

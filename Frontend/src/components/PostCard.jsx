@@ -75,10 +75,10 @@ export default function PostCard(props) {
                 }
                 <div className={styles.cardmidBottom}>
                     <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', gap: '5px' }}>
-                        {!liked && <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => handleLike()}>
+                        {!liked && <div style={{ display: 'flex', alignItems: 'center', cursor:'pointer' }} onClick={() => handleLike()}>
                             <InsertEmoticonIcon />
                         </div>}
-                        {liked && <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => handleUnlike()}>
+                        {liked && <div style={{ display: 'flex', alignItems: 'center', cursor:'pointer' }} onClick={() => handleUnlike()}>
                             <EmojiEmotionsIcon />
                         </div>}
                         <p>{likes}</p>

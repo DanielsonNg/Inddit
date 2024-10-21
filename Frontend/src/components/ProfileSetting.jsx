@@ -3,12 +3,14 @@ import { useAuth } from "../../context/AuthProvider"
 import axios from "../axios"
 import { Button } from "@mui/material"
 import { purple } from "@mui/material/colors"
+import ChangePasswordDialog from "./ChangePasswordDialog"
 
 export default function ProfileSetting() {
     const { userData } = useAuth()
     const [edit, setEdit] = useState(false)
     const [picture, setPicture] = useState(userData?.image)
     const [email, setEmail] = useState('')
+    const [dialogChangePassword, setDialogChangePassword] = useState(false)
 
     const setFileToBasePicture = (file) => {
         const reader = new FileReader();
@@ -41,6 +43,7 @@ export default function ProfileSetting() {
 
     return (
         <>
+            {dialogChangePassword && <ChangePasswordDialog open={dialogChangePassword} setOpen={setDialogChangePassword} email={email} />}
             <div style={{ display: 'flex', padding: '30px', columnGap: '200px' }}>
                 <div>
                     <div>
@@ -82,8 +85,8 @@ export default function ProfileSetting() {
                         </>}
                 </div>
             </div>
-            <div style={{display:'flex',padding:'30px'}}>
-                <Button variant="contained" style={{backgroundColor:purple}}>Change Password</Button>
+            <div style={{ display: 'flex', padding: '30px' }}>
+                <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => setDialogChangePassword(true)}>Change Password</Button>
             </div>
         </>
     )
