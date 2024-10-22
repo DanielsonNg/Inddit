@@ -2,7 +2,7 @@ const User = require("../models/user.model")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-const { LoginSchema, RegisterSchema } = require('../middlewares/ValidationBody')
+const { LoginSchema, RegisterSchema, ChangePasswordSchema } = require('../middlewares/ValidationBody')
 
 module.exports = {
     async signup(req, res, next) {
@@ -127,20 +127,19 @@ module.exports = {
 
     async changePassword(req, res) {
         try {
-            const { error } = RegisterSchema.register.validate(req.body)
+            const { error } = ChangePasswordSchema.change.validate(req.body)
             const valid = error == null
             if (!valid) {
                 return res.status(422).json({
                     response_message: error.message
                 })
             }
-            const { email, password } = req.body
+            const { email, new_password } = req.body
             const user = await User.findOne({ email: email })
-
-            const hashedPwd = await bcrypt.hash(password, 10)
+            const hashedPwd = await bcrypt.hash(new_password, 10)
 
             //store db
-            const update = await User.findByIdAndUpdate({ password: hashedPwd })
+            const update = await User.findByIdAndUpdate(user._id, { password: hashedPwd })
 
             // const token = jwt.sign({ _id: userCreate.id }, process.env.SECRET_KEY, { expiresIn: '90d' })
             return res.status(200).json({
