@@ -7,6 +7,7 @@ const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity, joinCommunity, getPostsByCommunity, getPermission, leaveCommunity, deleteCommunity, editCommunity, membersToApprove, getMembers, promoteMember, demoteMember, kickMember, acceptMember } = require('../controllers/community')
 const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike } = require('../controllers/post')
 const { createComment, getComments, editComment, deleteComment } = require('../controllers/comment')
+const { changeProfilePicture } = require('../controllers/user')
 const router = express.Router()
 
 // jwt
@@ -32,6 +33,9 @@ router.delete('/logout', logout)
 router.get('/user/email/:id', getEmail)
 router.post('/user/changePassword/request', changePasswordRequest)
 router.post('/user/changePassword', changePassword)
+
+//user
+router.post('/user/changePicture', changeProfilePicture)
 
 //category
 router.post('/category/insert', insertCategory)

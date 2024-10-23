@@ -4,6 +4,7 @@ import axios from "../axios"
 import { Button } from "@mui/material"
 import { purple } from "@mui/material/colors"
 import ChangePasswordDialog from "./ChangePasswordDialog"
+import ChangePictureDialog from "./ChangePictureDialog"
 
 export default function ProfileSetting() {
     const { userData } = useAuth()
@@ -11,12 +12,13 @@ export default function ProfileSetting() {
     const [picture, setPicture] = useState(userData?.image)
     const [email, setEmail] = useState('')
     const [dialogChangePassword, setDialogChangePassword] = useState(false)
+    const [dialogChangePicture, setDialogChangePicture] = useState(false)
 
     const setFileToBasePicture = (file) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
-            setBanner(reader.result);
+            setPicture(reader.result);
         }
 
     }
@@ -44,6 +46,7 @@ export default function ProfileSetting() {
     return (
         <>
             {dialogChangePassword && <ChangePasswordDialog open={dialogChangePassword} setOpen={setDialogChangePassword} email={email} />}
+            {dialogChangePicture && <ChangePictureDialog open={dialogChangePicture} setOpen={setDialogChangePicture} email={email} picture={userData?.image} handlePicture={handlePicture} />}
             <div style={{ display: 'flex', padding: '30px', columnGap: '200px' }}>
                 <div>
                     <div>
@@ -51,7 +54,7 @@ export default function ProfileSetting() {
                     </div>
                     <h2 style={{ fontWeight: 'lighter' }}>Email : {email}</h2>
                 </div>
-                <div style={{ display: 'flex', gap: '50px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     {edit ? <>
                         {/* image */}
                         <div>
@@ -59,7 +62,7 @@ export default function ProfileSetting() {
                             <label htmlFor="logo">
                                 <IconButton component="span">
                                     <Avatar
-                                        src={picture ? picture : userData?.image}
+                                        src={picture}
                                         style={{
                                             width: "200px",
                                             height: "200px",
@@ -80,13 +83,18 @@ export default function ProfileSetting() {
                         <>
                             <div>
                                 <h3>Profile Picture</h3>
-                                <img src={userData?.image} style={{ width: '200px', height: '200px', padding: '5px' }}></img>
+                                <img src={userData?.image} style={{ width: '200px', height: '200px' }}></img>
                             </div>
                         </>}
                 </div>
             </div>
-            <div style={{ display: 'flex', padding: '30px' }}>
-                <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => setDialogChangePassword(true)}>Change Password</Button>
+            <div style={{ display: 'flex', padding: '30px', columnGap: '200px' }}>
+                <div style={{ display: 'flex' }}>
+                    <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => setDialogChangePassword(true)}>Change Password</Button>
+                </div>
+                <div style={{ display: 'flex' }}>
+                    <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => setDialogChangePicture(true)}>Change Profile Picture</Button>
+                </div>
             </div>
         </>
     )

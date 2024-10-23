@@ -69,7 +69,7 @@ export default function PostCreate() {
                 navigate(`/post/${data._id}`)
             })
             .catch((error) => {
-                console.log(error)
+                // console.log(error)
                 setLoading(false)
             })
     }

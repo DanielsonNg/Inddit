@@ -12,7 +12,6 @@ export default function PostsToApprove({ id, permission }) {
             await axios.get(`/postToApprove/${id}`)
                 .then(({ data }) => {
                     setPosts(data)
-                    console.log(data)
                 })
         })()
     }, [])

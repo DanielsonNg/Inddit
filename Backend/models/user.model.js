@@ -22,6 +22,10 @@ const UserSchema = mongoose.Schema(
             type: String,
             default: 'https://res.cloudinary.com/dtrgatxpp/image/upload/v1726543992/ProfileDefault.png'
         },
+        image_public_id: {
+            type: String,
+            default: null
+        },
         token: String
 
     },

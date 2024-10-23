@@ -83,7 +83,7 @@ module.exports = {
         }
         userFind.refreshToken = ''
         const result = await userFind.save()
-        console.log(result)
+        // console.log(result)
 
         res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true })
         return res.sendStatus(204)
@@ -145,7 +145,7 @@ module.exports = {
             process.env.REFRESH_TOKEN_SECRET,
             (err, user) => {
                 if (err || userFind.username !== user.name) {
-                    console.log(user)
+                    // console.log(user)
                     return res.sendStatus(403)
                 }
                 const accessToken = jwt.sign(
