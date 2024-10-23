@@ -1,7 +1,7 @@
 import styles from '../css/landingpage.module.css'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PostCardContent from './PostCardContent';
 import PostCardContentLimited from './PostCardContentLimited';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
@@ -13,6 +13,10 @@ export default function PostCard(props) {
     const [liked, setLiked] = useState(false)
     const { userData } = useAuth()
     const [likes, setLikes] = useState(props.post.likes)
+
+    const [showMoreButton, setShowMoreButton] = useState(false)
+    const contentRef = useRef(null)
+
     useEffect(() => {
         (async () => {
             if (props.post.placement === 'landingpage') {
@@ -27,6 +31,19 @@ export default function PostCard(props) {
                 })
         })()
     }, [])
+
+    useEffect(() => {
+        // Check the height of PostCardContent after rendering
+        if (contentRef.current) {
+            const contentHeight = contentRef.current.offsetHeight;
+            const maxHeight = 300; // Your threshold for height
+            if (contentHeight > maxHeight) {
+                setShowMoreButton(true); // show "Show More" button if height exceeds the limit
+            } else {
+                setShowMoreButton(false); // hide it if it's within limit
+            }
+        }
+    }, [expand]); // Trigger height check when expanded state changes
 
     async function handleLike() {
         const data = {
@@ -55,30 +72,35 @@ export default function PostCard(props) {
         <>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {!expand ?
-                    <PostCardContentLimited placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} /> :
-                    <PostCardContent placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} />
-                }
-                {!expand ?
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'rgba(194, 194, 194, 0.1)', fontSize: '18px', cursor: 'pointer' }}
-                        onClick={() => {
-                            setExpand((prevExpand) => !prevExpand)
-                        }}>
-                        Show More
-                    </div> :
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', backgroundColor: 'rgba(194, 194, 194, 0.1)', fontSize: '18px', cursor: 'pointer' }}
-                        onClick={() => {
-                            setExpand((prevExpand) => !prevExpand)
-                        }}>
-                        Show Less
+                    <div ref={contentRef}>
+                        <PostCardContentLimited placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} expand={expand} />
                     </div>
-
+                    :
+                    <div ref={contentRef}>
+                        <PostCardContent placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} />
+                    </div>
                 }
+                {showMoreButton && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            width: '100%',
+                            backgroundColor: 'rgba(194, 194, 194, 0.1)',
+                            fontSize: '18px',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => setExpand(prevExpand => !prevExpand)}
+                    >
+                        {expand ? 'Show Less' : 'Show More'}
+                    </div>
+                )}
                 <div className={styles.cardmidBottom}>
                     <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', gap: '5px' }}>
-                        {!liked && <div style={{ display: 'flex', alignItems: 'center', cursor:'pointer' }} onClick={() => handleLike()}>
+                        {!liked && <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleLike()}>
                             <InsertEmoticonIcon />
                         </div>}
-                        {liked && <div style={{ display: 'flex', alignItems: 'center', cursor:'pointer' }} onClick={() => handleUnlike()}>
+                        {liked && <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleUnlike()}>
                             <EmojiEmotionsIcon />
                         </div>}
                         <p>{likes}</p>
