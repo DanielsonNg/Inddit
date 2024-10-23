@@ -4,6 +4,7 @@ const CommunitySchema = require('./community')
 const PostSchema = require('./post')
 const CommentSchema = require('./comment')
 const ChangePasswordSchema = require('./changePassword')
+const ChangePictureSchema = require('./changePicture')
 
 
 module.exports = {
@@ -12,5 +13,6 @@ module.exports = {
     CommunitySchema,
     PostSchema,
     CommentSchema,
-    ChangePasswordSchema
+    ChangePasswordSchema,
+    ChangePictureSchema
 }

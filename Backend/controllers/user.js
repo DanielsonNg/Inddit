@@ -1,3 +1,4 @@
+const { ChangePictureSchema } = require('../middlewares/ValidationBody')
 const User = require('../models/user.model')
 const cloudinary = require('../utils/cloudinary')
 
@@ -5,6 +6,13 @@ module.exports = {
     async changeProfilePicture(req, res) {
         try {
             const data = req.body
+            const {error} = await ChangePictureSchema.change.validate(data)
+            const valid = error == null
+            if(!valid){
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
 
             const userFind = await User.findOne({ email: data.email })
 
