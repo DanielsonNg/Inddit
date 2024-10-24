@@ -527,15 +527,14 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "inddits",            // The collection to join
-                        localField: "community_id",      // Field in the post collection (foreign key)
-                        foreignField: "_id",            // Field in the community collection (primary key)
-                        as: "community"             // Output array of matched documents from community
+                        from: "inddits",           
+                        localField: "community_id",   
+                        foreignField: "_id",            
+                        as: "community"             
                     }
                 },
                 {
-                    $unwind: "$community",          // Unwind the array to make communityInfo a single object
-                    // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                    $unwind: "$community",          
                 },
                 {
                     $lookup: {
@@ -561,21 +560,20 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "trackers", // The name of the Tracker collection
-                        localField: "community_id", // Field from Post model
-                        foreignField: "community_id", // Field from Tracker model
-                        as: "tracker" // Output array field for matches
+                        from: "trackers", 
+                        localField: "community_id", 
+                        foreignField: "community_id", 
+                        as: "tracker" 
                     }
                 },
                 {
-                    // Add a conditional field to filter the tracker data based on user_id
                     $addFields: {
                         tracker: {
                             $filter: {
-                                input: "$tracker",        // The tracker array to filter
-                                as: "tr",                 // Alias for each element in the array
+                                input: "$tracker",     
+                                as: "tr",                 
                                 cond: {
-                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)] // Filter by user_id
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)] 
                                 }
                             }
                         }
