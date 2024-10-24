@@ -505,5 +505,106 @@ module.exports = {
             console.log(error)
             return res.status(500).json(error)
         }
-    }
+    },
+
+    async getSavedPosts(req, res) {
+        try {
+            const id = req.params.id
+            const findSave = await SaveTracker.find({ user_id: ObjectId.createFromHexString(id) })
+
+            const postIds = []
+            for (let save of findSave) {
+                postIds.push(save.post_id)
+            }
+
+            const pipeline = [
+                {
+                    $match: {
+                        _id: {
+                            $in: postIds
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "inddits",            // The collection to join
+                        localField: "community_id",      // Field in the post collection (foreign key)
+                        foreignField: "_id",            // Field in the community collection (primary key)
+                        as: "community"             // Output array of matched documents from community
+                    }
+                },
+                {
+                    $unwind: "$community",          // Unwind the array to make communityInfo a single object
+                    // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $unwind: "$category",
+                },
+                {
+                    $lookup: {
+                        from: "trackers", // The name of the Tracker collection
+                        localField: "community_id", // Field from Post model
+                        foreignField: "community_id", // Field from Tracker model
+                        as: "tracker" // Output array field for matches
+                    }
+                },
+                {
+                    // Add a conditional field to filter the tracker data based on user_id
+                    $addFields: {
+                        tracker: {
+                            $filter: {
+                                input: "$tracker",        // The tracker array to filter
+                                as: "tr",                 // Alias for each element in the array
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)] // Filter by user_id
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        createdAt: 1,
+                        "community.logo": 1,
+                        "community.description": 1,
+                        "community.name": 1,
+                        "author.username": 1,
+                        "author._id": 1,
+                        "category.name": 1,
+                        "tracker.permission": 1
+                    }
+                }
+            ]
+            const posts = await Post.aggregate(pipeline);
+            return res.status(200).json(posts)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+    },
 }

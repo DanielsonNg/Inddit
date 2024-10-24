@@ -16,8 +16,13 @@ const getAll = Joi.object().keys({
     user_id: Joi.string().required()
 })
 
+const getAllSaved = Joi.object().keys({
+    user_id: Joi.string().required()
+})
+
 module.exports = {
     create,
     edit,
-    getAll
+    getAll,
+    getAllSaved
 }
