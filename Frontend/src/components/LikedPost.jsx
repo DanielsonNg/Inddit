@@ -4,7 +4,7 @@ import axios from "../axios"
 import NotFound from "./NotFound"
 import PostCard from "./PostCard"
 
-export default function SavedPost() {
+export default function LikedPost() {
     const { userData } = useAuth()
     const [posts, setPosts] = useState([])
 
@@ -14,7 +14,7 @@ export default function SavedPost() {
                 const data = {
                     user_id: userData._id
                 }
-                await axios.get(`/post/saved/${userData._id}`)
+                await axios.get(`/post/liked/${userData._id}`)
                     .then(({ data }) => {
                         setPosts(data)
                     })

@@ -3,6 +3,7 @@ import LeftCardManage from "./LeftCardManageCommunity";
 import ProfileSetting from "./ProfileSetting";
 import { useNavigate } from "react-router-dom";
 import SavedPost from "./SavedPost";
+import LikedPost from "./LikedPost";
 
 
 export default function UserPage() {
@@ -41,6 +42,7 @@ export default function UserPage() {
                     {selectedSetting === 0 && <ProfileSetting />}
                     {selectedSetting === 1 && <ProfileSetting />}
                     {selectedSetting === 2 && <SavedPost />}
+                    {selectedSetting === 3 && <LikedPost />}
                 </div>
 
             </div>
