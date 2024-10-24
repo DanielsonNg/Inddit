@@ -7,6 +7,8 @@ import { MenuItem } from '@mui/material';
 import { ADMIN_ROLE, cardColor } from '../utils'
 import { useState } from 'react'
 import ReactTimeAgo from 'react-time-ago'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 
 export default function PostCardContent(props) {
     const [open, setOpen] = useState(false)
@@ -42,6 +44,27 @@ export default function PostCardContent(props) {
                 setOpenEdit(false)
             })
     }
+
+    async function handleSave() {
+        const data = {
+            user_id: props.userData?._id
+        }
+        await axios.post(`/post/save/${props.post._id}`, data)
+            .then(({ data }) => {
+                props.setSaved(true)
+            })
+    }
+
+    async function handleUnsave() {
+        const data = {
+            user_id: props.userData?._id
+        }
+        await axios.post(`/post/unsave/${props.post._id}`, data)
+            .then(({ data }) => {
+                props.setSaved(false)
+            })
+
+    }
     return (
         <>
             <div className={styles.cardmid}>
@@ -55,6 +78,14 @@ export default function PostCardContent(props) {
                         <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> <ReactTimeAgo date={new Date(props.post.createdAt).getTime()} locale='en-US' /></p>
                     </div>
                     <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px', cursor: 'pointer' }}>
+                        {!props.saved ?
+                            <div onClick={() => handleSave()}>
+                                <BookmarkBorderIcon />
+                            </div> :
+                            <div onClick={() => handleUnsave()}>
+                                <BookmarkOutlinedIcon />
+                            </div>
+                        }
                         {!props.post.tracker[0]?.permission ? 'Join Now' : ''}
                         {props.post.tracker[0]?.permission < ADMIN_ROLE ?
                             props.post.author._id === props.user_id &&

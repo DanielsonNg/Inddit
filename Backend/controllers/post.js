@@ -8,6 +8,7 @@ const Comment = require('../models/comments.model')
 const { deleteCommentAndChildren } = require("../utils")
 const Tracker = require('../models/tracker.model')
 const LikeTracker = require('../models/likeTrackers.model')
+const SaveTracker = require('../models/saveTrackers.model')
 
 module.exports = {
     async createPost(req, res) {
@@ -464,6 +465,42 @@ module.exports = {
                 return res.status(200).json({ like: true })
             }
             return res.status(200).json({ like: false })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+    async savePost(req, res) {
+        try {
+            const id = req.params.id
+            const save = await SaveTracker.create({ post_id: id, user_id: req.body.user_id })
+            return res.status(200).json(save)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async unsavePost(req, res) {
+        try {
+            const id = req.params.id
+            const findSave = await SaveTracker.findOne({ post_id: id, user_id: req.body.user_id })
+            const unSave = await SaveTracker.findByIdAndDelete(findSave._id)
+            return res.status(200).json(unSave)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async getSave(req, res) {
+        try {
+            const id = req.params.id
+            const findSave = await SaveTracker.findOne({ post_id: id, user_id: req.body.user_id })
+            if (findSave) {
+                return res.status(200).json({ saved: true })
+            }
+            return res.status(200).json({ saved: false })
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)

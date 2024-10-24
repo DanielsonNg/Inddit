@@ -13,6 +13,7 @@ export default function PostCard(props) {
     const [liked, setLiked] = useState(false)
     const { userData } = useAuth()
     const [likes, setLikes] = useState(props.post.likes)
+    const [saved, setSaved] = useState(false)
 
     const [showMoreButton, setShowMoreButton] = useState(false)
     const contentRef = useRef(null)
@@ -29,6 +30,11 @@ export default function PostCard(props) {
                 .then(({ data }) => {
                     setLiked(data.like)
                 })
+            await axios.post(`/post/track/save/${props.post._id}`, data)
+                .then(({ data }) => {
+                    setSaved(data.saved)
+                })
+
         })()
     }, [])
 
@@ -73,11 +79,11 @@ export default function PostCard(props) {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {!expand ?
                     <div ref={contentRef}>
-                        <PostCardContentLimited placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} expand={expand} />
+                        <PostCardContentLimited placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} expand={expand} saved={saved} setSaved={setSaved} userData={userData} />
                     </div>
                     :
                     <div ref={contentRef}>
-                        <PostCardContent placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} />
+                        <PostCardContent placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} saved={saved} setSaved={setSaved} userData={userData} />
                     </div>
                 }
                 {showMoreButton && (
