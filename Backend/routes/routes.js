@@ -5,7 +5,7 @@ const { validateToken, adminOnly, memberOnly } = require('../middlewares/validat
 const { signup, signin, getEmail, changePasswordRequest, changePassword } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity, joinCommunity, getPostsByCommunity, getPermission, leaveCommunity, deleteCommunity, editCommunity, membersToApprove, getMembers, promoteMember, demoteMember, kickMember, acceptMember } = require('../controllers/community')
-const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike, savePost, unsavePost, getSave, getSavedPosts, getLikedPosts } = require('../controllers/post')
+const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike, savePost, unsavePost, getSave, getSavedPosts, getLikedPosts, getUserPosts } = require('../controllers/post')
 const { createComment, getComments, editComment, deleteComment } = require('../controllers/comment')
 const { changeProfilePicture } = require('../controllers/user')
 const router = express.Router()
@@ -58,6 +58,7 @@ router.put('/community/member/demote/:id', demoteMember)
 router.put('/community/member/kick/:id', kickMember)
 router.put('/community/member/accept/:id', acceptMember)
 
+//post
 router.post('/posts', getPosts)
 router.get('/postsGuest', getPostsGuest)
 router.post('/post/create', createPost)
@@ -73,9 +74,14 @@ router.post('/post/save/:id', savePost)
 router.post('/post/unsave/:id', unsavePost)
 router.post('/post/track/save/:id', getSave)
 
+
+//post in user setting
 router.get('/post/saved/:id', getSavedPosts)
 router.get('/post/liked/:id', getLikedPosts)
+router.get('/post/user/:id', getUserPosts)
 
+
+//comment
 router.post('/comment/:id', createComment)
 router.get('/comments/:id', getComments)
 router.post('/comment/edit/:id', editComment)

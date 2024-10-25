@@ -34,13 +34,6 @@ function App() {
       <Route path="*" element={<NotFound />} />
       <Route path='/inddit/manage/:id' element={<ManageCommunity />} />
       <Route path= '/user/:id' element={<UserPage />} />
-      {/* <Route path='/post/:id' element= {<Post />} /> */}
-     
-
-      {/* <Route element={<RequireAuth />}>
-        <Route path='/test' element={<TestPage />} />
-      </Route> */}
-        {/* <Route path='/users' element={<Users />} /> */}
     </Routes>
     </>
   )
