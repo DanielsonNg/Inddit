@@ -40,15 +40,15 @@ export default function LandingPage() {
         const data = {
             user_id: userData?._id
         }
-        await axios.post(`/posts/hot`, data)
-            .then(({ data }) => {
-                console.log(data)
-            })
+        // await axios.post(`/posts/category/66de60e184f963783162a313`, data)
+        //     .then(({ data }) => {
+        //         console.log(data)
+        //     })
     }
 
     return (
         <>
-            <Button onClick={test}>Test</Button>
+            {/* <Button onClick={test}>Test</Button> */}
             <div className={styles.mid}>
                 {loading && <Loading />}
                 {!loading && <>
