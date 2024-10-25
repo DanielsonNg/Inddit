@@ -805,8 +805,6 @@ module.exports = {
             const oneMonthAgo = new Date()
             oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-            const ids = await Post.distinct('_id')
-
             const post = await Post.aggregate([
                 {
                     $match: {
