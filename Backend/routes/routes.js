@@ -5,7 +5,7 @@ const { validateToken, adminOnly, memberOnly } = require('../middlewares/validat
 const { signup, signin, getEmail, changePasswordRequest, changePassword } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity, joinCommunity, getPostsByCommunity, getPermission, leaveCommunity, deleteCommunity, editCommunity, membersToApprove, getMembers, promoteMember, demoteMember, kickMember, acceptMember } = require('../controllers/community')
-const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike, savePost, unsavePost, getSave, getSavedPosts, getLikedPosts, getUserPosts } = require('../controllers/post')
+const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike, savePost, unsavePost, getSave, getSavedPosts, getLikedPosts, getUserPosts, getHotPosts } = require('../controllers/post')
 const { createComment, getComments, editComment, deleteComment } = require('../controllers/comment')
 const { changeProfilePicture } = require('../controllers/user')
 const router = express.Router()
@@ -73,6 +73,7 @@ router.post('/post/track/like/:id', getLike)
 router.post('/post/save/:id', savePost)
 router.post('/post/unsave/:id', unsavePost)
 router.post('/post/track/save/:id', getSave)
+router.post('/posts/hot', getHotPosts)
 
 
 //post in user setting

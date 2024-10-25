@@ -6,6 +6,7 @@ import axios from '../axios';
 import NotFound from './NotFound'
 import Loading from './Loading';
 import { AuthContext } from '../../context/AuthProvider';
+import { Button } from '@mui/material';
 
 export default function LandingPage() {
     const [posts, setPosts] = useState([])
@@ -13,20 +14,20 @@ export default function LandingPage() {
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-            (async () => {
-                setLoading(true)
-                const data = {
-                    user_id: userData?._id
-                }
-                await axios.post('/posts', data)
-                    .then(({ data }) => {
-                        setPosts(data)
-                        setLoading(false)
-                    })
-                    .catch((err) => {
-                        setLoading(false)
-                    })
-            })()
+        (async () => {
+            setLoading(true)
+            const data = {
+                user_id: userData?._id
+            }
+            await axios.post('/posts', data)
+                .then(({ data }) => {
+                    setPosts(data)
+                    setLoading(false)
+                })
+                .catch((err) => {
+                    setLoading(false)
+                })
+        })()
     }, [userData])
 
     function deletePostInstant(index) {
@@ -35,8 +36,19 @@ export default function LandingPage() {
         setPosts(reducedArr)
     }
 
+    async function test() {
+        const data = {
+            user_id: userData?._id
+        }
+        await axios.post(`/posts/hot`, data)
+            .then(({ data }) => {
+                console.log(data)
+            })
+    }
+
     return (
         <>
+            <Button onClick={test}>Test</Button>
             <div className={styles.mid}>
                 {loading && <Loading />}
                 {!loading && <>

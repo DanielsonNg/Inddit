@@ -527,14 +527,14 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "inddits",           
-                        localField: "community_id",   
-                        foreignField: "_id",            
-                        as: "community"             
+                        from: "inddits",
+                        localField: "community_id",
+                        foreignField: "_id",
+                        as: "community"
                     }
                 },
                 {
-                    $unwind: "$community",          
+                    $unwind: "$community",
                 },
                 {
                     $lookup: {
@@ -560,20 +560,20 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "trackers", 
-                        localField: "community_id", 
-                        foreignField: "community_id", 
-                        as: "tracker" 
+                        from: "trackers",
+                        localField: "community_id",
+                        foreignField: "community_id",
+                        as: "tracker"
                     }
                 },
                 {
                     $addFields: {
                         tracker: {
                             $filter: {
-                                input: "$tracker",     
-                                as: "tr",                 
+                                input: "$tracker",
+                                as: "tr",
                                 cond: {
-                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)] 
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)]
                                 }
                             }
                         }
@@ -626,14 +626,14 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "inddits",           
-                        localField: "community_id",   
-                        foreignField: "_id",            
-                        as: "community"             
+                        from: "inddits",
+                        localField: "community_id",
+                        foreignField: "_id",
+                        as: "community"
                     }
                 },
                 {
-                    $unwind: "$community",          
+                    $unwind: "$community",
                 },
                 {
                     $lookup: {
@@ -659,20 +659,20 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "trackers", 
-                        localField: "community_id", 
-                        foreignField: "community_id", 
-                        as: "tracker" 
+                        from: "trackers",
+                        localField: "community_id",
+                        foreignField: "community_id",
+                        as: "tracker"
                     }
                 },
                 {
                     $addFields: {
                         tracker: {
                             $filter: {
-                                input: "$tracker",     
-                                as: "tr",                 
+                                input: "$tracker",
+                                as: "tr",
                                 cond: {
-                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)] 
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)]
                                 }
                             }
                         }
@@ -717,14 +717,14 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "inddits",           
-                        localField: "community_id",   
-                        foreignField: "_id",            
-                        as: "community"             
+                        from: "inddits",
+                        localField: "community_id",
+                        foreignField: "_id",
+                        as: "community"
                     }
                 },
                 {
-                    $unwind: "$community",          
+                    $unwind: "$community",
                 },
                 {
                     $lookup: {
@@ -750,20 +750,20 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: "trackers", 
-                        localField: "community_id", 
-                        foreignField: "community_id", 
-                        as: "tracker" 
+                        from: "trackers",
+                        localField: "community_id",
+                        foreignField: "community_id",
+                        as: "tracker"
                     }
                 },
                 {
                     $addFields: {
                         tracker: {
                             $filter: {
-                                input: "$tracker",     
-                                as: "tr",                 
+                                input: "$tracker",
+                                as: "tr",
                                 cond: {
-                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)] 
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(id)]
                                 }
                             }
                         }
@@ -794,5 +794,113 @@ module.exports = {
             console.log(error)
             return res.status(500)
         }
+    },
+
+    async getHotPosts(req, res) {
+
+        try {
+            const id = req.params.id
+            const data = req.body
+
+            const oneMonthAgo = new Date()
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+            const ids = await Post.distinct('_id')
+
+            const post = await Post.aggregate([
+                {
+                    $match: {
+                        status: 1,
+                        createdAt: { $gte: oneMonthAgo }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "inddits",
+                        localField: "community_id",
+                        foreignField: "_id",
+                        as: "community"
+                    }
+                },
+                {
+                    $unwind: "$community"
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $unwind: "$category",
+                },
+                {
+                    $lookup: {
+                        from: "trackers",
+                        localField: "community_id",
+                        foreignField: "community_id",
+                        as: "tracker"
+                    }
+                },
+                {
+                    $addFields: {
+                        tracker: {
+                            $filter: {
+                                input: "$tracker",
+                                as: "tr",
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        createdAt: 1,
+                        "author._id": 1,
+                        "community.logo": 1,
+                        "community.description": 1,
+                        "community.name": 1,
+                        "author.username": 1,
+                        "category.name": 1,
+                        "tracker.permission": 1,
+                    }
+                },
+                {
+                    $sort: {
+                        likes: -1
+                    }
+                },
+                {
+                    $limit: 100
+                }
+            ]);
+
+            return res.status(200).json(post)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+
     },
 }
