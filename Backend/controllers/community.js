@@ -527,5 +527,30 @@ module.exports = {
             return res.status(500).json(error)
         }
     },
+    async getHotCommunity(req, res) {
+        try {
+            const result = await Tracker.aggregate([
+                { $limit: 100 }, 
+                {
+                    $group: {
+                        _id: "$community_id", 
+                        count: { $sum: 1 },  // Count each occurrence of communityId
+                    },
+                },
+                {
+                    $project: {
+                        communityId: "$_id",
+                        count: 1,
+                        _id: 0,
+                    },
+                },
+            ]);
+
+            return res.status(200).json(result)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    }
 
 }
