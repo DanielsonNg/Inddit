@@ -8,7 +8,7 @@ import axios from "../axios";
 import { usePost } from "../../context/PostProvider";
 import { useAuth } from "../../context/AuthProvider";
 import { ADMIN_ROLE } from "../utils";
-export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply, userId }) {
+export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply, userId, postId }) {
     // console.log(userId)
     let left = level * 5
     let right = 100 - left
@@ -61,9 +61,12 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
     }
 
     async function deleteComment() {
-        axios.delete(`/comment/${comment._id}`)
+        const data = {
+            post_id: postId
+        }
+        await axios.delete(`/comment/${comment._id}`, { data })
             .then(({ data }) => {
-                // console.log(data)
+                console.log(data)
                 reSetReply(data.is_replied)
                 deleteCommentInstant(index)
             })
@@ -138,12 +141,12 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
                             </div> : ''}
                         </div>
                     </div>
-                    {openComment && <CommentBox setOpenCommentBox={setOpenCommentBox} parentId={comment._id} addComment={addCommentInstant} />}
+                    {openComment && <CommentBox setOpenCommentBox={setOpenCommentBox} parentId={comment._id} addComment={addCommentInstant} postId={postId} />}
                     {openReply &&
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             {replies ? replies.map((reply) => (
                                 <div key={reply._id} style={{ width: '100%', marginTop: '20px' }}>
-                                    <Comment key={reply._id} comment={reply} level={level + 1} deleteCommentInstant={deleteReplyInstant} reSetReply={rreSetReply} userId={userId} />
+                                    <Comment key={reply._id} comment={reply} level={level + 1} deleteCommentInstant={deleteReplyInstant} reSetReply={rreSetReply} userId={userId} postId={postId} />
                                 </div>
                             )) : ''
                             }

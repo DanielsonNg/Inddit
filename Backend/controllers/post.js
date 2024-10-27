@@ -145,7 +145,8 @@ module.exports = {
                         "author.username": 1,
                         "author._id": 1,
                         "category.name": 1,
-                        "tracker.permission": 1
+                        "tracker.permission": 1,
+                        comments: 1
                     }
                 }
             ]
@@ -209,6 +210,7 @@ module.exports = {
                         "author.username": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
+                        comments: 1
                     }
                 }
             ]);
@@ -300,6 +302,7 @@ module.exports = {
                         "author.username": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
+                        comments: 1
                     }
                 },
             ]);
@@ -409,6 +412,7 @@ module.exports = {
                         "community.name": 1,
                         "author.username": 1,
                         "category.name": 1,
+                        comments: 1
                     }
                 },
             ]);
@@ -882,6 +886,7 @@ module.exports = {
                         "author.username": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
+                        comments: 1
                     }
                 },
                 {

@@ -12,7 +12,7 @@ export default function Comments({ postId }) {
     const [comments, setComments] = useState([])
 
     const [loading, setLoading] = useState(false)
-    const {userData} = useAuth()
+    const { userData } = useAuth()
 
     useEffect(() => {
         setLoading(true)
@@ -39,7 +39,7 @@ export default function Comments({ postId }) {
 
     return (
         <>
-            {openNewComment && <CommentBox setOpenCommentBox={setOpenNewComment} parentId={postId} addComment={addCommentInstant} />}
+            {openNewComment && <CommentBox setOpenCommentBox={setOpenNewComment} parentId={postId} addComment={addCommentInstant} postId={postId} />}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <h1>Comments</h1>
                 {!openNewComment && <p style={{ fontWeight: 'lighter', fontSize: '16px', cursor: 'pointer' }} onClick={() => setOpenNewComment(prev => !prev)}>
@@ -49,11 +49,11 @@ export default function Comments({ postId }) {
             {loading && <Loading />}
             {!loading && <div className={styles.commentCard}>
                 {comments.length > 0 ? comments.map((comment, index) => (
-                    <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} 
-                    index={index} comment={comment} level={0} userId={userData._id}
-                    reSetReply={function reSetReply(value) {
-                        comment.is_replied = value
-                    }} />
+                    <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} postId={postId}
+                        index={index} comment={comment} level={0} userId={userData._id}
+                        reSetReply={function reSetReply(value) {
+                            comment.is_replied = value
+                        }} />
                 )) : <NoData type='Comment' />}
             </div>}
         </>

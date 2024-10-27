@@ -3,6 +3,8 @@ const { CommentSchema } = require("../middlewares/ValidationBody")
 const Comment = require("../models/comments.model");
 const User = require("../models/user.model");
 const { deleteCommentAndChildren } = require("../utils");
+const Post = require("../models/post.model");
+const Inddit = require("../models/inddits.model");
 const ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
@@ -23,6 +25,7 @@ module.exports = {
             }
             const create = await Comment.create({ content: data.content, parent_id: id, user_id: data.userId })
             const user = await User.findById(data.userId)
+            const updatePost = await Post.findByIdAndUpdate(data.postId, { $inc: { comments: 1 } })
             const params = {
                 content: create.content,
                 likes: create.likes,
@@ -111,9 +114,15 @@ module.exports = {
                 is_replied = 0
                 await Comment.findByIdAndUpdate(comment.parent_id, { is_replied: 0 })
             }
-            const deleteReplies = await deleteCommentAndChildren(commentId)
+
+            let count = 0
+            count = await deleteCommentAndChildren(commentId, count);
             const del = await Comment.findByIdAndDelete(commentId)
-            return res.status(200).json({msg:"Comment Deleted", is_replied : is_replied})
+            //update comment counts
+            const updatePost = await Post.findByIdAndUpdate(comment.parent_id, { $inc: { comments: -Math.abs(count) } })
+
+
+            return res.status(200).json({ msg: "Comment Deleted", is_replied: is_replied })
         } catch (error) {
             console.log(error)
             return res.status(500)

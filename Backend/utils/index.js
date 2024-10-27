@@ -1,18 +1,23 @@
 const Comment = require("../models/comments.model");
 
 
-const deleteCommentAndChildren = async (commentId) => {
+const deleteCommentAndChildren = async (commentId, count) => {
     // Find all comments where the parent_id is the current commentId
     const childComments = await Comment.find({ parent_id: commentId });
 
     // Recursively delete each child comment and its children
     for (const childComment of childComments) {
-        await deleteCommentAndChildren(childComment._id); // Recursion for child comments
+        count = await deleteCommentAndChildren(childComment._id, count); // Reassign count here
     }
 
-    // Once all children are deleted, delete the parent comment itself
+    // Increment count after deleting the current comment itself
+    count++;
     await Comment.findByIdAndDelete(commentId);
+
+    // Return the updated count so that it propagates back up the call stack
+    return count;
 }
+
 module.exports = {
     deleteCommentAndChildren,
 } 

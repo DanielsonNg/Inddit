@@ -2,7 +2,8 @@ const Joi = require("joi")
 
 const create = Joi.object().keys({
     content: Joi.string().required(),
-    userId: Joi.string().required()
+    userId: Joi.string().required(),
+    postId: Joi.string().required(),
 })
 
 const edit = Joi.object().keys({

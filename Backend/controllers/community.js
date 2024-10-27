@@ -232,6 +232,7 @@ module.exports = {
                         "author.username": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
+                        comments: 1
                     }
                 },
             ]);
