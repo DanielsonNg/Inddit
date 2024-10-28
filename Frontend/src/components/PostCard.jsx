@@ -26,15 +26,12 @@ export default function PostCard(props) {
             const data = {
                 user_id: userData?._id
             }
-            await axios.post(`/post/track/like/${props.post._id}`, data)
-                .then(({ data }) => {
-                    setLiked(data.like)
-                })
-            await axios.post(`/post/track/save/${props.post._id}`, data)
-                .then(({ data }) => {
-                    setSaved(data.saved)
-                })
-
+            if(props.post.liketracker.length === 1){
+                setLiked(true)
+            }
+            if(props.post.savetracker.length === 1){
+                setSaved(true)
+            }
         })()
     }, [])
 

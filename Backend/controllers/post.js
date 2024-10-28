@@ -131,6 +131,48 @@ module.exports = {
                     }
                 },
                 {
+                    $lookup: {
+                        from: "liketrackers",
+                        localField: "_id",
+                        foreignField: "post_id",
+                        as: "liketracker"
+                    }
+                },
+                {
+                    $addFields: {
+                        liketracker: {
+                            $filter: {
+                                input: "$liketracker",
+                                as: "tr",
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "savetrackers",
+                        localField: "_id",
+                        foreignField: "post_id",
+                        as: "savetracker"
+                    }
+                },
+                {
+                    $addFields: {
+                        savetracker: {
+                            $filter: {
+                                input: "$savetracker",
+                                as: "sv",
+                                cond: {
+                                    $eq: ["$$sv.user_id", ObjectId.createFromHexString(data.user_id)]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -146,7 +188,9 @@ module.exports = {
                         "author._id": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
-                        comments: 1
+                        comments: 1,
+                        "liketracker": 1,
+                        "savetracker" : 1
                     }
                 }
             ]
@@ -287,6 +331,48 @@ module.exports = {
                     }
                 },
                 {
+                    $lookup: {
+                        from: "liketrackers",
+                        localField: "_id",
+                        foreignField: "post_id",
+                        as: "liketracker"
+                    }
+                },
+                {
+                    $addFields: {
+                        liketracker: {
+                            $filter: {
+                                input: "$liketracker",
+                                as: "tr",
+                                cond: {
+                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "savetrackers",
+                        localField: "_id",
+                        foreignField: "post_id",
+                        as: "savetracker"
+                    }
+                },
+                {
+                    $addFields: {
+                        savetracker: {
+                            $filter: {
+                                input: "$savetracker",
+                                as: "sv",
+                                cond: {
+                                    $eq: ["$$sv.user_id", ObjectId.createFromHexString(data.user_id)]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -302,7 +388,9 @@ module.exports = {
                         "author.username": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
-                        comments: 1
+                        comments: 1,
+                        "liketracker": 1,
+                        "savetracker" : 1
                     }
                 },
             ]);
@@ -938,7 +1026,7 @@ module.exports = {
                     // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
                 },
                 {
-                    $match:{
+                    $match: {
                         'community.category_id': ObjectId.createFromHexString(categoryId)
                     }
                 },
