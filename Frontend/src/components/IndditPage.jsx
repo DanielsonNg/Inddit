@@ -27,6 +27,8 @@ export default function IndditPage() {
     const [loading, setLoading] = useState(false)
     const [join, setJoin] = useState(0)
 
+    const [hotPosts, setHotPosts] = useState([])
+    const [category, setCategory] = useState('')
     function deletePostInstant(index) {
         const reducedArr = [...posts]
         reducedArr.splice(index, 1)
@@ -56,7 +58,8 @@ export default function IndditPage() {
                 }
                 await axios.get(`/community/${id}`)
                     .then(({ data }) => {
-                        setCommunity(data)
+                        setCommunity(data.community)
+                        setCategory(data.category)
                     })
                     .catch((error) => {
                         navigate('/')
@@ -67,6 +70,11 @@ export default function IndditPage() {
                         setLoading(false)
                     })
                 await setPermission()
+
+                await axios.get(`/community/posts/hot/${id}`)
+                    .then(({ data }) => {
+                        setHotPosts(data)
+                    })
             }
         })()
     }, [userData])
@@ -198,14 +206,11 @@ export default function IndditPage() {
                     </div>
                     <div className={styles.right}>
                         <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                            <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
-                            I/Memes
+                            <img src={community.logo} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
+                            I/{community.name}
                         </div>
                         <div style={{ marginTop: '10px' }}>
-                            Meme Community
-                        </div>
-                        <div style={{ fontWeight: 'lighter' }}>
-                            This description describe a description of a inddit good.
+                            {category} Community
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '10px ' }}>
                             25k Members
@@ -213,10 +218,14 @@ export default function IndditPage() {
                         <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
                             Hot Posts
                         </div>
-                        <HotPost />
-                        <HotPost />
-                        <HotPost />
-                        <HotPost />
+                        {hotPosts ? hotPosts.map((post) => (
+                            <div style={{cursor:'pointer'}} onClick={()=>navigate(`/post/${post._id}`)} key={post._id}>
+                                <HotPost author={post.author.username} likes={post.likes} comments={post.comments} content={post.description} image={post.author.image} />
+                            </div>
+                        ))
+                            :
+                            <NotFound />
+                        }
                     </div>
                 </div>
             </div>}

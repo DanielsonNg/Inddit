@@ -21,6 +21,15 @@
     border-bottom: 4px solid transparent;
     animation: rotation 0.5s linear infinite reverse;
   }
+
+  .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+}
+
   @keyframes rotation {
     0% {
       transform: rotate(0deg);

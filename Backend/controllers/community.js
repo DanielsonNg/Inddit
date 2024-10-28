@@ -90,7 +90,8 @@ module.exports = {
                 })
             }
             const community = await Inddit.findById(data.id)
-            return res.status(200).json(community)
+            const category = await Category.findById(community.category_id)
+            return res.status(200).json({community: community, category:category.name})
         } catch (error) {
             console.log(error)
             return res.status(500).json({ msg: 'Data Not Found' })
@@ -593,15 +594,15 @@ module.exports = {
                     }
                 },
                 {
-                    $unwind:'$community'
+                    $unwind: '$community'
                 },
                 {
                     $project: {
                         count: 1,
                         _id: 0,
-                        'community.logo' : 1,
-                        'community.name' : 1,
-                        'community._id' : 1
+                        'community.logo': 1,
+                        'community.name': 1,
+                        'community._id': 1
                     },
                 },
             ]);
@@ -627,19 +628,8 @@ module.exports = {
                     $match: {
                         status: 1,
                         createdAt: { $gte: oneMonthAgo },
-                        community_id: id
+                        community_id: ObjectId.createFromHexString(id)
                     }
-                },
-                {
-                    $lookup: {
-                        from: "inddits",
-                        localField: "community_id",
-                        foreignField: "_id",
-                        as: "community"
-                    }
-                },
-                {
-                    $unwind: "$community"
                 },
                 {
                     $lookup: {
@@ -653,38 +643,6 @@ module.exports = {
                     $unwind: "$author"
                 },
                 {
-                    $lookup: {
-                        from: "categories",
-                        localField: "community.category_id",
-                        foreignField: "_id",
-                        as: "category"
-                    }
-                },
-                {
-                    $unwind: "$category",
-                },
-                {
-                    $lookup: {
-                        from: "trackers",
-                        localField: "community_id",
-                        foreignField: "community_id",
-                        as: "tracker"
-                    }
-                },
-                {
-                    $addFields: {
-                        tracker: {
-                            $filter: {
-                                input: "$tracker",
-                                as: "tr",
-                                cond: {
-                                    $eq: ["$$tr.user_id", ObjectId.createFromHexString(data.user_id)]
-                                }
-                            }
-                        }
-                    }
-                },
-                {
                     $project: {
                         _id: 1,
                         title: 1,
@@ -694,12 +652,8 @@ module.exports = {
                         community_id: 1,
                         createdAt: 1,
                         "author._id": 1,
-                        "community.logo": 1,
-                        "community.description": 1,
-                        "community.name": 1,
                         "author.username": 1,
-                        "category.name": 1,
-                        "tracker.permission": 1,
+                        "author.image": 1,
                         comments: 1
                     }
                 },
@@ -709,7 +663,7 @@ module.exports = {
                     }
                 },
                 {
-                    $limit: 100
+                    $limit: 5
                 }
             ]);
 
