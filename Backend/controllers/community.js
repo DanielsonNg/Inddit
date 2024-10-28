@@ -601,6 +601,7 @@ module.exports = {
                         _id: 0,
                         'community.logo' : 1,
                         'community.name' : 1,
+                        'community._id' : 1
                     },
                 },
             ]);

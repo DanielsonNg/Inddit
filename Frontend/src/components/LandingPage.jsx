@@ -7,12 +7,14 @@ import NotFound from './NotFound'
 import Loading from './Loading';
 import { AuthContext } from '../../context/AuthProvider';
 import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
     const [posts, setPosts] = useState([])
     const { userData, isAuthenticated } = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
     const [hotCommunities, setHotCommunities] = useState([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         (async () => {
@@ -54,7 +56,9 @@ export default function LandingPage() {
             <div className={styles.right}>
                 <h3>Trending</h3>
                 {hotCommunities ? hotCommunities.map((c) => (
-                    <RightCard key={c.community.name} name={c.community.name} logo={c.community.logo} />
+                    <div key={c.community.name} onClick={()=>navigate(`/inddit/${c.community._id}`)}>
+                        <RightCard  name={c.community.name} logo={c.community.logo} />
+                    </div>
                 ))
                     :
                     <NotFound />}
