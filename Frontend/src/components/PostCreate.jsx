@@ -38,6 +38,7 @@ export default function PostCreate() {
                         name: data.name,
                         description: data.description,
                         logo: data.logo,
+                        postApproval: data.post_approval
                     })
                     setLoading(false)
                 })
@@ -64,9 +65,13 @@ export default function PostCreate() {
             user_id: userData._id
         }
         await axios.post('/post/create', data)
-            .then(({data}) => {
+            .then(({ data }) => {
                 setLoading(false)
-                navigate(`/post/${data._id}`)
+                if (community.post_approval === 0) {
+                    navigate(`/post/${data._id}`)
+                } else {
+                    navigate(`/inddit/${community.id}`)
+                }
             })
             .catch((error) => {
                 // console.log(error)
@@ -82,7 +87,7 @@ export default function PostCreate() {
     return (
         <>
             {loading &&
-                <div style={{display:'flex', justifyContent:'center', width:'100%'}}>
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
 
                     <Loading />
                 </div>
