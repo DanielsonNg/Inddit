@@ -12,6 +12,7 @@ export default function LandingPage() {
     const [posts, setPosts] = useState([])
     const { userData, isAuthenticated } = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
+    const [hotCommunities, setHotCommunities] = useState([])
 
     useEffect(() => {
         (async () => {
@@ -27,6 +28,10 @@ export default function LandingPage() {
                 .catch((err) => {
                     setLoading(false)
                 })
+            await axios.get('/communities/hot')
+                .then(({ data }) => {
+                    setHotCommunities(data)
+                })
         })()
     }, [userData])
 
@@ -36,19 +41,8 @@ export default function LandingPage() {
         setPosts(reducedArr)
     }
 
-    async function test() {
-        const data = {
-            user_id: userData?._id
-        }
-        // await axios.post(`/posts/category/66de60e184f963783162a313`, data)
-        //     .then(({ data }) => {
-        //         console.log(data)
-        //     })
-    }
-
     return (
         <>
-            {/* <Button onClick={test}>Test</Button> */}
             <div className={styles.mid}>
                 {loading && <Loading />}
                 {!loading && <>
@@ -59,8 +53,11 @@ export default function LandingPage() {
             </div>
             <div className={styles.right}>
                 <h3>Trending</h3>
-                <RightCard />
-                <RightCard />
+                {hotCommunities ? hotCommunities.map((c) => (
+                    <RightCard key={c.community.name} name={c.community.name} logo={c.community.logo} />
+                ))
+                    :
+                    <NotFound />}
             </div>
         </>
     )

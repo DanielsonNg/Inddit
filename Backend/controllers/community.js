@@ -574,7 +574,7 @@ module.exports = {
     },
     async getHotCommunity(req, res) {
         try {
-            const result = await Tracker.aggregate([
+            const communities = await Tracker.aggregate([
                 { $limit: 100 },
                 {
                     $group: {
@@ -582,16 +582,31 @@ module.exports = {
                         count: { $sum: 1 },  // Count each occurrence of communityId
                     },
                 },
+                { $sort: { count: -1 } },
+                { $limit: 5 },
+                {
+                    $lookup: {
+                        from: "inddits",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: 'community'
+                    }
+                },
+                {
+                    $unwind:'$community'
+                },
                 {
                     $project: {
-                        communityId: "$_id",
                         count: 1,
                         _id: 0,
+                        'community.logo' : 1,
+                        'community.name' : 1,
                     },
                 },
             ]);
 
-            return res.status(200).json(result)
+
+            return res.status(200).json(communities)
         } catch (error) {
             console.log(error)
             return res.status(500).json(error)
