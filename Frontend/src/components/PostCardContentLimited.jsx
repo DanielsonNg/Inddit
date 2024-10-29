@@ -89,7 +89,7 @@ export default function PostCardContentLimited(props) {
                                 <BookmarkOutlinedIcon />
                             </div>
                         }
-                        {!props.post.tracker[0]?.permission ? 'Join Now' : ''}
+                        {/* {!props.post.tracker[0]?.permission ? 'Join Now' : ''} */}
                         {props.post.tracker[0]?.permission < ADMIN_ROLE ?
                             props.post.author._id === props.user_id &&
                             <Dropdown open={open}>

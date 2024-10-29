@@ -9,34 +9,39 @@ import HotPost from "./HotPost"
 import axios from "../axios"
 import Loading from "./Loading"
 import { useAuth } from "../../context/AuthProvider"
-import { PostProvider, usePost } from "../../context/PostProvider"
+import { usePost } from "../../context/PostProvider"
+import NotFound from "./NotFound"
 
 export default function Post() {
     let { id } = useParams()
     const [post, setPost] = useState()
-    const {userData} = useAuth()
-    const {setPermission} = usePost()
-
+    const { userData } = useAuth()
+    const { setPermission } = usePost()
+    const [hotPosts, setHotPosts] = useState([])
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
         (async () => {
-            // console.log(userData)
             setLoading(true)
             const data = {
                 user_id: userData?._id
             }
-            if(userData){
+            if (userData) {
                 await axios.post(`/post/${id}`, data)
-                    .then(({ data }) => {
+                    .then(async ({ data }) => {
                         setPost(data[0])
                         setPermission(data[0]?.tracker[0]?.permission ? data[0].tracker[0].permission : null)
                         setLoading(false)
+                        await axios.get(`/community/posts/hot/${data[0].community_id}`)
+                            .then(({ data }) => {
+                                setHotPosts(data)
+                            })
                     })
             }
+
         })()
-      
+
     }, [userData])
 
     function deletePostInstant(index) {
@@ -67,10 +72,14 @@ export default function Post() {
                 <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
                     Hot Posts
                 </div>
-                <HotPost />
-                <HotPost />
-                <HotPost />
-                <HotPost />
+                {hotPosts ? hotPosts.map((post) => (
+                    <div style={{ cursor: 'pointer' }} onClick={() => navigate(`/post/${post._id}`)} key={post._id}>
+                        <HotPost author={post.author.username} likes={post.likes} comments={post.comments} content={post.description} image={post.author.image} />
+                    </div>
+                ))
+                    :
+                    <NotFound />
+                }
             </div>}
         </>
     )

@@ -110,7 +110,7 @@ export default function PostCard(props) {
                     </div>
                     <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', gap: '5px' }}>
                         <InsertCommentIcon />
-                        71k
+                        {props.post.comments ? props.post.comments : 0}
                     </div>
                 </div>
             </div>
