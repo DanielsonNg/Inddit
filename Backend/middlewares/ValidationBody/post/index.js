@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const category = require("../../../controllers/category");
 
 const create = Joi.object().keys({
     title: Joi.string().required(),
@@ -13,7 +14,8 @@ const edit = Joi.object().keys({
 })
 
 const getAll = Joi.object().keys({
-    user_id: Joi.string().required()
+    user_id: Joi.string().required(),
+    category: Joi.string().allow(null)
 })
 
 const getAllSaved = Joi.object().keys({

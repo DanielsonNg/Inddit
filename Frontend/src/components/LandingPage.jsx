@@ -7,7 +7,7 @@ import NotFound from './NotFound'
 import Loading from './Loading';
 import { AuthContext } from '../../context/AuthProvider';
 import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 export default function LandingPage() {
     const [posts, setPosts] = useState([])
@@ -15,12 +15,14 @@ export default function LandingPage() {
     const [loading, setLoading] = useState(false)
     const [hotCommunities, setHotCommunities] = useState([])
     const navigate = useNavigate()
+    const [category] = useOutletContext()
 
     useEffect(() => {
         (async () => {
             setLoading(true)
             const data = {
-                user_id: userData?._id
+                user_id: userData?._id,
+                category: category ? category : null
             }
             await axios.post('/posts', data)
                 .then(({ data }) => {
@@ -35,7 +37,12 @@ export default function LandingPage() {
                     setHotCommunities(data)
                 })
         })()
-    }, [userData])
+    }, [userData, category])
+
+    // useEffect(() => {
+    //     console.log(category)
+
+    // }, [category])
 
     function deletePostInstant(index) {
         const reducedArr = [...posts]
@@ -56,8 +63,8 @@ export default function LandingPage() {
             <div className={styles.right}>
                 <h3>Trending</h3>
                 {hotCommunities ? hotCommunities.map((c) => (
-                    <div key={c.community.name} onClick={()=>navigate(`/inddit/${c.community._id}`)}>
-                        <RightCard  name={c.community.name} logo={c.community.logo} />
+                    <div key={c.community.name} onClick={() => navigate(`/inddit/${c.community._id}`)}>
+                        <RightCard name={c.community.name} logo={c.community.logo} />
                     </div>
                 ))
                     :

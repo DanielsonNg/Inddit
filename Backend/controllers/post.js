@@ -190,10 +190,18 @@ module.exports = {
                         "tracker.permission": 1,
                         comments: 1,
                         "liketracker": 1,
-                        "savetracker" : 1
+                        "savetracker": 1
                     }
                 }
             ]
+            if (data.category) {
+                pipeline.push({
+                    $match: {
+                        "category.name": data.category
+                    }
+                })
+            }
+            console.log(pipeline)
             const posts = await Post.aggregate(pipeline);
             return res.status(200).json(posts)
         } catch (error) {
@@ -390,7 +398,7 @@ module.exports = {
                         "tracker.permission": 1,
                         comments: 1,
                         "liketracker": 1,
-                        "savetracker" : 1
+                        "savetracker": 1
                     }
                 },
             ]);
