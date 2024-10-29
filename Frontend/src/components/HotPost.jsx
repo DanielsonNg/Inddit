@@ -1,5 +1,6 @@
 import EmojiEmotions from '@mui/icons-material/EmojiEmotions'
 import styles from '../css/common.module.css'
+import InsertCommentIcon from '@mui/icons-material/InsertComment';
 
 export default function HotPost({author, image, likes, comments, content}) {
     return (
@@ -16,7 +17,7 @@ export default function HotPost({author, image, likes, comments, content}) {
                     <p>{likes}</p>&#160; <EmojiEmotions /> &#160;&#160;&#160;
                 </div>
                 <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', fontSize: '14px' }}>
-                    <p>{comments}</p> &#160; Comments
+                    <p>{comments ? comments : 0}</p> &#160; <InsertCommentIcon />
                 </div>
             </div>
         </div>

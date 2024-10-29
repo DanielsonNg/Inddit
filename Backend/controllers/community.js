@@ -91,7 +91,9 @@ module.exports = {
             }
             const community = await Inddit.findById(data.id)
             const category = await Category.findById(community.category_id)
-            return res.status(200).json({community: community, category:category.name})
+            const query = { community_id: data.id };
+            const count = await Tracker.countDocuments(query)
+            return res.status(200).json({ community: community, category: category.name, members: count })
         } catch (error) {
             console.log(error)
             return res.status(500).json({ msg: 'Data Not Found' })

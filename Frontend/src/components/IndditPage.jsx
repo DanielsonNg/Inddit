@@ -29,6 +29,8 @@ export default function IndditPage() {
 
     const [hotPosts, setHotPosts] = useState([])
     const [category, setCategory] = useState('')
+    const [memberCount, setMemberCount] = useState(0)
+
     function deletePostInstant(index) {
         const reducedArr = [...posts]
         reducedArr.splice(index, 1)
@@ -60,6 +62,7 @@ export default function IndditPage() {
                     .then(({ data }) => {
                         setCommunity(data.community)
                         setCategory(data.category)
+                        setMemberCount(data.members)
                     })
                     .catch((error) => {
                         navigate('/')
@@ -213,7 +216,7 @@ export default function IndditPage() {
                             {category} Community
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '10px ' }}>
-                            25k Members
+                            {memberCount} Members
                         </div>
                         <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
                             Hot Posts
