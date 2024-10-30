@@ -69,7 +69,8 @@ module.exports = {
                     response_message: error.message
                 })
             }
-
+            const page = req.query.page || 0
+            const postPerPage = 2
             const pipeline = [
                 {
                     $match: { status: 1 }
@@ -192,6 +193,17 @@ module.exports = {
                         "liketracker": 1,
                         "savetracker": 1
                     }
+                },
+                {
+                    $facet: {
+                        data: [
+                            { $skip: page*postPerPage },
+                            { $limit: postPerPage }
+                        ],
+                        totalCount: [
+                            { $count: "count" }
+                        ]
+                    }
                 }
             ]
             if (data.category) {
@@ -201,9 +213,10 @@ module.exports = {
                     }
                 })
             }
-            
             const posts = await Post.aggregate(pipeline);
-            return res.status(200).json(posts)
+
+            // console.log(posts[0].data)
+            return res.status(200).json({posts: posts[0].data, totalCount: posts[0].totalCount[0].count})
         } catch (error) {
             console.log(error)
             return res.status(500)
