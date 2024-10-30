@@ -8,6 +8,7 @@ import axios from "../axios";
 import { usePost } from "../../context/PostProvider";
 import { ADMIN_ROLE } from "../utils";
 import { useAuth } from "../../context/AuthProvider"
+import ReactTimeAgo from "react-time-ago";
 
 export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply, userId, postId }) {
     // console.log(userId)
@@ -121,7 +122,7 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
                         &#160; &#160;
                         {comment?.user?.username}
                         &#160;&#160;&#160;
-                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
+                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> <ReactTimeAgo date={new Date(comment.createdAt).getTime()} locale='en-US' /></p>
                     </div>
                     {openEdit &&
                         <form style={{ width: '100%' }}>
