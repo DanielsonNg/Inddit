@@ -5,14 +5,17 @@ import { Button } from "@mui/material"
 import { purple } from "@mui/material/colors"
 import ChangePasswordDialog from "./ChangePasswordDialog"
 import ChangePictureDialog from "./ChangePictureDialog"
+import { useNavigate } from "react-router-dom"
 
 export default function ProfileSetting() {
-    const { userData } = useAuth()
+    const { userData, logout } = useAuth()
     const [edit, setEdit] = useState(false)
     const [picture, setPicture] = useState(userData?.image)
     const [email, setEmail] = useState('')
     const [dialogChangePassword, setDialogChangePassword] = useState(false)
     const [dialogChangePicture, setDialogChangePicture] = useState(false)
+
+    const navigate = useNavigate()
 
     const setFileToBasePicture = (file) => {
         const reader = new FileReader();
@@ -41,6 +44,11 @@ export default function ProfileSetting() {
             }
         })()
     }, [userData])
+
+    const handleLogout = () => {
+        logout()
+        navigate('/')
+    }
 
 
     return (
@@ -95,6 +103,9 @@ export default function ProfileSetting() {
                 <div style={{ display: 'flex' }}>
                     <Button variant="contained" style={{ backgroundColor: purple }} onClick={() => setDialogChangePicture(true)}>Change Profile Picture</Button>
                 </div>
+            </div>
+            <div style={{ display: 'flex', padding: '30px', columnGap: '200px' }}>
+                <Button variant="contained" color="error" onClick={() => handleLogout()}>Logout</Button>
             </div>
         </>
     )

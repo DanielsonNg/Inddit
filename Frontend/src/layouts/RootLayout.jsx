@@ -23,11 +23,6 @@ export default function RootLayout() {
     const [category, setCategory] = useState('')
 
     const navigate = useNavigate()
-
-    const handleLogout = () => {
-        logout()
-    }
-
     const handleCategory = (category) => {
         navigate('/')
         setCategory(category)
@@ -36,9 +31,7 @@ export default function RootLayout() {
     return (
         <>
             <Context.Provider value={{ open, setOpen }} >
-                <Button onClick={handleLogout}>
-                    Logout
-                </Button>
+             
                 {open && (
                     <CreateCommunityDialog />
                 )}

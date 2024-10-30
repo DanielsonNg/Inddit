@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { purple } from "../utils";
 import axios from "../axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthProvider";
 
 export default function GeneralSetting({ community }) {
     // console.log(community)
@@ -15,6 +16,8 @@ export default function GeneralSetting({ community }) {
     const [logo, setLogo] = useState('')
     const [banner, setBanner] = useState('')
     const [edit, setEdit] = useState(false)
+
+    const {logout} = useAuth()
 
     const navigate = useNavigate()
 
@@ -90,7 +93,7 @@ export default function GeneralSetting({ community }) {
             post_approval: editPostApproval,
             description: editDescription,
             logo: logo ? logo : null,
-            banner: banner ? banner: null
+            banner: banner ? banner : null
         }
 
         axios.put(`/community/${community._id}`, data)
