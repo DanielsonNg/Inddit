@@ -14,14 +14,23 @@ export default function Comments({ postId }) {
     const [loading, setLoading] = useState(false)
     const { userData } = useAuth()
 
+    // const [liked, setLiked] = useState(false)
+    // const [likes, setLikes] = useState(0)
+
+
     useEffect(() => {
         setLoading(true)
-        axios.get(`/comments/${postId}`)
-            .then(({ data }) => {
-                setComments(data)
-                setLoading(false)
-            })
-    }, [])
+        if (userData) {
+            const data = {
+                user_id: userData._id
+            }
+            axios.post(`/comments/${postId}`, data)
+                .then(({ data }) => {
+                    setComments(data)
+                    setLoading(false)
+                })
+        }
+    }, [userData])
 
     function addCommentInstant(newComment) {
         setLoading(true)
@@ -50,10 +59,12 @@ export default function Comments({ postId }) {
             {!loading && <div className={styles.commentCard}>
                 {comments.length > 0 ? comments.map((comment, index) => (
                     <Comment key={comment._id} addComment={addCommentInstant} deleteCommentInstant={deleteCommentInstant} postId={postId}
-                        index={index} comment={comment} level={0} userId={userData._id}
+                        index={index} comment={comment} level={0} userId={userData._id} 
                         reSetReply={function reSetReply(value) {
                             comment.is_replied = value
-                        }} />
+                        }} 
+                      
+                        />
                 )) : <NoData type='Comment' />}
             </div>}
         </>

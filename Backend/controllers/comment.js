@@ -5,6 +5,7 @@ const User = require("../models/user.model");
 const { deleteCommentAndChildren } = require("../utils");
 const Post = require("../models/post.model");
 const Inddit = require("../models/inddits.model");
+const CommentLikeTracker = require("../models/commentLikeTrackers.model");
 const ObjectId = mongoose.Types.ObjectId;
 
 module.exports = {
@@ -67,6 +68,27 @@ module.exports = {
                     $unwind: '$user'
                 },
                 {
+                    $lookup: {
+                        from: 'commentliketrackers',
+                        localField: '_id',
+                        foreignField: 'comment_id',
+                        as: 'liked',
+                    }
+                },
+                {
+                    $addFields: {
+                        tracker: {
+                            $filter: {
+                                input: "$liked",       
+                                as: "lk",                
+                                cond: {
+                                    $eq: ["$$lk.user_id", ObjectId.createFromHexString(req.body.user_id)] 
+                                }
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         content: 1,
@@ -75,6 +97,7 @@ module.exports = {
                         likes: 1,
                         is_replied: 1,
                         'user._id': 1,
+                        'liked': 1,
                     }
                 }
             ])
@@ -128,5 +151,31 @@ module.exports = {
             return res.status(500)
         }
 
-    }
+    },
+
+    async likeComment(req, res) {
+        try {
+            const id = req.params.id
+            const comment = await Comment.findByIdAndUpdate(id, { $inc: { likes: 1 } })
+            const like = await CommentLikeTracker.create({ comment_id: id, user_id: req.body.user_id })
+            return res.status(200).json(like)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
+    async unlikeComment(req, res) {
+        try {
+            const id = req.params.id
+
+            const comment = await Comment.findByIdAndUpdate(id, { $inc: { likes: -1 } })
+            const findLike = await CommentLikeTracker.findOne({ comment_id: id, user_id: req.body.user_id })
+            const unlike = await CommentLikeTracker.findByIdAndDelete(findLike._id)
+            return res.status(200).json(unlike)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
 }

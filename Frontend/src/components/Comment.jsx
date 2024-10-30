@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import imageTest from "../assets/Library.jpg"
-import Reply from "./Reply"
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import CommentBox from "./CommentBox";
 import axios from "../axios";
 import { usePost } from "../../context/PostProvider";
-import { useAuth } from "../../context/AuthProvider";
 import { ADMIN_ROLE } from "../utils";
+import { useAuth } from "../../context/AuthProvider"
+
 export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply, userId, postId }) {
     // console.log(userId)
     let left = level * 5
@@ -21,11 +22,19 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
     const [edit, setEdit] = useState(comment.content)
     const [openEdit, setOpenEdit] = useState(false)
 
+    const [liked, setLiked] = useState(comment?.liked?.length > 0 ? true : false)
+    const [likes, setLikes] = useState(comment.likes)
+
     const { permission } = usePost()
+
+    const { userData } = useAuth()
 
     async function handleOpenReply() {
         setOpenReply((prevValue) => !prevValue)
-        await axios.get(`/comments/${comment._id}`)
+        const data = {
+            user_id: userData._id
+        }
+        await axios.post(`/comments/${comment._id}`,data)
             .then(({ data }) => {
                 setReplies(data)
                 // console.log(data)
@@ -76,9 +85,28 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
         comment.is_replied = value
     }
 
-    // useEffect(() => {
-    //     console.log(permission)
-    // }, [permission])
+    async function handleLike() {
+        const data = {
+            user_id: userData?._id
+        }
+        await axios.post(`/comment/like/${comment._id}`, data)
+            .then(({ data }) => {
+                setLiked(true)
+                setLikes(prevLikes => prevLikes + 1)
+            })
+    }
+
+    async function handleUnlike() {
+        const data = {
+            user_id: userData?._id
+        }
+        await axios.post(`/comment/unlike/${comment._id}`, data)
+            .then(({ data }) => {
+                setLiked(false)
+                setLikes(prevLikes => prevLikes - 1)
+            })
+
+    }
 
     return (
         <>
@@ -109,7 +137,11 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
                     </div>}
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'lighter', marginTop: '10px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}><EmojiEmotionsIcon /> &#160;{comment.likes} &#160; &#160;</div>
+                            {!liked ?
+                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleLike()}><InsertEmoticonIcon /> &#160;{likes} &#160; &#160;</div>
+                                :
+                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleUnlike()}><EmojiEmotionsIcon /> &#160;{likes} &#160; &#160;</div>
+                            }
                             <div style={{ cursor: 'pointer' }} onClick={() => setOpenCommentBox(prevValue => !prevValue)}>Reply</div>&#160; &#160;
 
                             {permission < ADMIN_ROLE ?

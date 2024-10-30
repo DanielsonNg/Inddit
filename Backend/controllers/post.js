@@ -201,7 +201,7 @@ module.exports = {
                     }
                 })
             }
-            console.log(pipeline)
+            
             const posts = await Post.aggregate(pipeline);
             return res.status(200).json(posts)
         } catch (error) {
@@ -1108,5 +1108,4 @@ module.exports = {
             return res.status(500)
         }
     }
-
 }

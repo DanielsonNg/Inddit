@@ -6,7 +6,7 @@ const { signup, signin, getEmail, changePasswordRequest, changePassword } = requ
 const { insertCategory, getCategories } = require('../controllers/category')
 const { createCommunity, getCommunities, getCommunity, joinCommunity, getPostsByCommunity, getPermission, leaveCommunity, deleteCommunity, editCommunity, membersToApprove, getMembers, promoteMember, demoteMember, kickMember, acceptMember, getHotCommunity, getHotPostByCommunity } = require('../controllers/community')
 const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike, savePost, unsavePost, getSave, getSavedPosts, getLikedPosts, getUserPosts, getHotPosts, getPostsByCategory } = require('../controllers/post')
-const { createComment, getComments, editComment, deleteComment } = require('../controllers/comment')
+const { createComment, getComments, editComment, deleteComment, likeComment, unlikeComment } = require('../controllers/comment')
 const { changeProfilePicture } = require('../controllers/user')
 const router = express.Router()
 
@@ -88,9 +88,11 @@ router.get('/post/user/:id', getUserPosts)
 
 //comment
 router.post('/comment/:id', createComment)
-router.get('/comments/:id', getComments)
+router.post('/comments/:id', getComments)
 router.post('/comment/edit/:id', editComment)
 router.delete('/comment/:id', deleteComment)
+router.post('/comment/like/:id', likeComment)
+router.post('/comment/unlike/:id', unlikeComment)
 
 
 module.exports = router
