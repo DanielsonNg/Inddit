@@ -14,6 +14,7 @@ import { Button } from '@mui/material';
 import axios from "../axios"
 import LocalAirportIcon from '@mui/icons-material/LocalAirport';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export const Context = createContext()
 
@@ -28,15 +29,22 @@ export default function RootLayout() {
         setCategory(category)
     }
 
+    const [search, setSearch] = useState('')
+    const searchDebounce = useDebounce(search)
+
+    // useEffect(()=>{
+    //     // console.log(search)
+    //     console.log(searchDebounce)
+    // },[searchDebounce])
+
     return (
         <>
             <Context.Provider value={{ open, setOpen }} >
-             
                 {open && (
                     <CreateCommunityDialog />
                 )}
                 <div className={styles.container}>
-                    <NavBar />
+                    <NavBar setSearch={setSearch} search={search} />
                     <div className={styles.content}>
 
                         <div className={styles.left}>
@@ -59,7 +67,7 @@ export default function RootLayout() {
                             {token && <LeftCard name="Create Community" icon={<AddIcon />} />}
                         </div>
                         <div className={styles.rightSide}>
-                            <Outlet context={[category, setCategory]} />
+                            <Outlet context={[category, setCategory, searchDebounce]} />
                         </div>
                     </div>
                 </div>

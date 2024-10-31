@@ -1,11 +1,9 @@
 import { useAuth } from "../../context/AuthProvider"
-import SearchIcon from '@mui/icons-material/Search';
 import styles from "../css/rootlayout.module.css"
 import { Link } from "react-router-dom";
 import { purple } from "../utils";
-import { useEffect } from "react";
 
-export default function NavBar() {
+export default function NavBar({ search, setSearch }) {
     const { userData, token } = useAuth()
     return (
         <div className={styles.navbar}>
@@ -15,9 +13,24 @@ export default function NavBar() {
                 </Link>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', padding: '5px' }}>
-                <div className={styles.search} style={{ backgroundColor: 'rgb(28, 26, 26)', borderRadius: '10px', maxWidth: '500px', minWidth: '300px', height: '49px', paddingLeft: '20px', display: 'flex', alignItems: 'center' }}>
-                    <SearchIcon /> <p style={{ fontWeight: 'lighter' }}>Search Inddit</p>
-                </div>
+
+                <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className={styles.search}
+                    style={{
+                        backgroundColor: 'rgb(28, 26, 26)',
+                        borderRadius: '10px',
+                        maxWidth: '500px',
+                        minWidth: '300px',
+                        height: '49px',
+                        paddingLeft: '20px',
+                        display: 'flex',
+                        alignItems: 'center'
+                    }}
+                    placeholder={'Search...'}>
+                </input>
+
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {token === null ? (
@@ -28,8 +41,8 @@ export default function NavBar() {
                     </Link>)
                     :
                     <Link to={`/user/${userData._id}`} style={{ textDecoration: 'none', color: 'white' }}>
-                        <div style={{ backgroundColor: "black", width: '70px', height: '70px', borderRadius: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginRight:"50px", marginBottom:'20px' }}>
-                            <img src={userData.image} style={{width:'70px', height:'70px', borderRadius: '100px'}} ></img>
+                        <div style={{ backgroundColor: "black", width: '70px', height: '70px', borderRadius: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginRight: "50px", marginBottom: '20px' }}>
+                            <img src={userData.image} style={{ width: '70px', height: '70px', borderRadius: '100px' }} ></img>
                         </div>
                     </Link>
                 }

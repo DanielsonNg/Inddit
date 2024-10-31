@@ -70,8 +70,17 @@ module.exports = {
                 })
             }
             const page = req.query.page || 0
+            const search = req.query.search || null
             const postPerPage = 2
             const pipeline = [
+                ...(search ? [{
+                    $match: {
+                        $or: [
+                            { title: { $regex: search, $options: 'i' } },
+                            { description: { $regex: search, $options: 'i' } },
+                        ]
+                    }
+                }] : []),
                 {
                     $match: { status: 1 }
                 },
@@ -109,6 +118,11 @@ module.exports = {
                 {
                     $unwind: "$category",
                 },
+                ...(data.category ? [{
+                    $match: {
+                        "category.name": data.category
+                    }
+                }] : []),
                 {
                     $lookup: {
                         from: "trackers", // The name of the Tracker collection
@@ -197,7 +211,7 @@ module.exports = {
                 {
                     $facet: {
                         data: [
-                            { $skip: page*postPerPage },
+                            { $skip: page * postPerPage },
                             { $limit: postPerPage }
                         ],
                         totalCount: [
@@ -206,17 +220,9 @@ module.exports = {
                     }
                 }
             ]
-            if (data.category) {
-                pipeline.push({
-                    $match: {
-                        "category.name": data.category
-                    }
-                })
-            }
-            const posts = await Post.aggregate(pipeline);
 
-            // console.log(posts[0].data)
-            return res.status(200).json({posts: posts[0].data, totalCount: posts[0].totalCount[0].count})
+            const posts = await Post.aggregate(pipeline);
+            return res.status(200).json({ posts: posts[0].data, totalCount: posts[0]?.totalCount[0]?.count })
         } catch (error) {
             console.log(error)
             return res.status(500)
