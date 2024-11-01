@@ -4,9 +4,9 @@ const { login, token, logout, register, handleRefreshToken, addRole } = require(
 const { validateToken, adminOnly, memberOnly } = require('../middlewares/validationHeader')
 const { signup, signin, getEmail, changePasswordRequest, changePassword } = require('../controllers/authNew')
 const { insertCategory, getCategories } = require('../controllers/category')
-const { createCommunity, getCommunities, getCommunity, joinCommunity, getPostsByCommunity, getPermission, leaveCommunity, deleteCommunity, editCommunity, membersToApprove, getMembers, promoteMember, demoteMember, kickMember, acceptMember, getHotCommunity, getHotPostByCommunity } = require('../controllers/community')
+const { createCommunity, getCommunities, getCommunity, joinCommunity, getPostsByCommunity, getPermission, leaveCommunity, deleteCommunity, editCommunity, membersToApprove, getMembers, promoteMember, demoteMember, kickMember, acceptMember, getHotCommunity, getHotPostByCommunity, getPostsByCommunityGuest } = require('../controllers/community')
 const { createPost, getPosts, getPost, deletePost, editPost, getPostsGuest, postsToApprove, approvePost, likePost, unlikePost, getLike, savePost, unsavePost, getSave, getSavedPosts, getLikedPosts, getUserPosts, getHotPosts, getPostsByCategory } = require('../controllers/post')
-const { createComment, getComments, editComment, deleteComment, likeComment, unlikeComment } = require('../controllers/comment')
+const { createComment, getComments, editComment, deleteComment, likeComment, unlikeComment, getCommentsGuest } = require('../controllers/comment')
 const { changeProfilePicture } = require('../controllers/user')
 const router = express.Router()
 
@@ -63,7 +63,6 @@ router.get('/community/posts/hot/:id',getHotPostByCommunity)
 
 //post
 router.post('/posts', getPosts)
-router.get('/postsGuest', getPostsGuest)
 router.post('/post/create', createPost)
 router.post('/post/:id', getPost)
 router.delete('/post/:id', deletePost)
@@ -93,6 +92,12 @@ router.post('/comment/edit/:id', editComment)
 router.delete('/comment/:id', deleteComment)
 router.post('/comment/like/:id', likeComment)
 router.post('/comment/unlike/:id', unlikeComment)
+
+//for guests
+router.post('/postsGuest', getPostsGuest)
+router.get('/postGuest/:id', getPost)
+router.get('/commentsGuest/:id', getCommentsGuest)
+router.get('/communityGuest/posts/:id', getPostsByCommunityGuest)
 
 
 module.exports = router

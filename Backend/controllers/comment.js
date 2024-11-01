@@ -108,6 +108,45 @@ module.exports = {
         }
     },
 
+    async getCommentsGuest(req, res) {
+        try {
+            const id = req.params.id
+            const comments = await Comment.aggregate([
+                {
+                    $match: {
+                        parent_id: ObjectId.createFromHexString(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user_id',
+                        foreignField: '_id',
+                        as: 'user'
+                    }
+                },
+                {
+                    $unwind: '$user'
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        content: 1,
+                        createdAt: 1,
+                        'user.username': 1,
+                        likes: 1,
+                        is_replied: 1,
+                        'user._id': 1,
+                    }
+                }
+            ])
+            return res.status(200).json(comments)
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(error)
+        }
+    },
+
     async editComment(req, res) {
         try {
             const commentId = req.params.id

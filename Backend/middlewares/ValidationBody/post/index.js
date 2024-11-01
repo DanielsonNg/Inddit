@@ -18,6 +18,10 @@ const getAll = Joi.object().keys({
     category: Joi.string().allow(null)
 })
 
+const getAllGuest = Joi.object().keys({
+    category: Joi.string().allow(null)
+})
+
 const getAllSaved = Joi.object().keys({
     user_id: Joi.string().required()
 })
@@ -26,5 +30,6 @@ module.exports = {
     create,
     edit,
     getAll,
-    getAllSaved
+    getAllSaved,
+    getAllGuest
 }

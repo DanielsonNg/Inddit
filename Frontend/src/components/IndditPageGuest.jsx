@@ -1,4 +1,4 @@
-import PostCard from '../components/PostCard'
+import PostCardGuest from '../components/PostCardGuest'
 import styles from '../css/landingpage.module.css'
 import RightCard from '../components/RightCard,';
 import loginImage from "../assets/Night.jpg"
@@ -12,7 +12,7 @@ import Loading from './Loading';
 import { useAuth } from "../../context/AuthProvider"
 import NotFound from './NotFound';
 
-export default function IndditPageGuest() {
+export default function IndditPage() {
     const { userData } = useAuth()
     const { id } = useParams()
     const navigate = useNavigate()
@@ -23,74 +23,34 @@ export default function IndditPageGuest() {
     })
 
     const [posts, setPosts] = useState()
-
     const [loading, setLoading] = useState(false)
-    const [join, setJoin] = useState(0)
-    
-    function deletePostInstant(index) {
-        const reducedArr = [...posts]
-        reducedArr.splice(index, 1)
-        setPosts(reducedArr)
-    }
-
-    async function setPermission() {
-        const data = {
-            user_id: userData?._id,
-            community_id: id
-        }
-        if (userData._id) {
-            await axios.post(`/community/permission`, data)
-                .then(({ data }) => {
-                    setJoin(data.permission)
-                })
-        }
-    }
+    const [hotPosts, setHotPosts] = useState([])
+    const [category, setCategory] = useState('')
+    const [memberCount, setMemberCount] = useState(0)
 
     useEffect(() => {
         (async () => {
             setLoading(true)
             await axios.get(`/community/${id}`)
                 .then(({ data }) => {
-                    setCommunity(data)
+                    setCommunity(data.community)
+                    setCategory(data.category)
+                    setMemberCount(data.members)
                 })
                 .catch((error) => {
                     navigate('/')
                 })
-            await axios.get(`/community/posts/${id}`)
+            await axios.get(`/communityGuest/posts/${id}`)
                 .then(({ data }) => {
                     setPosts(data)
                     setLoading(false)
                 })
+            await axios.get(`/community/posts/hot/${id}`)
+                .then(({ data }) => {
+                    setHotPosts(data)
+                })
         })()
-
     }, [])
-
-    useEffect(() => {
-        setPermission()
-    }, [userData])
-
-    function handleJoin(e) {
-        e.preventDefault()
-        const data = {
-            user_id: userData._id
-        }
-        axios.post(`/community/join/${community._id}`, data)
-            .then(async ({ data }) => {
-                setJoin(data.is_join)
-            })
-    }
-
-    function handleLeave(e) {
-        e.preventDefault()
-        const data = {
-            user_id: userData._id
-        }
-        axios.post(`/community/leave/${community._id}`, data)
-            .then(async ({ data }) => {
-                setJoin(data.is_join)
-            })
-    }
-
 
     return (
         <>
@@ -103,8 +63,8 @@ export default function IndditPageGuest() {
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'center', minWidth: '300px', width: '100%' }}>
                     <div style={{ width: '100%' }}>
-                        <img src={loginImage}
-                            style={{ width: '100%', height: '140px', borderRadius: '20px', }}>
+                        <img src={community.banner} loading='lazy'
+                            style={{ width: '100%', height: '140px', borderRadius: '20px' }}>
                         </img>
                     </div>
                 </div>
@@ -112,28 +72,13 @@ export default function IndditPageGuest() {
                     <div style={{ display: 'flex', flexDirection: 'row', marginTop: '-55px', justifyContent: 'space-between', padding: '0px 50px', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', flexWrap: 'wrap' }}>
                             <div>
-                                <img src={s} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
+                                <img src={community.logo} style={{ width: '100px', height: '100px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                             </div>
                             <div style={{ marginTop: '40px' }}>
-                                <h1>i/{community.name}</h1>
+                                <h1>i/{community?.name}</h1>
                             </div>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', gap: '30px', marginTop: '40px', alignItems: "center" }}>
-                            {join === 0 && <div onClick={(e) => handleJoin(e)}
-                                style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                Join Community
-                            </div>}
-                            {join === 1 && <div onClick={(e) => handleLeave(e)}
-                                style={{ borderBlock: '2px solid gray', cursor: 'pointer', minWidth: '200px', height: "40px", borderRadius: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                Leave Community
-                            </div>}
-                            {join === 1 && <div>
-                                <Link to={`/post/create/${id}`}>
-                                    <Button color='secondary' style={{ borderRadius: '20px', height: '40px' }}>
-                                        <h3 style={{ fontWeight: 'lighter' }}>Create Post</h3>
-                                    </Button>
-                                </Link>
-                            </div>}
                         </div>
                     </div>
                 </div>
@@ -142,7 +87,7 @@ export default function IndditPageGuest() {
                         <div>
                             <img src={s} style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'black' }}></img>&#160;
                         </div>
-                        <h3>I/{community.name}</h3>
+                        <h3>I/{community?.name}</h3>
                     </div>
                     <div>
                         <div>
@@ -159,39 +104,39 @@ export default function IndditPageGuest() {
                     <h1>de</h1>
                 </div>
                 <div style={{ padding: '0px 50px 10px 50px', width: '100%', flexWrap: 'wrap', fontSize: '16px', fontWeight: 'lighter' }}>
-                    {community.description}
+                    {community?.description}
                 </div>
                 {/* Content */}
                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%' }}>
                     <div className={styles.mid}>
-                        {posts.length > 0 ? posts.map((post, index) => (
-                            <PostCard key={index} placement='landingpage' post={post} index={index} deletePostInstant={deletePostInstant} />
-                        )) : <NotFound />}
-                        {/* <PostCard placement='landingpage' />
-                        <PostCard placement='landingpage' />
-                        <PostCard placement='landingpage' /> */}
+                        {posts?.length > 0 ? posts.map((post, index) => (
+                            <PostCardGuest key={index} placement='landingpage' post={post} index={index} />
+                        )) :
+                            <NotFound />
+                        }
                     </div>
                     <div className={styles.right}>
                         <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                            <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
-                            I/Memes
+                            <img src={community.logo} style={{ width: '30px', height: '30px', borderRadius: '50%' }}></img>&#160;
+                            I/{community.name}
                         </div>
                         <div style={{ marginTop: '10px' }}>
-                            Meme Community
-                        </div>
-                        <div style={{ fontWeight: 'lighter' }}>
-                            This description describe a description of a inddit good.
+                            {category} Community
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '10px ' }}>
-                            25k Members
+                            {memberCount} Members
                         </div>
                         <div style={{ fontWeight: 'bold', marginTop: '10px' }}>
                             Hot Posts
                         </div>
-                        <HotPost />
-                        <HotPost />
-                        <HotPost />
-                        <HotPost />
+                        {hotPosts ? hotPosts.map((post) => (
+                            <div style={{ cursor: 'pointer' }} onClick={() => navigate(`/post/${post._id}`)} key={post._id}>
+                                <HotPost author={post.author.username} likes={post.likes} comments={post.comments} content={post.description} image={post.author.image} />
+                            </div>
+                        ))
+                            :
+                            <NotFound />
+                        }
                     </div>
                 </div>
             </div>}

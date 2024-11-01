@@ -231,18 +231,41 @@ module.exports = {
 
     async getPostsGuest(req, res) {
         try {
-            const posts = await Post.aggregate([
+            const data = req.body
+
+            const { error } = PostSchema.getAllGuest.validate(data)
+            const valid = error == null
+
+            if (!valid) {
+                return res.status(422).json({
+                    response_message: error.message
+                })
+            }
+            const page = req.query.page || 0
+            const search = req.query.search || null
+            const postPerPage = 2
+            const pipeline = [
+                ...(search ? [{
+                    $match: {
+                        $or: [
+                            { title: { $regex: search, $options: 'i' } },
+                            { description: { $regex: search, $options: 'i' } },
+                        ]
+                    }
+                }] : []),
+                {
+                    $match: { status: 1 }
+                },
                 {
                     $lookup: {
-                        from: "inddits",            // The collection to join
-                        localField: "community_id",      // Field in the post collection (foreign key)
-                        foreignField: "_id",            // Field in the community collection (primary key)
-                        as: "community"             // Output array of matched documents from community
+                        from: "inddits",     
+                        localField: "community_id",     
+                        foreignField: "_id",          
+                        as: "community"           
                     }
                 },
                 {
-                    $unwind: "$community",          // Unwind the array to make communityInfo a single object
-                    // preserveNullAndEmptyArrays: true // Keep posts even if no matches found
+                    $unwind: "$community",        
                 },
                 {
                     $lookup: {
@@ -266,6 +289,11 @@ module.exports = {
                 {
                     $unwind: "$category",
                 },
+                ...(data.category ? [{
+                    $match: {
+                        "category.name": data.category
+                    }
+                }] : []),
                 {
                     $project: {
                         _id: 1,
@@ -279,14 +307,29 @@ module.exports = {
                         "community.description": 1,
                         "community.name": 1,
                         "author.username": 1,
+                        "author._id": 1,
                         "category.name": 1,
                         "tracker.permission": 1,
-                        comments: 1
+                        comments: 1,
+                        "liketracker": 1,
+                        "savetracker": 1
+                    }
+                },
+                {
+                    $facet: {
+                        data: [
+                            { $skip: page * postPerPage },
+                            { $limit: postPerPage }
+                        ],
+                        totalCount: [
+                            { $count: "count" }
+                        ]
                     }
                 }
-            ]);
-            // console.log(posts)
-            return res.status(200).json(posts)
+            ]
+
+            const posts = await Post.aggregate(pipeline);
+            return res.status(200).json({ posts: posts[0].data, totalCount: posts[0]?.totalCount[0]?.count })
         } catch (error) {
             console.log(error)
             return res.status(500)
@@ -418,6 +461,73 @@ module.exports = {
                         comments: 1,
                         "liketracker": 1,
                         "savetracker": 1
+                    }
+                },
+            ]);
+            // console.log(post)
+            return res.status(200).json(post)
+        } catch (error) {
+            console.log(error)
+            return res.status(500)
+        }
+    },
+
+    async getPost(req, res) {
+        try {
+            const id = req.params.id
+            const post = await Post.aggregate([
+                {
+                    $match: { _id: ObjectId.createFromHexString(id) }
+                },
+                {
+                    $lookup: {
+                        from: "inddits",         
+                        localField: "community_id",    
+                        foreignField: "_id",           
+                        as: "community"             
+                    }
+                },
+                {
+                    $unwind: "$community"          
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author_id",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $unwind: "$author"
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "community.category_id",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $unwind: "$category",
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        description: 1,
+                        likes: 1,
+                        image: 1,
+                        community_id: 1,
+                        createdAt: 1,
+                        "author._id": 1,
+                        "community.logo": 1,
+                        "community.description": 1,
+                        "community.name": 1,
+                        "author.username": 1,
+                        "category.name": 1,
+                        comments: 1,
                     }
                 },
             ]);

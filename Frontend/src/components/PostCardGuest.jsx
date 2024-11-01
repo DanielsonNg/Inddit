@@ -1,76 +1,77 @@
 import styles from '../css/landingpage.module.css'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
-import s from '../../assets/s.jpg'
-import { Link, useNavigate } from 'react-router-dom';
-import { Dropdown } from '@mui/base/Dropdown';
-import { Menu } from '@mui/base/Menu';
-import { MenuButton } from '@mui/base/MenuButton';
-import { MenuItem, styled } from '@mui/material';
-import React, { useState } from 'react';
-import { ADMIN_ROLE, cardColor } from '../utils/index'
-import axios from '../axios'
-import PostBox from './PostBox'
+import React, { useEffect, useRef, useState } from 'react';
+import PostCardContentGuest from './PostCardContentGuest';
+import PostCardContentLimitedGuest from './PostCardContentLimitedGuest';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+import { useAuth } from "../../context/AuthProvider"
+import axios from '../axios';
 
-export default function PostCardGuest(props) {
-    // console.log(props.post.tracker.permission)
-    const [content, setContent] = useState(props.post.description)
+export default function PostCard(props) {
+    const [expand, setExpand] = useState(false)
+    const [liked, setLiked] = useState(false)
+    const { userData } = useAuth()
+    const [likes, setLikes] = useState(props.post.likes)
+    const [saved, setSaved] = useState(false)
+
+    const [showMoreButton, setShowMoreButton] = useState(false)
+    const contentRef = useRef(null)
+
+
+    useEffect(() => {
+        if (contentRef.current) {
+            const contentHeight = contentRef.current.offsetHeight;
+            const maxHeight = 300;
+            if (contentHeight > maxHeight) {
+                setShowMoreButton(true);
+            } else {
+                setShowMoreButton(false);
+            }
+        }
+    }, [expand]);
+
     return (
         <>
-            <div className={props.placement === 'landingpage' ? styles.cardmidLimited : styles.cardmid}>
-                <div style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'row' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={s} style={{ width: '30px', height: '30px', borderRadius: '50%' }} loading='lazy'></img>&#160;
-                        <Link to={`/inddit/guest/${props.post.community_id}`} style={{ color: 'white' }}>
-                            <p style={{ fontWeight: 'lighter' }}>i/{props.post.community.name}</p>
-                        </Link>
-                        &#160;&#160;&#160;
-                        <p style={{ fontWeight: 'lighter', fontSize: '14px', textAlign: 'center' }}> 20 Hours Ago</p>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {!expand ?
+                    <div ref={contentRef}>
+                        <PostCardContentLimitedGuest placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} expand={expand} saved={saved} setSaved={setSaved} userData={userData} />
                     </div>
-                    <div style={{ fontWeight: 'lighter', display: 'flex', gap: '20px', cursor: 'pointer' }}>
-                        {/* {!props.post.tracker.permission && 'Join Now'}
-                        {props.post.tracker.permission && <Dropdown open={open}>
-                            <MenuButton onClick={() => setOpen((prevVal) => !prevVal)} style={{ height: '30px', backgroundColor: cardColor, borderColor: cardColor, borderRadius: '20px' }}>...</MenuButton>
-                            <Menu style={{ backgroundColor: cardColor, borderRadius: '10px', marginTop: '10px', borderBlockColor: 'white' }}>
-                                {props.post.author._id === props.user_id && <MenuItem onClick={() => setOpenEdit(true)}>Edit Post</MenuItem>}
-                                {props.post.author._id === props.user_id ?
-                                    <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem> :
-                                    props.post.tracker.permission >= ADMIN_ROLE ? 
-                                    <MenuItem onClick={() => deletePost()}>Delete Post</MenuItem> : ''
-                                }
-                            </Menu>
-                        </Dropdown>} */}
+                    :
+                    <div ref={contentRef}>
+                        <PostCardContentGuest placement={props.placement} key={props.post._id} deletePostInstant={props.deletePostInstant} user_id={props.user_id} post={props.post} index={props.index} saved={saved} setSaved={setSaved} userData={userData} />
                     </div>
-                </div>
-                <div style={{ fontSize: '16px', fontWeight: 'lighter' }}>
-                    u/{props.post.author.username}
-                </div>
-                <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
-                    <div>
-                        <h2>{props.post.title}</h2>
+                }
+                {showMoreButton && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            width: '100%',
+                            backgroundColor: 'rgba(194, 194, 194, 0.1)',
+                            fontSize: '18px',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => setExpand(prevExpand => !prevExpand)}
+                    >
+                        {expand ? 'Show Less' : 'Show More'}
                     </div>
-                </Link>
-                <div className={props.placement === 'landingpage' ? styles.text : ''} style={{ fontWeight: 'lighter' }}>
-                    <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
-                        {content}
-                    </Link>
-                </div>
-                <Link style={{ cursor: 'pointer', color: 'white' }} to={`/post/${props.post._id}`}>
-                    <div style={{ padding: '50px', display: 'flex', justifyContent: 'center', maxWidth: '100%' }}>
-                        <img src={props.post.image} style={{ maxWidth: '100%' }}></img>
+                )}
+                <div className={styles.cardmidBottom}>
+                    <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', gap: '5px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => handleLike()}>
+                            <InsertEmoticonIcon />
+                        </div>
+                        <p>{likes}</p>
                     </div>
-                </Link >
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '50px', marginTop: '20px' }}>
-                    <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
-                        <EmojiEmotionsIcon />&#160;&#160;
-                        <p>{props.post.likes}</p>&#160;&#160;
-                    </div>
-                    <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex' }}>
-                        <InsertCommentIcon />&#160;
-                        71k
+                    <div style={{ alignItems: 'center', borderRadius: '10px', display: 'flex', gap: '5px' }}>
+                        <InsertCommentIcon />
+                        {props.post.comments ? props.post.comments : 0}
                     </div>
                 </div>
-            </div >
+            </div>
+
         </>
     )
 }

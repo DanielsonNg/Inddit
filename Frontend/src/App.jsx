@@ -15,6 +15,7 @@ import LandingPageGuest from './components/LandingPageGuest'
 import IndditPageGuest from './components/IndditPageGuest'
 import ManageCommunity from './components/ManageCommunity'
 import UserPage from './components/UserPage'
+import PostGuest from './components/PostGuest'
 
 function App() {  
   const {isAuthenticated} = useAuth()
@@ -23,10 +24,9 @@ function App() {
     <Routes>
       <Route path='/' element={<RootLayout />}>
         <Route index element={isAuthenticated ? <LandingPage /> : <LandingPageGuest/> } /> 
-        <Route path='/post/:id' element={<Post />} />
+        <Route path='/post/:id' element={!isAuthenticated ? <PostGuest /> :  <Post />} />
         {/* <Route exact path="/inddit" render={() => (<IndditPage id={id} />)} /> */}
-        <Route path='/inddit/:id' element={<IndditPage />} />
-        <Route path='/inddit/guest/:id' element={<IndditPageGuest />} />
+        <Route path='/inddit/:id' element={!isAuthenticated ?<IndditPageGuest /> : <IndditPage />} />
         <Route path='/post/create/:id' element={<PostCreate />} />
       </Route>
       <Route path='/login' element={!isAuthenticated ? <LoginPage/> : <LandingPage />} />
