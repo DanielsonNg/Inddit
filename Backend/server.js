@@ -3,15 +3,11 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser');
 
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json({limit:'50mb'}))
 
 app.use(express.urlencoded({ extended: false }))
 
-// app.unsubscribe(cors())
 app.use(cors())
 
 app.use(cookieParser())
@@ -28,7 +24,7 @@ app.use(function (req, res, next) {
 
 app.use('/', router)
 
-mongoose.connect("mongodb+srv://danielson7632:lLGJDM1eqkYxMJSm@indodit.xvqhxtv.mongodb.net/Node-API?retryWrites=true&w=majority&appName=Indodit")
+mongoose.connect(process.env.MONGO_DB_CONNECTION)
     .then(() => {
         console.log("Connected to Database")
         app.listen(port, () => {
