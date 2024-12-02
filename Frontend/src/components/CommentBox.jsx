@@ -14,7 +14,6 @@ export default function CommentBox({ setOpenCommentBox, parentId, addComment, po
         }
         axios.post(`/comment/${parentId}`, data)
             .then(({ data }) => {
-                // console.log(data)
                 addComment(data)
                 setOpenCommentBox((prev) => !prev)
             })

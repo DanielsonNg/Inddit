@@ -11,7 +11,6 @@ import { useAuth } from "../../context/AuthProvider"
 import ReactTimeAgo from "react-time-ago";
 
 export default function Comment({ comment, level, deleteCommentInstant, index, reSetReply, userId, postId }) {
-    // console.log(userId)
     let left = level * 5
     let right = 100 - left
     const [openComment, setOpenCommentBox] = useState(false)
@@ -38,7 +37,6 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
         await axios.post(`/comments/${comment._id}`,data)
             .then(({ data }) => {
                 setReplies(data)
-                // console.log(data)
             })
     }
 
@@ -76,7 +74,6 @@ export default function Comment({ comment, level, deleteCommentInstant, index, r
         }
         await axios.delete(`/comment/${comment._id}`, { data })
             .then(({ data }) => {
-                console.log(data)
                 reSetReply(data.is_replied)
                 deleteCommentInstant(index)
             })

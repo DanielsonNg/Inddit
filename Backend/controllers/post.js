@@ -340,7 +340,6 @@ module.exports = {
         try {
             const id = req.params.id
             const data = req.body
-            // console.log(data)
             const post = await Post.aggregate([
                 {
                     $match: { _id: ObjectId.createFromHexString(id) }
@@ -464,7 +463,6 @@ module.exports = {
                     }
                 },
             ]);
-            // console.log(post)
             return res.status(200).json(post)
         } catch (error) {
             console.log(error)
@@ -531,7 +529,6 @@ module.exports = {
                     }
                 },
             ]);
-            // console.log(post)
             return res.status(200).json(post)
         } catch (error) {
             console.log(error)

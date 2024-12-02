@@ -38,7 +38,6 @@ export default function ProfileSetting() {
             if (userData) {
                 await axios.get(`/user/email/${userData?._id}`)
                     .then(({ data }) => {
-                        // console.log(data)
                         setEmail(data.email)
                     })
             }

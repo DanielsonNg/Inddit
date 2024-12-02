@@ -6,8 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 
 export default function GeneralSetting({ community }) {
-    // console.log(community)
-
     const [previewLogo, setPreviewLogo] = useState('')
     const [previewBanner, setPreviewBanner] = useState('')
     const [editDescription, setEditDescription] = useState('')
@@ -99,7 +97,6 @@ export default function GeneralSetting({ community }) {
         axios.put(`/community/${community._id}`, data)
             .then(({ data }) => {
                 navigate(`/inddit/${community._id}`)
-                // console.log(data)
             })
     }
 

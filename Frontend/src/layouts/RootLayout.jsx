@@ -32,10 +32,6 @@ export default function RootLayout() {
     const [search, setSearch] = useState('')
     const searchDebounce = useDebounce(search)
 
-    // useEffect(()=>{
-    //     // console.log(search)
-    //     console.log(searchDebounce)
-    // },[searchDebounce])
 
     return (
         <>
